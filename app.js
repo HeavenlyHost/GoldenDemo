@@ -1,6 +1,7 @@
 var app = angular.module('heyApp', ['ngPopup']);
 
 app.service('ticker', ['$interval', '$rootScope', function($interval, $rootScope) {
+  
   function beat() {
       var dt = Date.now();
       $rootScope.$broadcast('configDateTime', dt);
@@ -81,6 +82,39 @@ app.controller('heyControllerNav', [ '$compile', '$scope', '$rootScope', functio
             title: "Hey 1",
             moduleId: "heyModule1",
             templateId: "heyTemplate1"
+        }; 
+        
+        $rootScope.$broadcast('dockDialog', newItemConfig)
+    };        
+    
+    $scope.addNewTemplate2 = function(){
+        
+        var newItemConfig = {
+            title: "Hey 2",
+            moduleId: "heyModule2",
+            templateId: "heyTemplate2"
+        }; 
+        
+        $rootScope.$broadcast('dockDialog', newItemConfig)
+    };
+    
+    $scope.addNewTemplate3 = function(){
+        
+        var newItemConfig = {
+            title: "Hey 3",
+            moduleId: "heyModule3",
+            templateId: "heyTemplate3"
+        }; 
+        
+        $rootScope.$broadcast('dockDialog', newItemConfig)
+    };
+    
+    $scope.addNewTemplate4 = function(){
+        
+        var newItemConfig = {
+            title: "Hey 4",
+            moduleId: "heyModule4",
+            templateId: "heyTemplate4"
         }; 
         
         $rootScope.$broadcast('dockDialog', newItemConfig)
@@ -173,6 +207,9 @@ app.controller('heyControllerRoot', [ '$compile', '$scope', '$rootScope', functi
         {
             $scope.myLayout.root.contentItems[ 0 ].addChild( newItemConfig );            
         }
+        
+        // Remove pop dialog from DOM as we don't need it anymore
+        $("div[id=pop" + args.templateId + "]").remove();
     });
     
     $scope.stackCreated = function( stack ){
@@ -218,7 +255,7 @@ app.controller('heyControllerRoot', [ '$compile', '$scope', '$rootScope', functi
                 title: item.config.title,
             }
 
-            var myPopup = angular.element('<div data-ng-controller="heyControllerPopup"><ng-pop-up option="ngPopupOption"></ng-pop-up></div>');
+            var myPopup = angular.element('<div id=pop' + templateId + ' data-ng-controller="heyControllerPopup"><ng-pop-up option="ngPopupOption"></ng-pop-up></div>');
             html = $compile(myPopup)($rootScope);
             angular.element(document.body).append(html);
         };

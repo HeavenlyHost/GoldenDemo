@@ -17,15 +17,14 @@
 	<body data-ng-app="heyApp">
 		<div class="navdiv" data-ng-controller="heyControllerNav">
 			<button ng-click="addNewTemplate1()">Add 1</button>
+			<button ng-click="addNewTemplate2()">Add 2</button>
+			<button ng-click="addNewTemplate3()">Add 3</button>
+			<button ng-click="addNewTemplate4()">Add 4</button>
 		</div>
 		<div data-ng-controller="heyControllerRoot">
 			<template type="text/html" id="heyTemplate1">		
 				<div class="templatediv" data-ng-controller="heyController1">
 					<p>Current Date/Time: {{dt | date:'medium'}}</p>
-					<button>Hey Template 1</button>
-					<button>Hey Template 1</button>
-					<button>Hey Template 1</button>
-					<button>Hey Template 1</button>
 					<button>Hey Template 1</button>
 					<button>Hey Template 1</button>
 					<button>Hey Template 1</button>
@@ -36,8 +35,6 @@
 			<template type="text/html" id="heyTemplate2">
 				<div class="templatediv" data-ng-controller="heyController2">			
 					<p>Current Date/Time: {{dt | date:'medium'}}</p>
-					<button>Hey Template 2</button>
-					<button>Hey Template 2</button>
 					<button>Hey Template 2</button>
 					<button>Hey Template 2</button>
 					<button>Hey Template 2</button>
@@ -58,6 +55,8 @@
 			<template type="text/html" id="heyTemplate4">
 				<div class="templatediv" data-ng-controller="heyController4">			
 					<p>Current Date/Time: {{dt | date:'medium'}}</p>
+					<button>Hey Template 4</button>
+					<button>Hey Template 4</button>
 					<button>Hey Template 4</button>
 					<button>Hey Template 4</button>
 				</div>

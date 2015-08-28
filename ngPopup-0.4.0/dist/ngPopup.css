@@ -31,9 +31,9 @@
     height:25px;
     position: relative;
     float:left;
-    background-color: #222222;
+    background-color: #000000;
     cursor: move;
-    border-bottom:1px solid lightgrey;
+    border-bottom: 1px solid #222222;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     z-index: 1;
@@ -42,6 +42,8 @@
 .ngPopup  > .container .content{
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
     width:100%;
     height: 100%;
     position: relative;
@@ -49,7 +51,7 @@
     padding-top: 25px;
     float:left;
     overflow: auto;
-    background-color: #EAEAEA;
+    background-color: #222222;
 }
 
     .ngPopup  > .container .contentNoBar{
@@ -106,10 +108,10 @@
 }
 
 .ngPopup > .container >.resizeBar > .top-bar {
-    width:96%;
+    width: 100%;
     height:6px;
     top: -5px;
-    left:2%;
+    left: 0%;
     cursor: ns-resize;
     background-color: #EAEAEA;
 }
@@ -125,8 +127,8 @@
 
 .ngPopup > .container >.resizeBar > .right-bar {
     width:6px;
-    height:96%;
-    top:5px;
+    height: 100%;
+    top: 0px;
     left:100%;
     cursor: ew-resize;
     background-color:  #EAEAEA;
@@ -134,8 +136,8 @@
 
 .ngPopup > .container >.resizeBar > .left-bar {
     width:6px;
-    height:96%;
-    top:2%;
+    height: 100%;
+    top: 0%;
     left: -5px;
     cursor: ew-resize;
     background-color:  #EAEAEA;
