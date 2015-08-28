@@ -1,19 +1,45 @@
 var app = angular.module('heyApp', ['ngPopup']);
 
-app.controller('heyController1', [ '$scope', function( $scope, container, state ) {
+app.service('ticker', ['$interval', '$rootScope', function($interval, $rootScope) {
+  function beat() {
+      var dt = Date.now();
+      $rootScope.$broadcast('configDateTime', dt);
+  }
+
+  // start periodic checking
+  $interval(beat, 20);
+}]);
+
+app.controller('heyController1', [ '$scope', 'ticker', function( $scope, ticker, container, state ) {
         console.log("heyModule1 !!!");
+        $scope.dt = new Date();
+        $scope.$on('configDateTime', function(event, args) {
+            $scope.dt = args;
+        });
 }]);
 
-app.controller('heyController2', [ '$scope', function( $scope, container, state ) {
+app.controller('heyController2', [ '$scope', 'ticker', function( $scope, ticker, container, state ) {
         console.log("heyModule2 !!!");
+        $scope.dt = new Date();
+        $scope.$on('configDateTime', function(event, args) {
+            $scope.dt = args;
+        });
 }]);
 
-app.controller('heyController3', [ '$scope', function( $scope, container, state ) {
+app.controller('heyController3', [ '$scope', 'ticker', function( $scope, ticker, container, state ) {
         console.log("heyModule3 !!!");
+        $scope.dt = new Date();
+        $scope.$on('configDateTime', function(event, args) {
+            $scope.dt = args;
+        });
 }]);
 
-app.controller('heyController4', [ '$scope', function( $scope, container, state ) {
+app.controller('heyController4', [ '$scope', 'ticker', function( $scope, ticker, container, state ) {
         console.log("heyModule4 !!!");
+        $scope.dt = new Date();
+        $scope.$on('configDateTime', function(event, args) {
+            $scope.dt = args;
+        });
 }]);
 
 app.controller('heyControllerPopup', [ '$scope', '$rootScope', function( $scope, $rootScope ) {
@@ -165,6 +191,9 @@ app.controller('heyControllerRoot', [ '$compile', '$scope', '$rootScope', functi
             */
             console.log(item.element);  
 
+            var templateId = item._mSubscriptions.__all[0].ctx.config.componentState.templateId
+            var html = $( '#' + templateId ).html();
+
             $rootScope.ngPopupOptionRoot = {
                 modelName: "myNgPopup",
                 width: 320,
@@ -172,7 +201,7 @@ app.controller('heyControllerRoot', [ '$compile', '$scope', '$rootScope', functi
                 myItem: item,
                 moduleId: item._mSubscriptions.__all[0].ctx.config.componentState.module,
                 templateId: item._mSubscriptions.__all[0].ctx.config.componentState.templateId,
-                template: item.element[0].children[0].children[0].innerHTML,
+                template: html,
                 title: item.config.title,
             }
 

@@ -16,7 +16,8 @@
 	</head>
 	<body data-ng-app="heyApp" data-ng-controller="heyControllerRoot">
 		<template type="text/html" id="heyTemplate1">		
-			<div data-ng-controller="heyController1">
+			<div class="templatediv" data-ng-controller="heyController1">
+				<p>Current Date/Time: {{dt | date:'medium'}}</p>
 				<button>Hey Template 1</button>
 				<button>Hey Template 1</button>
 				<button>Hey Template 1</button>
@@ -29,7 +30,8 @@
 		</template>
 
 		<template type="text/html" id="heyTemplate2">
-			<div data-ng-controller="heyController2">			
+			<div class="templatediv" data-ng-controller="heyController2">			
+				<p>Current Date/Time: {{dt | date:'medium'}}</p>
 				<button>Hey Template 2</button>
 				<button>Hey Template 2</button>
 				<button>Hey Template 2</button>
@@ -40,7 +42,8 @@
 		</template>
 
 		<template type="text/html" id="heyTemplate3">
-			<div data-ng-controller="heyController3">			
+			<div class="templatediv" data-ng-controller="heyController3">			
+				<p>Current Date/Time: {{dt | date:'medium'}}</p>
 				<button>Hey Template 3</button>
 				<button>Hey Template 3</button>
 				<button>Hey Template 3</button>
@@ -49,7 +52,8 @@
 		</template>
 
 		<template type="text/html" id="heyTemplate4">
-			<div data-ng-controller="heyController4">			
+			<div class="templatediv" data-ng-controller="heyController4">			
+				<p>Current Date/Time: {{dt | date:'medium'}}</p>
 				<button>Hey Template 4</button>
 				<button>Hey Template 4</button>
 			</div>
