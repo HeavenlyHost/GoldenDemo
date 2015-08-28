@@ -74,6 +74,19 @@ app.controller('heyControllerPopup', [ '$scope', '$rootScope', function( $scope,
     }
 }]);
 
+app.controller('heyControllerNav', [ '$compile', '$scope', '$rootScope', function( $compile, $scope, $rootScope ) {
+    $scope.addNewTemplate1 = function(){
+        
+        var newItemConfig = {
+            title: "Hey 1",
+            moduleId: "heyModule1",
+            templateId: "heyTemplate1"
+        }; 
+        
+        $rootScope.$broadcast('dockDialog', newItemConfig)
+    };        
+}]);
+
 app.controller('heyControllerRoot', [ '$compile', '$scope', '$rootScope', function( $compile, $scope, $rootScope ) {
     $scope.myLayout = new GoldenLayout({
         content:[{
@@ -229,29 +242,5 @@ app.controller('heyControllerRoot', [ '$compile', '$scope', '$rootScope', functi
     };
     
     $scope.myLayout.registerComponent( 'angularModule', $scope.AngularModuleComponent );
-    
-    //$http.get(state.templateId, {cache:true}).success(function(html) {
-    //html = $compile('<div>'+html+'</div>')($rootScope);
-    //container.getElement().html(html);
-    //});
-    
-    //myLayout.registerComponent( 'angularModule', AngularModuleComponent );
-    $scope.myLayout.init();
-    
+    $scope.myLayout.init();    
 }]);
-
-//var AngularModuleComponent = function( container, state ) {
-//    var html = $( '#' + state.templateId ).html(),
-//        element = container.getElement();
-    
-//    element.html( html );
-
-//    angular
-//        .module( state.module )
-//        .value( 'container', container )
-//        .value( 'state', state );
-
-//    angular.bootstrap( element[ 0 ], [ state.module ] );
-//};	
-
-

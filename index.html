@@ -14,51 +14,56 @@
 		<link rel="stylesheet" href="ngPopup-0.4.0/dist/ngPopup.css">
 		<link rel="stylesheet" href="defaults.css"
 	</head>
-	<body data-ng-app="heyApp" data-ng-controller="heyControllerRoot">
-		<template type="text/html" id="heyTemplate1">		
-			<div class="templatediv" data-ng-controller="heyController1">
-				<p>Current Date/Time: {{dt | date:'medium'}}</p>
-				<button>Hey Template 1</button>
-				<button>Hey Template 1</button>
-				<button>Hey Template 1</button>
-				<button>Hey Template 1</button>
-				<button>Hey Template 1</button>
-				<button>Hey Template 1</button>
-				<button>Hey Template 1</button>
-				<button>Hey Template 1</button>
-			</div>
-		</template>
-
-		<template type="text/html" id="heyTemplate2">
-			<div class="templatediv" data-ng-controller="heyController2">			
-				<p>Current Date/Time: {{dt | date:'medium'}}</p>
-				<button>Hey Template 2</button>
-				<button>Hey Template 2</button>
-				<button>Hey Template 2</button>
-				<button>Hey Template 2</button>
-				<button>Hey Template 2</button>
-				<button>Hey Template 2</button>
-			</div>
-		</template>
-
-		<template type="text/html" id="heyTemplate3">
-			<div class="templatediv" data-ng-controller="heyController3">			
-				<p>Current Date/Time: {{dt | date:'medium'}}</p>
-				<button>Hey Template 3</button>
-				<button>Hey Template 3</button>
-				<button>Hey Template 3</button>
-				<button>Hey Template 3</button>
-			</div>
-		</template>
-
-		<template type="text/html" id="heyTemplate4">
-			<div class="templatediv" data-ng-controller="heyController4">			
-				<p>Current Date/Time: {{dt | date:'medium'}}</p>
-				<button>Hey Template 4</button>
-				<button>Hey Template 4</button>
-			</div>
-		</template>	
+	<body data-ng-app="heyApp">
+		<div class="navdiv" data-ng-controller="heyControllerNav">
+			<button ng-click="addNewTemplate1()">Add 1</button>
+		</div>
+		<div data-ng-controller="heyControllerRoot">
+			<template type="text/html" id="heyTemplate1">		
+				<div class="templatediv" data-ng-controller="heyController1">
+					<p>Current Date/Time: {{dt | date:'medium'}}</p>
+					<button>Hey Template 1</button>
+					<button>Hey Template 1</button>
+					<button>Hey Template 1</button>
+					<button>Hey Template 1</button>
+					<button>Hey Template 1</button>
+					<button>Hey Template 1</button>
+					<button>Hey Template 1</button>
+					<button>Hey Template 1</button>
+				</div>
+			</template>
 	
+			<template type="text/html" id="heyTemplate2">
+				<div class="templatediv" data-ng-controller="heyController2">			
+					<p>Current Date/Time: {{dt | date:'medium'}}</p>
+					<button>Hey Template 2</button>
+					<button>Hey Template 2</button>
+					<button>Hey Template 2</button>
+					<button>Hey Template 2</button>
+					<button>Hey Template 2</button>
+					<button>Hey Template 2</button>
+				</div>
+			</template>
+	
+			<template type="text/html" id="heyTemplate3">
+				<div class="templatediv" data-ng-controller="heyController3">			
+					<p>Current Date/Time: {{dt | date:'medium'}}</p>
+					<button>Hey Template 3</button>
+					<button>Hey Template 3</button>
+					<button>Hey Template 3</button>
+					<button>Hey Template 3</button>
+				</div>
+			</template>
+	
+			<template type="text/html" id="heyTemplate4">
+				<div class="templatediv" data-ng-controller="heyController4">			
+					<p>Current Date/Time: {{dt | date:'medium'}}</p>
+					<button>Hey Template 4</button>
+					<button>Hey Template 4</button>
+				</div>
+			</template>		
+		</div>
+
 		<!-- Include modules and js stuff -->
 		<script src="jquery/jquery-1.11.3.js"></script>
 		<script src="bootstrap-3.3.5-dist/js/bootstrap.js"></script>
@@ -66,5 +71,6 @@
 		<script src="angular-1.4.x-dist/angular.min.js"></script>
 		<script src="ngPopup-0.4.0/dist/ngPopup.js"></script>
 		<script src="app.js"></script>
+
 	</body>	
 </html>
