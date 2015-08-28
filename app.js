@@ -18,7 +18,34 @@ app.controller('heyController4', [ '$scope', function( $scope, container, state 
 
 app.controller('heyControllerPopup', [ '$scope', '$rootScope', function( $scope, $rootScope ) {
     console.log("heyModulePopup !!!");
-    $scope.ngPopupOption = $rootScope.ngPopupOptionRoot;
+    
+    $scope.ngPopupOption = {
+        modelName: $rootScope.ngPopupOptionRoot.modelName,
+        width: $rootScope.ngPopupOptionRoot.width,
+        height: $rootScope.ngPopupOptionRoot.height,
+        moduleId: $rootScope.ngPopupOptionRoot.moduleId,
+        templateId: $rootScope.ngPopupOptionRoot.templateId,
+        template: $rootScope.ngPopupOptionRoot.template,
+        title: $rootScope.ngPopupOptionRoot.title,
+        hasTitleBar: true,
+        resizable:true,
+        draggable: true,
+        isShow:true,
+        position: { top : 100, left : 100},
+        onOpen : function()
+        {
+            console.log(this.title + " - Dialog Opened!!! ");
+        },
+        onClose  : function()
+        {
+            console.log(this.title + " - Dialog Closed!!! ");                 
+            
+            $rootScope.$broadcast('dockDialog', this);
+        },
+        onDragStart : function(){},
+        onDragEnd : function(){},
+        onResize : function(){}
+    }
 }]);
 
 app.controller('heyControllerRoot', [ '$compile', '$scope', '$rootScope', function( $compile, $scope, $rootScope ) {
@@ -61,7 +88,55 @@ app.controller('heyControllerRoot', [ '$compile', '$scope', '$rootScope', functi
         }]
     });
     
-    $scope.myLayout.on( 'stackCreated', function( stack ){
+    $scope.$on('dockDialog', function(event, args) {
+        var newItemConfig = {
+            title: args.title,
+            type: 'component',
+            componentName: 'angularModule',
+            componentState: {
+                module: args.moduleId,
+                templateId: args.templateId,
+            }
+        }; 
+        
+        if ($scope.myLayout.root.contentItems.length == 0)       
+        {
+            //Manually remove all golden layout containers            
+            $('.lm_dropTargetIndicator').remove();
+            $('.lm_inner').remove();
+            $('.lm_goldenlayout').remove();
+            
+            //Recreate golden layout            
+            $scope.myLayout = new GoldenLayout({
+                content:[{
+                    type: 'row',
+                    content: [{
+                        title: args.title,
+                        type: 'component',
+                        componentName: 'angularModule',
+                        componentState: {
+                            module: args.moduleId,
+                            templateId: args.templateId,
+                        }
+                    }]
+                }]
+            });             
+            
+            $scope.myLayout.on( 'stackCreated', function( stack ){
+                $scope.stackCreated( stack );
+            });
+            
+            $scope.myLayout.registerComponent( 'angularModule', $scope.AngularModuleComponent );
+            
+            $scope.myLayout.init();             
+        }
+        else
+        {
+            $scope.myLayout.root.contentItems[ 0 ].addChild( newItemConfig );            
+        }
+    });
+    
+    $scope.stackCreated = function( stack ){
         /*
         * Re-use the label
         */
@@ -94,24 +169,11 @@ app.controller('heyControllerRoot', [ '$compile', '$scope', '$rootScope', functi
                 modelName: "myNgPopup",
                 width: 320,
                 height: 240,
-                hasTitleBar:true,
+                myItem: item,
+                moduleId: item._mSubscriptions.__all[0].ctx.config.componentState.module,
+                templateId: item._mSubscriptions.__all[0].ctx.config.componentState.templateId,
                 template: item.element[0].children[0].children[0].innerHTML,
                 title: item.config.title,
-                resizable:true,
-                draggable: true,
-                isShow:true,
-                position: { top : 100, left : 100},
-                onOpen : function()
-                {
-                    console.log("Dialog Opened!!!");
-                },
-                onClose  : function()
-                {
-                    
-                },
-                onDragStart : function(){},
-                onDragEnd : function(){},
-                onResize : function(){}
             }
 
             var myPopup = angular.element('<div data-ng-controller="heyControllerPopup"><ng-pop-up option="ngPopupOption"></ng-pop-up></div>');
@@ -124,7 +186,11 @@ app.controller('heyControllerRoot', [ '$compile', '$scope', '$rootScope', functi
         * logic when the header is moved / destroyed. Only trouble is that it currently appends the element,
         * so the popout icon is now last...might be worth doing something hack-ish here
         */
-        new GoldenLayout.__lm.controls.HeaderButton( stack.header, label, 'lm_popout', popout );
+        new GoldenLayout.__lm.controls.HeaderButton( stack.header, label, 'lm_popout', popout );       
+    }
+    
+    $scope.myLayout.on( 'stackCreated', function( stack ){
+        $scope.stackCreated( stack );
     });
 
     $scope.AngularModuleComponent = function (container, state) {
