@@ -176,7 +176,7 @@ app.controller('heyControllerRoot', [ '$compile', '$scope', '$rootScope', functi
         {
             //Manually remove all golden layout containers            
             $('.lm_dropTargetIndicator').remove();
-            $('.lm_inner').remove();
+            $('.lm_transition_indicator').remove();
             $('.lm_goldenlayout').remove();
             
             //Recreate golden layout            
