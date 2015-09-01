@@ -1,45 +1,91 @@
 var app = angular.module('heyApp', ['ngPopup']);
 
-app.service('ticker', ['$interval', '$rootScope', function($interval, $rootScope) {
+app.service('websoc', ['$timeout', '$rootScope', function($timeout, $rootScope) {        
+
+    var connected = false;    
+    var websock = null;
+
+    var myWebSocket = function() {
+        var tout = 5000;
+        if (!connected)
+        {
+            websock = new WebSocket("ws://localhost:8080/goldenserver");    
+            websock.onopen = function(evt){
+                console.debug("Web Socket Open !!!")      
+                connected = true  
+                $rootScope.$broadcast('wsConnection', connected);
+            }
+            websock.onmessage = function(evt){
+                console.debug("RX WS Data:" + evt)
+                $rootScope.$broadcast('configDateTime', evt);
+            }
+            websock.onclose = function(evt){
+                console.debug("Web Socket Close !!!")                
+                connected = false 
+                $rootScope.$broadcast('wsConnection', connected);
+            }   
+            websock.onerror = function(evt){
+                console.debug("error: " + evt)  
+            }             
+            tout = 1000;
+        }
+        $timeout(myWebSocket, tout);            
+    };
+    
+    myWebSocket();
+    
+    var sendMyData = function (data) {
+       if (connected == true)
+       {
+           websock.send(data);
+       }                
+    }
+    
+    return {
+        sendMyData: sendMyData 
+    };
+}]);
+
+app.service('ticker', ['$interval', '$rootScope', 'websoc', function($interval, $rootScope, websoc) {
   
   function beat() {
       var dt = Date.now();
-      $rootScope.$broadcast('configDateTime', dt);
+      websoc.sendMyData(dt);
   }
 
   // start periodic checking
-  $interval(beat, 20);
+  $interval(beat, 50);
 }]);
 
-app.controller('heyController1', [ '$scope', 'ticker', function( $scope, ticker, container, state ) {
+app.controller('heyController1', [ '$scope', 'ticker', 'websoc', function( $scope, ticker, websoc, container, state ) {
         console.log("heyModule1 !!!");
         $scope.dt = new Date();
         $scope.$on('configDateTime', function(event, args) {
-            $scope.dt = args;
+            $scope.dt = args.data;
         });
 }]);
 
-app.controller('heyController2', [ '$scope', 'ticker', function( $scope, ticker, container, state ) {
+app.controller('heyController2', [ '$scope', 'ticker', 'websoc', function( $scope, ticker, websoc, container, state ) {
         console.log("heyModule2 !!!");
         $scope.dt = new Date();
         $scope.$on('configDateTime', function(event, args) {
-            $scope.dt = args;
+            $scope.dt = args.data;
         });
 }]);
 
-app.controller('heyController3', [ '$scope', 'ticker', function( $scope, ticker, container, state ) {
+app.controller('heyController3', [ '$scope', 'ticker', 'websoc', function( $scope, ticker, websoc, container, state ) {
         console.log("heyModule3 !!!");
         $scope.dt = new Date();
         $scope.$on('configDateTime', function(event, args) {
-            $scope.dt = args;
+            $scope.dt = args.data;
         });
 }]);
 
-app.controller('heyController4', [ '$scope', 'ticker', function( $scope, ticker, container, state ) {
+app.controller('heyController4', [ '$scope', 'ticker', 'websoc', function( $scope, ticker, websoc, container, state ) {
         console.log("heyModule4 !!!");
         $scope.dt = new Date();
         $scope.$on('configDateTime', function(event, args) {
-            $scope.dt = args;
+            $scope.dt = args.data;
         });
 }]);
 
@@ -47,6 +93,7 @@ app.controller('heyControllerPopup', [ '$scope', '$rootScope', function( $scope,
     console.log("heyModulePopup !!!");
     
     $scope.ngPopupOption = {
+        createNew: false,
         modelName: $rootScope.ngPopupOptionRoot.modelName,
         width: $rootScope.ngPopupOptionRoot.width,
         height: $rootScope.ngPopupOptionRoot.height,
@@ -75,10 +122,11 @@ app.controller('heyControllerPopup', [ '$scope', '$rootScope', function( $scope,
     }
 }]);
 
-app.controller('heyControllerNav', [ '$compile', '$scope', '$rootScope', function( $compile, $scope, $rootScope ) {
+app.controller('heyControllerNav', [ '$compile', '$scope', '$rootScope', 'websoc', function( $compile, $scope, $rootScope, websoc ) {
     $scope.addNewTemplate1 = function(){
         
         var newItemConfig = {
+            createNew: true,
             title: "Hey 1",
             moduleId: "heyModule1",
             templateId: "heyTemplate1"
@@ -90,6 +138,7 @@ app.controller('heyControllerNav', [ '$compile', '$scope', '$rootScope', functio
     $scope.addNewTemplate2 = function(){
         
         var newItemConfig = {
+            createNew: true,
             title: "Hey 2",
             moduleId: "heyModule2",
             templateId: "heyTemplate2"
@@ -101,6 +150,7 @@ app.controller('heyControllerNav', [ '$compile', '$scope', '$rootScope', functio
     $scope.addNewTemplate3 = function(){
         
         var newItemConfig = {
+            createNew: true,
             title: "Hey 3",
             moduleId: "heyModule3",
             templateId: "heyTemplate3"
@@ -112,13 +162,30 @@ app.controller('heyControllerNav', [ '$compile', '$scope', '$rootScope', functio
     $scope.addNewTemplate4 = function(){
         
         var newItemConfig = {
+            createNew: true,
             title: "Hey 4",
             moduleId: "heyModule4",
             templateId: "heyTemplate4"
         }; 
         
         $rootScope.$broadcast('dockDialog', newItemConfig)
-    };        
+    };    
+
+    $scope.connected = false;
+    $scope.commsmessage = "Disconnected";
+    
+    $scope.$on('wsConnection', function(event, args) {
+        $scope.connected = args;
+        if (args == true)
+        {
+            $scope.commsmessage = "Connected";                    
+        }
+        else
+        {
+            $scope.commsmessage = "Disconnected";   
+        }
+    });
+    
 }]);
 
 app.controller('heyControllerRoot', [ '$compile', '$scope', '$rootScope', function( $compile, $scope, $rootScope ) {
@@ -208,8 +275,11 @@ app.controller('heyControllerRoot', [ '$compile', '$scope', '$rootScope', functi
             $scope.myLayout.root.contentItems[ 0 ].addChild( newItemConfig );            
         }
         
-        // Remove pop dialog from DOM as we don't need it anymore
-        $("div[id=pop" + args.templateId + "]").remove();
+        if (args.createNew == false)
+        {
+            // Remove pop dialog from DOM as we don't need it anymore
+            $("div[id=pop" + args.templateId + "]").remove();            
+        }
     });
     
     $scope.stackCreated = function( stack ){
@@ -231,7 +301,7 @@ app.controller('heyControllerRoot', [ '$compile', '$scope', '$rootScope', functi
             * Remove the item as a child from the stack. true indicates that we DON'T
             * want the item to be destroyed
             */
-            stack.removeChild( item, true );
+            stack.removeChild( item, false );
             
             /*************************************
             * From here on its up to you. item is an instance of contentItem (https://golden-layout.com/docs/Item.html),

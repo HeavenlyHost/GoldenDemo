@@ -6,7 +6,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<title>Golden Thales</title>		
+		<title>Golden Demo</title>		
 
 		<link type="text/css" rel="stylesheet" href="bootstrap-3.3.5-dist/css/bootstrap.css"/>
 		<link type="text/css" rel="stylesheet" href="GoldenLayout/css/goldenlayout-base.css"/>
@@ -20,6 +20,7 @@
 			<button ng-click="addNewTemplate2()">Add 2</button>
 			<button ng-click="addNewTemplate3()">Add 3</button>
 			<button ng-click="addNewTemplate4()">Add 4</button>
+			<span ng-class="{'albl': true, 'albltrue': connected == true, 'alblfalse': connected == false}">{{commsmessage}}</span>
 		</div>
 		<div data-ng-controller="heyControllerRoot">
 			<template type="text/html" id="heyTemplate1">		
