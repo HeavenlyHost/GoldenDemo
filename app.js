@@ -1,5 +1,112 @@
 var app = angular.module('heyApp', ['ngPopup']);
 
+app.service('fileaccessor', ['$http', function($http){
+   
+    var getFilesWithFullPathAndExt = function(src_fldr, // e.g. templates, relative path from index.html
+                                        complete_func   // function to call when complete, this must accept one param for myFiles to be passed back
+                                        ){
+        var myFiles = [];                        
+        
+        $http.get(src_fldr).success(function (t) {
+    
+            var result = xmlToJSON.parseString(t);        
+    
+            result.Listing[0].Entries[0].Entry.forEach(function(element) {
+                var t = element.urlPath[0]._text;
+                myFiles.push(t);            
+            }, this);
+    
+            if (complete_func != null)
+            {
+                complete_func(myFiles);
+            }           
+        }).error(function (data, status){
+            console.debug("ERROR: " + data);
+        }); 
+    };
+
+    var getFilesWithExt = function(src_fldr,       // e.g. templates, relative path from index.html
+                                        complete_func   // function to call when complete, this must accept one param for myFiles to be passed back
+                                        ){
+        var myFiles = [];                        
+        
+        $http.get(src_fldr).success(function (t) {
+    
+            var result = xmlToJSON.parseString(t);        
+    
+            result.Listing[0].Entries[0].Entry.forEach(function(element) {
+                var t = element.urlPath[0]._text;
+                t = t.substr(t.lastIndexOf("/")+1, t.length-t.lastIndexOf("/")-1);
+                myFiles.push(t);            
+            }, this);
+    
+            if (complete_func != null)
+            {
+                complete_func(myFiles);
+            }           
+        }).error(function (data, status){
+            console.debug("ERROR: " + data);
+        }); 
+    };
+             
+    var getFileNamesOnly = function(src_fldr,       // e.g. templates, relative path from index.html
+                                    complete_func   // function to call when complete, this must accept one param for myFiles to be passed back
+                                    ){
+        var myFiles = [];                        
+        
+        $http.get(src_fldr).success(function (t) {
+    
+            var result = xmlToJSON.parseString(t);        
+    
+            result.Listing[0].Entries[0].Entry.forEach(function(element) {
+                var t = element.urlPath[0]._text;
+                t = t.substr(t.lastIndexOf("/")+1, t.length-t.lastIndexOf("/")-1);
+                t = t.substr(0, t.lastIndexOf("."));
+                myFiles.push(t);            
+            }, this);
+    
+            if (complete_func != null)
+            {
+                complete_func(myFiles);
+            }           
+        }).error(function (data, status){
+            console.debug("ERROR: " + data);
+        }); 
+    };
+    
+    return {
+        getFilesWithFullPathAndExt: getFilesWithFullPathAndExt,
+        getFilesWithExt: getFilesWithExt,
+        getFileNamesOnly: getFileNamesOnly
+    };            
+}]);
+
+app.run(['$rootScope', '$templateCache', '$http', 'fileaccessor', function ($rootScope, $templateCache, $http, fileaccessor){
+
+    var getTemplates = function(myFilesArray){
+
+        var templateCount = myFilesArray.length;
+        
+        var getServerSideTemplate = function(id){
+            $http.get('templates/' + id + '.html').success(function (t) {
+                $templateCache.put(id + '.html', t);
+            }).error(function (data, status){
+                console.debug("ERROR: " + data);
+            }).finally(function(){
+                templateCount -= 1;
+                if (templateCount == 0)
+                    $rootScope.$broadcast('initGolden', null);            
+            }); 
+        }
+        
+        myFilesArray.forEach(function(element) {
+            getServerSideTemplate(element);    
+        }, this);             
+    };
+
+    fileaccessor.getFileNamesOnly('templates', getTemplates);
+}]);
+
 app.service('websoc', ['$timeout', '$rootScope', function($timeout, $rootScope) {        
 
     var connected = false;    
@@ -9,18 +116,15 @@ app.service('websoc', ['$timeout', '$rootScope', function($timeout, $rootScope) 
         var tout = 5000;
         if (!connected)
         {
-            websock = new WebSocket("ws://localhost:8080/goldenserver");    
+            websock = new WebSocket("ws://192.168.1.97:8081/goldenserver");    
             websock.onopen = function(evt){
-                console.debug("Web Socket Open !!!")      
                 connected = true  
                 $rootScope.$broadcast('wsConnection', connected);
             }
             websock.onmessage = function(evt){
-                console.debug("RX WS Data:" + evt)
                 $rootScope.$broadcast('configDateTime', evt);
             }
             websock.onclose = function(evt){
-                console.debug("Web Socket Close !!!")                
                 connected = false 
                 $rootScope.$broadcast('wsConnection', connected);
             }   
@@ -58,7 +162,6 @@ app.service('ticker', ['$interval', '$rootScope', 'websoc', function($interval, 
 }]);
 
 app.controller('heyController1', [ '$scope', 'ticker', 'websoc', function( $scope, ticker, websoc, container, state ) {
-        console.log("heyModule1 !!!");
         $scope.dt = new Date();
         $scope.$on('configDateTime', function(event, args) {
             $scope.dt = args.data;
@@ -66,7 +169,6 @@ app.controller('heyController1', [ '$scope', 'ticker', 'websoc', function( $scop
 }]);
 
 app.controller('heyController2', [ '$scope', 'ticker', 'websoc', function( $scope, ticker, websoc, container, state ) {
-        console.log("heyModule2 !!!");
         $scope.dt = new Date();
         $scope.$on('configDateTime', function(event, args) {
             $scope.dt = args.data;
@@ -74,7 +176,6 @@ app.controller('heyController2', [ '$scope', 'ticker', 'websoc', function( $scop
 }]);
 
 app.controller('heyController3', [ '$scope', 'ticker', 'websoc', function( $scope, ticker, websoc, container, state ) {
-        console.log("heyModule3 !!!");
         $scope.dt = new Date();
         $scope.$on('configDateTime', function(event, args) {
             $scope.dt = args.data;
@@ -82,7 +183,6 @@ app.controller('heyController3', [ '$scope', 'ticker', 'websoc', function( $scop
 }]);
 
 app.controller('heyController4', [ '$scope', 'ticker', 'websoc', function( $scope, ticker, websoc, container, state ) {
-        console.log("heyModule4 !!!");
         $scope.dt = new Date();
         $scope.$on('configDateTime', function(event, args) {
             $scope.dt = args.data;
@@ -90,8 +190,6 @@ app.controller('heyController4', [ '$scope', 'ticker', 'websoc', function( $scop
 }]);
 
 app.controller('heyControllerPopup', [ '$scope', '$rootScope', function( $scope, $rootScope ) {
-    console.log("heyModulePopup !!!");
-    
     $scope.ngPopupOption = {
         createNew: false,
         modelName: $rootScope.ngPopupOptionRoot.modelName,
@@ -106,14 +204,9 @@ app.controller('heyControllerPopup', [ '$scope', '$rootScope', function( $scope,
         draggable: true,
         isShow:true,
         position: { top : 100, left : 100},
-        onOpen : function()
-        {
-            console.log(this.title + " - Dialog Opened!!! ");
-        },
+        onOpen : function(){},
         onClose  : function()
         {
-            console.log(this.title + " - Dialog Closed!!! ");                 
-            
             $rootScope.$broadcast('dockDialog', this);
         },
         onDragStart : function(){},
@@ -188,7 +281,7 @@ app.controller('heyControllerNav', [ '$compile', '$scope', '$rootScope', 'websoc
     
 }]);
 
-app.controller('heyControllerRoot', [ '$compile', '$scope', '$rootScope', function( $compile, $scope, $rootScope ) {
+app.controller('heyControllerRoot', [ '$templateCache', '$http', '$compile', '$scope', '$rootScope', function( $templateCache, $http, $compile, $scope, $rootScope ) {
     $scope.myLayout = new GoldenLayout({
         content:[{
             type: 'row',
@@ -309,10 +402,10 @@ app.controller('heyControllerRoot', [ '$compile', '$scope', '$rootScope', functi
             *
             * Good luck and if you have any questions: don't hesitate to ask
             */
-            console.log(item.element);  
-
             var templateId = item._mSubscriptions.__all[0].ctx.config.componentState.templateId
-            var html = $( '#' + templateId ).html();
+            //var html = $( '#' + templateId ).html();
+            
+            var html = $templateCache.get(templateId + '.html');
 
             $rootScope.ngPopupOptionRoot = {
                 modelName: "myNgPopup",
@@ -337,17 +430,22 @@ app.controller('heyControllerRoot', [ '$compile', '$scope', '$rootScope', functi
         */
         new GoldenLayout.__lm.controls.HeaderButton( stack.header, label, 'lm_popout', popout );       
     }
-    
+        
     $scope.myLayout.on( 'stackCreated', function( stack ){
         $scope.stackCreated( stack );
     });
 
     $scope.AngularModuleComponent = function (container, state) {
-        var html = $( '#' + state.templateId ).html();
+        //var html = $( '#' + state.templateId ).html();
+        var id = state.templateId + '.html';
+        var html = $templateCache.get(id);
         html = $compile('<div>'+html+'</div>')($rootScope);
         container.getElement().html(html);                
     };
+
+    $scope.$on('initGolden', function(event, args){
+        $scope.myLayout.registerComponent( 'angularModule', $scope.AngularModuleComponent );
+        $scope.myLayout.init();    
+    });
     
-    $scope.myLayout.registerComponent( 'angularModule', $scope.AngularModuleComponent );
-    $scope.myLayout.init();    
 }]);

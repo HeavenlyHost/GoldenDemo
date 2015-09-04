@@ -67,3 +67,43 @@ Button:active {
 	position:relative;
 	top:1px;
 }
+
+.leftdiv {
+	margin:1px;
+	padding:1px;
+	overflow-y: auto;
+	overflow-x: auto;
+	float: left;
+}
+
+.rightdiv {
+	margin:1px;
+	padding: 1px;
+	overflow-y: auto;
+	overflow-x: auto;
+	float: right;
+}
+
+.footer {
+	overflow-y: auto;
+	overflow-x: auto;
+	clear: both;
+}
+
+video {
+	width: 100%;
+	height: auto;
+}
+
+.centrediv {
+	display: inline-block;
+	margin: 0 auto;
+}
+
+h2 {
+	color:orange;
+}
+
+h3 {
+	color:orange
+}

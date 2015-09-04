@@ -11,8 +11,10 @@ GoldenServer::GoldenServer(quint16 port, bool debug, QObject *parent):
                                             QWebSocketServer::NonSecureMode, this)),
     m_clients(),
     m_debug(true)
-{
-    if (m_pWebSocketServer->listen(QHostAddress::LocalHost, port)) {
+{ 
+    port = 8081;
+
+    if (m_pWebSocketServer->listen(QHostAddress::AnyIPv4, port)) {
         if (m_debug)
             qDebug() << "goldenserver listening on port" << port;
         connect(m_pWebSocketServer, &QWebSocketServer::newConnection,
