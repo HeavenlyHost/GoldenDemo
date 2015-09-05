@@ -2,6 +2,7 @@
 #include "QtWebSockets/qwebsocketserver.h"
 #include "QtWebSockets/qwebsocket.h"
 #include <QtCore/QDebug>
+#include <QTimer>
 
 QT_USE_NAMESPACE
 
@@ -22,18 +23,42 @@ GoldenServer::GoldenServer(quint16 port, bool debug, QObject *parent):
         connect(m_pWebSocketServer, &QWebSocketServer::closed, this, &GoldenServer::closed);
     }
 
-    qDebug() << "Hello World !!!";
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    timer->start(50);
 }
 
 GoldenServer::~GoldenServer()
 {
+    timer->stop();
     m_pWebSocketServer->close();
     qDeleteAll(m_clients.begin(), m_clients.end());
+}
+
+void GoldenServer::update()
+{
+    QDateTime dt = QDateTime::currentDateTime();
+    QString sdt = dt.toString(Qt::TextDate);
+    int index = 0;
+    while(index < m_clients.length())
+    {
+        try
+        {
+            qDebug() << "message sent: " + sdt + ", index = " + index;
+            m_clients[index]->sendTextMessage(sdt);
+            index++;
+        }
+        catch(...)
+        {
+            qDebug() << "GoldenServer::update - Exception";
+        }
+    }
 }
 
 void GoldenServer::onNewConnection()
 {
     QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
+    qDebug() << "Connection Open";
 
     connect(pSocket, &QWebSocket::textMessageReceived, this, &GoldenServer::processTextMessage);
     connect(pSocket, &QWebSocket::binaryMessageReceived, this, &GoldenServer::processBinaryMessage);

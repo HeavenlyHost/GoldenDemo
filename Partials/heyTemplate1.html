@@ -1,6 +1,7 @@
 <div class="templatediv" data-ng-controller="heyController1">	
 	<header>
-		<p>Current Date/Time: {{dt | date:'medium'}}</p>		
+<!--		<p>Current Date/Time: {{dt | date:'medium'}}</p>	-->	
+	<p>Current Date/Time: {{dt}}</p>		
 	</header>
 	<div class="leftdiv">
 		<button>Hey Template 1</button>
@@ -10,10 +11,10 @@
 		<button>Hey Template 1</button>
 		<button>Hey Template 1</button>
 	</div>			
+		
 	<div class="footer">
+		<p>Web Socket Raw Data: {{dt}}</p>
 		<h2>Some Video HTML5</h2>
-	</div>
-	<div class="footer">
 		<video width="320" height="240" controls>
 			<source type="video/mp4" src="Videos/Minions.mp4">
 			Your browser does not support the video tag.

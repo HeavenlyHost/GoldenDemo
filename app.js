@@ -1,85 +1,4 @@
-var app = angular.module('heyApp', ['ngPopup']);
-
-app.service('fileaccessor', ['$http', function($http){
-   
-    var getFilesWithFullPathAndExt = function(src_fldr, // e.g. templates, relative path from index.html
-                                        complete_func   // function to call when complete, this must accept one param for myFiles to be passed back
-                                        ){
-        var myFiles = [];                        
-        
-        $http.get(src_fldr).success(function (t) {
-    
-            var result = xmlToJSON.parseString(t);        
-    
-            result.Listing[0].Entries[0].Entry.forEach(function(element) {
-                var t = element.urlPath[0]._text;
-                myFiles.push(t);            
-            }, this);
-    
-            if (complete_func != null)
-            {
-                complete_func(myFiles);
-            }           
-        }).error(function (data, status){
-            console.debug("ERROR: " + data);
-        }); 
-    };
-
-    var getFilesWithExt = function(src_fldr,       // e.g. templates, relative path from index.html
-                                        complete_func   // function to call when complete, this must accept one param for myFiles to be passed back
-                                        ){
-        var myFiles = [];                        
-        
-        $http.get(src_fldr).success(function (t) {
-    
-            var result = xmlToJSON.parseString(t);        
-    
-            result.Listing[0].Entries[0].Entry.forEach(function(element) {
-                var t = element.urlPath[0]._text;
-                t = t.substr(t.lastIndexOf("/")+1, t.length-t.lastIndexOf("/")-1);
-                myFiles.push(t);            
-            }, this);
-    
-            if (complete_func != null)
-            {
-                complete_func(myFiles);
-            }           
-        }).error(function (data, status){
-            console.debug("ERROR: " + data);
-        }); 
-    };
-             
-    var getFileNamesOnly = function(src_fldr,       // e.g. templates, relative path from index.html
-                                    complete_func   // function to call when complete, this must accept one param for myFiles to be passed back
-                                    ){
-        var myFiles = [];                        
-        
-        $http.get(src_fldr).success(function (t) {
-    
-            var result = xmlToJSON.parseString(t);        
-    
-            result.Listing[0].Entries[0].Entry.forEach(function(element) {
-                var t = element.urlPath[0]._text;
-                t = t.substr(t.lastIndexOf("/")+1, t.length-t.lastIndexOf("/")-1);
-                t = t.substr(0, t.lastIndexOf("."));
-                myFiles.push(t);            
-            }, this);
-    
-            if (complete_func != null)
-            {
-                complete_func(myFiles);
-            }           
-        }).error(function (data, status){
-            console.debug("ERROR: " + data);
-        }); 
-    };
-    
-    return {
-        getFilesWithFullPathAndExt: getFilesWithFullPathAndExt,
-        getFilesWithExt: getFilesWithExt,
-        getFileNamesOnly: getFileNamesOnly
-    };            
-}]);
+var app = angular.module('heyApp', ['ngPopup', 'myServices', 'myDirectives']);
 
 app.run(['$rootScope', '$templateCache', '$http', 'fileaccessor', function ($rootScope, $templateCache, $http, fileaccessor){
 
@@ -88,7 +7,7 @@ app.run(['$rootScope', '$templateCache', '$http', 'fileaccessor', function ($roo
         var templateCount = myFilesArray.length;
         
         var getServerSideTemplate = function(id){
-            $http.get('templates/' + id + '.html').success(function (t) {
+            $http.get('Partials/' + id + '.html').success(function (t) {
                 $templateCache.put(id + '.html', t);
             }).error(function (data, status){
                 console.debug("ERROR: " + data);
@@ -104,7 +23,7 @@ app.run(['$rootScope', '$templateCache', '$http', 'fileaccessor', function ($roo
         }, this);             
     };
 
-    fileaccessor.getFileNamesOnly('templates', getTemplates);
+    fileaccessor.getFileNamesOnly('Partials', getTemplates);
 }]);
 
 app.service('websoc', ['$timeout', '$rootScope', function($timeout, $rootScope) {        
@@ -158,35 +77,44 @@ app.service('ticker', ['$interval', '$rootScope', 'websoc', function($interval, 
   }
 
   // start periodic checking
-  $interval(beat, 50);
+  //$interval(beat, 50);
 }]);
 
 app.controller('heyController1', [ '$scope', 'ticker', 'websoc', function( $scope, ticker, websoc, container, state ) {
-        $scope.dt = new Date();
-        $scope.$on('configDateTime', function(event, args) {
-            $scope.dt = args.data;
+    $scope.dt = new Date();
+    $scope.$on('configDateTime', function(event, args) {
+        $scope.$apply(function(){
+            console.debug("heyController1 ON message received: " + args.data)  
+            $scope.dt = args.data;                
         });
+    });
 }]);
 
 app.controller('heyController2', [ '$scope', 'ticker', 'websoc', function( $scope, ticker, websoc, container, state ) {
-        $scope.dt = new Date();
-        $scope.$on('configDateTime', function(event, args) {
+    $scope.dt = new Date();
+    $scope.$on('configDateTime', function(event, args) {
+        $scope.$apply(function(){
             $scope.dt = args.data;
         });
+    });
 }]);
 
 app.controller('heyController3', [ '$scope', 'ticker', 'websoc', function( $scope, ticker, websoc, container, state ) {
-        $scope.dt = new Date();
-        $scope.$on('configDateTime', function(event, args) {
+    $scope.dt = new Date();
+    $scope.$on('configDateTime', function(event, args) {
+        $scope.$apply(function(){
             $scope.dt = args.data;
         });
+    });
 }]);
 
 app.controller('heyController4', [ '$scope', 'ticker', 'websoc', function( $scope, ticker, websoc, container, state ) {
-        $scope.dt = new Date();
-        $scope.$on('configDateTime', function(event, args) {
+    $scope.dt = new Date();
+    $scope.$on('configDateTime', function(event, args) {
+        $scope.$apply(function(){
             $scope.dt = args.data;
         });
+    });
 }]);
 
 app.controller('heyControllerPopup', [ '$scope', '$rootScope', function( $scope, $rootScope ) {
