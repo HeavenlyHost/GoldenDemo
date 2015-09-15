@@ -1,5 +1,49 @@
 var servs = angular.module('myServices', []);
 
+servs.service('configmanager', ['$http', function($http){
+    var ready = false;
+    var wsIpAddress = "0.0.0.0";
+    var wsPort = 0;
+    
+    var readConfig = function(){
+          var req = {
+              method: 'GET',
+              url: 'config.xml',
+              transformResponse: function(data) {
+                      // convert the data to JSON and provide
+                      // it to the success function below
+                      var json = xmlToJSON.parseString( data );
+                      return json;
+                      }              
+          }
+            
+          $http(req).success( function(data){
+              wsIpAddress = data.config[0].ws[0].ip[0]._text;
+              wsPort = data.config[0].ws[0].port[0]._text;
+              ready = true;
+          });
+    }; 
+    
+    var getIP = function(){
+        return wsIpAddress;
+    }
+
+    var getPort = function(){
+        return wsPort;
+    }
+
+    var isReady = function(){
+        return ready;
+    }
+    
+    return {
+        isReady: isReady,
+        getIP: getIP,
+        getPort: getPort,
+        readConfig: readConfig
+    };      
+}]);
+
 servs.service('fileaccessor', ['$http', function($http){
    
     var getFilesWithFullPathAndExt = function(src_fldr, // e.g. templates, relative path from index.html

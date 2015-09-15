@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<ws>
+		<ip>192.168.1.97</ip>
+		<port>9876</port>
+	</ws>
+</config>

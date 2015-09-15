@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     bool debug = parser.isSet(dbgOption);
     int port = parser.value(portOption).toInt();
 
-    GoldenServer *server = new GoldenServer(port, debug);
+    GoldenServer *server = new GoldenServer(port, debug, a.applicationDirPath());
     QObject::connect(server, &GoldenServer::closed, &a, &QCoreApplication::quit);
 
     return a.exec();

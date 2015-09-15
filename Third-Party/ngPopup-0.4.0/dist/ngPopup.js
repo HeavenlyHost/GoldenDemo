@@ -325,16 +325,33 @@ ngPopup.directive("ngPopUp",[
 
                 scope.action = ngPopupBuilder.getDefaultMethods($option,element);
 
-                element.bind("mousedown", function(event){
+                element.bind("mousedown touchstart", function(event){
 
+                    var getX = function(event){
+                        var dx = event.pageX;
+                        if (event.type.substr( 0, 5 ) === 'touch')
+                        {
+                            dx = event.originalEvent.touches[0].pageX;
+                        }
+                        return dx;
+                    }
+                    
+                    var getY = function(event){
+                        var dy = event.pageY;
+                        if (event.type.substr( 0, 5 ) === 'touch')
+                        {
+                            dy = event.originalEvent.touches[0].pageY;
+                        }
+                        return dy;
+                    }
 
                     var target = angular.element(event.target)
                         ,targetTop = parseFloat(window.getComputedStyle($element,null)['top'])
                         ,targetLeft = parseFloat(window.getComputedStyle($element,null)['left'])
                         ,targetHeight = parseFloat(window.getComputedStyle($element,null)['height'])
                         ,targetWidth = parseFloat(window.getComputedStyle($element,null)['width'])
-                        ,origY = event.pageY
-                        ,origX = event.pageX;
+                        ,origY = getY(event)
+                        ,origX = getX(event);
 
                     if(target.hasClass('titleBar') || target.hasClass('title') || target.parent().hasClass('contentNoBar') || target.hasClass('contentNoBar')) {
 
@@ -344,10 +361,10 @@ ngPopup.directive("ngPopUp",[
                             dragStartFlag = true;
                         }
                         $document.find('body').addClass('unselectable');
-                        $document.bind("mousemove", function (event) {
+                        $document.bind("mousemove touchmove", function (event) {
 
-                            $element.style.top = event.pageY - origY + targetTop + "px";
-                            $element.style.left = event.pageX - origX + targetLeft + "px";
+                            $element.style.top = getY(event) - origY + targetTop + "px";
+                            $element.style.left = getX(event) - origX + targetLeft + "px";
                             ngPopupBuilder.updateParentScopeOptions(scope.option,element);
                             ngPopupBuilder.callParentScopeApply(scope.$parent);
                         })
@@ -367,37 +384,37 @@ ngPopup.directive("ngPopUp",[
 
                         $document.find('body').addClass('unselectable');
                         if(target.hasClass("right-bottom-corner")){
-                            $document.bind("mousemove", function (event) {
-                                $element.style.height = targetHeight + event.pageY - origY + "px";
-                                $element.style.width = targetWidth + event.pageX - origX + "px";
+                            $document.bind("mousemove touchmove", function (event) {
+                                $element.style.height = targetHeight + getY(event) - origY + "px";
+                                $element.style.width = targetWidth + getX(event) - origX + "px";
                                 ngPopupBuilder.updateParentScopeOptions(scope.option,element);
                                 ngPopupBuilder.callParentScopeApply(scope.$parent);
                             })
                         }
                         else if(target.hasClass("right-top-corner")){
-                            $document.bind("mousemove", function (event) {
-                                $element.style.top = event.pageY + "px";
-                                $element.style.width = targetWidth + event.pageX - origX + "px";
-                                $element.style.height = targetHeight - event.pageY + origY + "px";
+                            $document.bind("mousemove touchmove", function (event) {
+                                $element.style.top = getY(event) + "px";
+                                $element.style.width = targetWidth + getX(event) - origX + "px";
+                                $element.style.height = targetHeight - getY(event) + origY + "px";
                                 ngPopupBuilder.updateParentScopeOptions(scope.option,element);
                                 ngPopupBuilder.callParentScopeApply(scope.$parent);
                             })
                         }
                         else if(target.hasClass("left-top-corner")){
-                            $document.bind("mousemove", function (event) {
-                                $element.style.left = targetLeft + event.pageX - origX + "px";
-                                $element.style.top = event.pageY + "px";
-                                $element.style.width = targetWidth - event.pageX + origX + "px";
-                                $element.style.height = targetHeight - event.pageY + origY + "px";
+                            $document.bind("mousemove touchmove", function (event) {
+                                $element.style.left = targetLeft + getX(event) - origX + "px";
+                                $element.style.top = getY(event) + "px";
+                                $element.style.width = targetWidth - getX(event) + origX + "px";
+                                $element.style.height = targetHeight - getY(event) + origY + "px";
                                 ngPopupBuilder.updateParentScopeOptions(scope.option,element);
                                 ngPopupBuilder.callParentScopeApply(scope.$parent);
                             })
                         }
                         else if(target.hasClass("left-bottom-corner")){
-                            $document.bind("mousemove", function (event) {
-                                $element.style.left = event.pageX + "px";
-                                $element.style.width = targetWidth - event.pageX + origX + "px";
-                                $element.style.height = targetHeight + event.pageY - origY + "px";
+                            $document.bind("mousemove touchmove", function (event) {
+                                $element.style.left = getX(event) + "px";
+                                $element.style.width = targetWidth - getX(event) + origX + "px";
+                                $element.style.height = targetHeight + getY(event) - origY + "px";
                                 ngPopupBuilder.updateParentScopeOptions(scope.option,element);
                                 ngPopupBuilder.callParentScopeApply(scope.$parent);
                             })
@@ -413,33 +430,33 @@ ngPopup.directive("ngPopUp",[
                         }
                         $document.find('body').addClass('unselectable');
                         if(target.hasClass('left-bar')){
-                            $document.bind("mousemove", function (event) {
-                                $element.style.left = targetLeft + event.pageX - origX + "px";
-                                $element.style.width = targetWidth - event.pageX + origX + "px";
+                            $document.bind("mousemove touchmove", function (event) {
+                                $element.style.left = targetLeft + getX(event) - origX + "px";
+                                $element.style.width = targetWidth - getX(event) + origX + "px";
                                 ngPopupBuilder.updateParentScopeOptions(scope.option,element);
                                 ngPopupBuilder.callParentScopeApply(scope.$parent);
                             })
                         }
                         else if(target.hasClass('right-bar')){
-                            $document.bind("mousemove", function (event) {
+                            $document.bind("mousemove touchmove", function (event) {
 
-                                $element.style.width = targetWidth + event.pageX - origX + "px";
+                                $element.style.width = targetWidth + getX(event) - origX + "px";
                                 ngPopupBuilder.updateParentScopeOptions(scope.option,element);
                                 ngPopupBuilder.callParentScopeApply(scope.$parent);
 
                             })
                         }
                         else if(target.hasClass('top-bar')){
-                            $document.bind("mousemove", function (event) {
-                                $element.style.top = event.pageY + "px";
-                                $element.style.height = targetHeight - event.pageY + origY + "px";
+                            $document.bind("mousemove touchmove", function (event) {
+                                $element.style.top = getY(event) + "px";
+                                $element.style.height = targetHeight - getY(event) + origY + "px";
                                 ngPopupBuilder.updateParentScopeOptions(scope.option,element);
                                 ngPopupBuilder.callParentScopeApply(scope.$parent);
                             })
                         }
                         else if(target.hasClass('bottom-bar')){
-                            $document.bind("mousemove", function (event) {
-                                $element.style.height = targetHeight + event.pageY - origY + "px";
+                            $document.bind("mousemove touchmove", function (event) {
+                                $element.style.height = targetHeight + getY(event) - origY + "px";
                                 ngPopupBuilder.updateParentScopeOptions(scope.option,element);
                                 ngPopupBuilder.callParentScopeApply(scope.$parent);
                             })
@@ -450,7 +467,7 @@ ngPopup.directive("ngPopUp",[
 
                 });
 
-                element.bind("mouseup", function(event){
+                element.bind("mouseup touchend", function(event){
                     if($option.onDragEnd && dragStartFlag){
                         $option.onDragEnd();
                         dragStartFlag = false;
@@ -458,7 +475,7 @@ ngPopup.directive("ngPopUp",[
                     }
 
                     $document.find('body').removeClass('unselectable');
-                    $document.unbind("mousemove");
+                    $document.unbind("mousemove touchmove");
 
                     ngPopupBuilder.callParentScopeApply(scope.$parent);
                 })

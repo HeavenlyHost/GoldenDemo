@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core websockets
+QT       += core websockets network
 
 QT       -= gui
 

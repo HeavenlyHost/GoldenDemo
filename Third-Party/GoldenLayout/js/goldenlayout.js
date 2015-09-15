@@ -317,7 +317,7 @@ lm.utils.DragListener = function(eElement, nButtonCode)
 	/**
 	* The delay after which to start the drag in milliseconds
 	*/
-	this._nDelay = 200;
+	this._nDelay = 300;
 
 	/**
 	* The distance the mouse needs to be moved to qualify as a drag
@@ -332,38 +332,124 @@ lm.utils.DragListener = function(eElement, nButtonCode)
 
 	this._bDragging = false;
 
-	this._fMove = lm.utils.fnBind( this.onMouseMove, this );
-	this._fUp = lm.utils.fnBind( this.onMouseUp, this );
-	this._fDown = lm.utils.fnBind( this.onMouseDown, this );
+	this._ftStart = lm.utils.fnBind( this.onTouchStart, this );
+	this._ftMove = lm.utils.fnBind( this.onTouchMove, this );
+	this._ftEnd = lm.utils.fnBind( this.onTouchEnd, this );
+	this._ftCancel = lm.utils.fnBind( this.onTouchCancel, this );
 
+	this._fmDown = lm.utils.fnBind( this.onMouseDown, this );
+	this._fmMove = lm.utils.fnBind( this.onMouseMove, this );
+	this._fmUp = lm.utils.fnBind( this.onMouseUp, this );
 
-	this._eElement.on( 'mousedown touchstart', this._fDown );
+	this._contextMenu = lm.utils.fnBind( this.onContextMenu, this );
+
+	this._eElement.on( 'touchstart', this._ftStart );
+	this._eElement.on( 'mousedown', this._fmDown );
+	this._eElement.on( 'contextmenu', this._fmContextMenu );
 };
 
 lm.utils.DragListener.timeout = null;
 
 lm.utils.copy( lm.utils.DragListener.prototype, {
 	destroy: function() {
-		this._eElement.unbind( 'mousedown touchstart', this._fDown );
+		this._eElement.off('touchstart', this._ftStart);
+		this._eElement.off('touchmove', this._ftMove);
+		this._eElement.off('touchend', this._ftEnd);
+		this._eElement.off('touchcancel', this._ftCancel);
+		this._eElement.off('mousedown', this._fmDown);
+		this._eElement.off('mousemove', this._fmMove);
+		this._eElement.off('mouseup', this._fmUp);		
+		this._eElement.off('contextmenu', this._fmContextMenu);
 	},
 
-	onMouseDown: function(oEvent)
-	{
-		oEvent.preventDefault();
-
+	onTouchStart: function(oEvent)
+	{		
+		console.debug(oEvent.type);
+				
 		var coordinates = this._getCoordinates( oEvent );
 		
 		this._nOriginalX = coordinates.x;
 		this._nOriginalY = coordinates.y;
 
-		this._oDocument.on('mousemove touchmove', this._fMove);
-		this._oDocument.one('mouseup touchend', this._fUp);
+		this._oDocument.on('touchmove', this._ftMove);
+		this._oDocument.on('touchend', this._ftEnd);
+		this._oDocument.on('touchcancel', this._ftCancel);
 
 		this._timeout = setTimeout( lm.utils.fnBind( this._startDrag, this ), this._nDelay );
 	},
+	
+	onTouchMove: function(oEvent)
+	{
+		console.debug(oEvent.type);
 
+		oEvent.preventDefault();
+		
+		var coordinates = this._getCoordinates( oEvent );
+
+		this._nX = coordinates.x - this._nOriginalX;
+		this._nY = coordinates.y - this._nOriginalY;
+
+		if( this._bDragging === false ) {
+			if(
+				Math.abs( this._nX ) > this._nDistance ||
+				Math.abs( this._nY ) > this._nDistance
+			){
+				clearTimeout( this._timeout );
+				this._startDrag();
+			}
+		}
+
+		if( this._bDragging )
+		{
+			this.emit('drag', this._nX, this._nY, oEvent );
+		}
+	},
+
+	onTouchEnd: function(oEvent)
+	{				
+		console.debug(oEvent.type);
+
+		clearTimeout( this._timeout );
+
+		this._eBody.removeClass( 'lm_dragging' );
+		
+		this._oDocument.off('touchmove', this._ftMove);
+		this._oDocument.off('touchend', this._ftEnd);
+		this._oDocument.off('touchcancel', this._ftCancel);
+		
+		if( this._bDragging === true )
+		{
+			this._bDragging = false;
+			this.emit('dragStop', oEvent, this._nOriginalX + this._nX);
+		}
+	},
+
+	onTouchCancel: function(oEvent)
+	{
+		this._oDocument.off('touchmove', this._ftMove);
+		this._oDocument.off('touchend', this._ftEnd);
+		this._oDocument.off('touchcancel', this._ftCancel);		
+	},
+
+	onMouseDown: function(oEvent)
+	{		
+		console.debug(oEvent.type);
+				
+		var coordinates = this._getCoordinates( oEvent );
+		
+		this._nOriginalX = coordinates.x;
+		this._nOriginalY = coordinates.y;
+
+		this._oDocument.on('mousemove', this._fmMove);
+		this._oDocument.on('mouseup', this._fmUp);
+
+		this._timeout = setTimeout( lm.utils.fnBind( this._startDrag, this ), this._nDelay );
+	},
+	
 	onMouseMove: function(oEvent)
 	{
+		console.debug(oEvent.type);
+
 		oEvent.preventDefault();
 
 		var coordinates = this._getCoordinates( oEvent );
@@ -388,16 +474,28 @@ lm.utils.copy( lm.utils.DragListener.prototype, {
 	},
 
 	onMouseUp: function(oEvent)
-	{
+	{				
+		console.debug(oEvent.type);
+
 		clearTimeout( this._timeout );
+
 		this._eBody.removeClass( 'lm_dragging' );
-		this._oDocument.unbind( 'mousemove touchmove', this._fMove);
-		
-		if( this._bDragging === true )
+
+		this._oDocument.off('mousemove', this._fmMove);
+		this._oDocument.off('mouseup', this._fmUp);
+				
+		if(this._bDragging === true)
 		{
 			this._bDragging = false;
 			this.emit('dragStop', oEvent, this._nOriginalX + this._nX);
 		}
+	},
+
+	onContextMenu: function(oEvent)
+	{
+		console.debug(oEvent.type);
+
+		oEvent.preventDefault();		
 	},
 
 	_startDrag: function()
@@ -1135,9 +1233,9 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 	 * @returns {void}
 	 */
 	_bindEvents: function() {
-		if( this._isFullPage ) {
+		//if( this._isFullPage ) {
 			$(window).resize( this._resizeFunction );
-		}
+		//}
 	},
 
 	/**
@@ -1845,7 +1943,7 @@ lm.controls.DragProxy = function( x, y, dragListener, layoutManager, contentItem
 	this._dragListener.on( 'dragStop', this._onDrop, this );
 
 	this.element = $( lm.controls.DragProxy._template );
-	this.element.css({ left: x, top: y });
+	this.element.css({ left: x-10, top: y-10 });
 	this.element.find( '.lm_title' ).html( this._contentItem.config.title );
 	this.childElementContainer = this.element.find( '.lm_content' );
 	this.childElementContainer.append( contentItem.element );
@@ -1866,7 +1964,7 @@ lm.controls.DragProxy = function( x, y, dragListener, layoutManager, contentItem
 	this._height = this.element.height();
 };
 
-lm.controls.DragProxy._template = '<div class="lm_dragProxy">' +
+lm.controls.DragProxy._template = '<div id="proxDiv" class="lm_dragProxy">' +
 									'<div class="lm_header">' +
 										'<ul class="lm_tabs">' +
 											'<li class="lm_tab lm_active"><i class="lm_left"></i>' +
@@ -1893,9 +1991,19 @@ lm.utils.copy( lm.controls.DragProxy.prototype, {
 	 * @returns {void}
 	 */
 	_onDrag: function( offsetX, offsetY, event ) {
-		var x = event.pageX,
-			y = event.pageY,
-			isWithinContainer = x > this._minX && x < this._maxX && y > this._minY && y < this._maxY;
+		var x;
+		var y;
+
+		if( event.type.substr( 0, 5 ) === 'touch' ) {
+			x = event.originalEvent.targetTouches[ 0 ].pageX;
+			y = event.originalEvent.targetTouches[ 0 ].pageY;
+		}
+		else {
+			x = event.pageX;
+			y = event.pageY;
+		}
+		
+		var isWithinContainer = x > this._minX && x < this._maxX && y > this._minY && y < this._maxY;
 	
 		if( !isWithinContainer && this._layoutManager.config.settings.constrainDragToContainer === true ) {
 			return;
@@ -1908,6 +2016,8 @@ lm.utils.copy( lm.controls.DragProxy.prototype, {
 			this._lastValidArea = this._area;
 			this._area.contentItem._$highlightDropZone( x, y, this._area );
 		}
+		
+		this._layoutManager.emit( 'tabDrag' );
 	},
 	
 	/**
@@ -2400,7 +2510,7 @@ lm.controls.Tab = function( header, contentItem ) {
 	this._onTabClickFn = lm.utils.fnBind( this._onTabClick, this );
 	this._onCloseClickFn = lm.utils.fnBind( this._onCloseClick, this );
 
-	this.element.click( this._onTabClickFn );
+	this.element.on('click',this._onTabClickFn);
 
 	if( this._layoutManager.config.settings.showCloseIcon === true ) {
 		this.closeElement.click( this._onCloseClickFn );

@@ -4,6 +4,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QList>
 #include <QtCore/QByteArray>
+#include <QCoreApplication>
 
 QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
@@ -13,7 +14,7 @@ class GoldenServer : public QObject
 {
     Q_OBJECT
 public:
-    explicit GoldenServer(quint16 port, bool debug = false, QObject *parent = Q_NULLPTR);
+    explicit GoldenServer(quint16 port, bool debug = false, QString appDirPath = "", QObject *parent = Q_NULLPTR);
     ~GoldenServer();
 
 Q_SIGNALS:
@@ -28,10 +29,13 @@ private Q_SLOTS:
     void update();
 
 private:
+    QString wsIP;
+    quint16 wsPort;
     QWebSocketServer *m_pWebSocketServer;
     QList<QWebSocket *> m_clients;
     bool m_debug;
     QTimer *timer;
+    void ReadConfigXML(QString appDirPath);
 };
 
 #endif // GOLDENSERVER_H

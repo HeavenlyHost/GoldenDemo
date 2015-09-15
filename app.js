@@ -1,6 +1,14 @@
 var app = angular.module('heyApp', ['ngPopup', 'myServices', 'myDirectives']);
 
-app.run(['$rootScope', '$templateCache', '$http', 'fileaccessor', function ($rootScope, $templateCache, $http, fileaccessor){
+var connectionEnum = {
+    DISCONNECTED : 0,
+    CONNECTING: 1,
+    CONNECTED: 2
+}
+
+app.run(['$rootScope', '$templateCache', '$http', 'fileaccessor', 'configmanager', function ($rootScope, $templateCache, $http, fileaccessor, configmanager){
+
+    configmanager.readConfig();
 
     var getTemplates = function(myFilesArray){
 
@@ -26,33 +34,38 @@ app.run(['$rootScope', '$templateCache', '$http', 'fileaccessor', function ($roo
     fileaccessor.getFileNamesOnly('Partials', getTemplates);
 }]);
 
-app.service('websoc', ['$timeout', '$rootScope', function($timeout, $rootScope) {        
+app.service('websoc', ['$timeout', '$rootScope', 'configmanager', function($timeout, $rootScope, configmanager) {        
 
-    var connected = false;    
-    var websock = null;
+    var connected = connectionEnum.DISCONNECTED;    
+    var websock = null;    
 
     var myWebSocket = function() {
-        var tout = 5000;
-        if (!connected)
+        if (connected === connectionEnum.DISCONNECTED)
         {
-            websock = new WebSocket("ws://192.168.1.97:8081/goldenserver");    
-            websock.onopen = function(evt){
-                connected = true  
-                $rootScope.$broadcast('wsConnection', connected);
+            if (configmanager.isReady())
+            {
+                var ip = configmanager.getIP();
+                var port = configmanager.getPort();            
+                connected = connectionEnum.CONNECTING;
+                websock = new WebSocket("wss://" + ip + ":" + port + "/goldenserver");    
+                websock.onopen = function(evt){
+                    connected = connectionEnum.CONNECTED;  
+                    $rootScope.$broadcast('wsConnection', connected);
+                }
+                websock.onmessage = function(evt){
+                    $rootScope.$broadcast('configDateTime', evt);
+                }
+                websock.onclose = function(evt){
+                    connected = connectionEnum.DISCONNECTED;  
+                    $rootScope.$broadcast('wsConnection', connected);
+                }   
+                websock.onerror = function(evt){
+                    console.debug("error: " + evt)  
+                    connected = connectionEnum.DISCONNECTED;  
+                }             
             }
-            websock.onmessage = function(evt){
-                $rootScope.$broadcast('configDateTime', evt);
-            }
-            websock.onclose = function(evt){
-                connected = false 
-                $rootScope.$broadcast('wsConnection', connected);
-            }   
-            websock.onerror = function(evt){
-                console.debug("error: " + evt)  
-            }             
-            tout = 1000;
         }
-        $timeout(myWebSocket, tout);            
+        $timeout(myWebSocket, 1000);            
     };
     
     myWebSocket();
@@ -80,41 +93,109 @@ app.service('ticker', ['$interval', '$rootScope', 'websoc', function($interval, 
   //$interval(beat, 50);
 }]);
 
-app.controller('heyController1', [ '$scope', 'ticker', 'websoc', function( $scope, ticker, websoc, container, state ) {
+app.controller('heyController1', [ '$scope', '$timeout', 'ticker', 'websoc', function( $scope, $timeout, ticker, websoc, container, state ) {
     $scope.dt = new Date();
+    $scope.draw = true;
+    $scope.tout = null;    
     $scope.$on('configDateTime', function(event, args) {
-        $scope.$apply(function(){
-            console.debug("heyController1 ON message received: " + args.data)  
-            $scope.dt = args.data;                
-        });
+        $scope.dt = args.data; 
+            if ($scope.draw)
+            {
+                $scope.$digest();        
+            }                           
     });
+    $scope.$on('delayDigest', function(event, args){        
+        $scope.draw = false;
+        $timeout.cancel($scope.tout);
+        $scope.tout = $timeout(function(){
+            $scope.draw = true;
+            $scope.$digest();                      
+        },1000);
+    });            
 }]);
 
-app.controller('heyController2', [ '$scope', 'ticker', 'websoc', function( $scope, ticker, websoc, container, state ) {
+app.controller('heyController2', [ '$scope', '$timeout', 'ticker', 'websoc', function( $scope, $timeout, ticker, websoc, container, state ) {
     $scope.dt = new Date();
+    $scope.draw = true;
+    $scope.tout = null;    
     $scope.$on('configDateTime', function(event, args) {
-        $scope.$apply(function(){
-            $scope.dt = args.data;
-        });
+        $scope.dt = args.data; 
+            if ($scope.draw)
+            {
+                $scope.$digest();        
+            }                           
     });
+    $scope.$on('delayDigest', function(event, args){        
+        $scope.draw = false;
+        $timeout.cancel($scope.tout);
+        $scope.tout = $timeout(function(){
+            $scope.draw = true;
+            $scope.$digest();                      
+        },1000);
+    });            
 }]);
 
-app.controller('heyController3', [ '$scope', 'ticker', 'websoc', function( $scope, ticker, websoc, container, state ) {
+app.controller('heyController3', [ '$scope', '$timeout', 'ticker', 'websoc', function( $scope, $timeout, ticker, websoc, container, state ) {
     $scope.dt = new Date();
+    $scope.draw = true;
+    $scope.tout = null;    
     $scope.$on('configDateTime', function(event, args) {
-        $scope.$apply(function(){
-            $scope.dt = args.data;
-        });
+        $scope.dt = args.data; 
+            if ($scope.draw)
+            {
+                $scope.$digest();        
+            }                           
     });
+    $scope.$on('delayDigest', function(event, args){        
+        $scope.draw = false;
+        $timeout.cancel($scope.tout);
+        $scope.tout = $timeout(function(){
+            $scope.draw = true;
+            $scope.$digest();                      
+        },1000);
+    });            
 }]);
 
-app.controller('heyController4', [ '$scope', 'ticker', 'websoc', function( $scope, ticker, websoc, container, state ) {
+app.controller('heyController4', [ '$scope', '$timeout', 'ticker', 'websoc', function( $scope, $timeout, ticker, websoc, container, state ) {
     $scope.dt = new Date();
+    $scope.draw = true;    
+    $scope.tout = null;    
     $scope.$on('configDateTime', function(event, args) {
-        $scope.$apply(function(){
-            $scope.dt = args.data;
-        });
+        $scope.dt = args.data; 
+            if ($scope.draw)
+            {
+                $scope.$digest();        
+            }                           
     });
+    $scope.$on('delayDigest', function(event, args){        
+        $scope.draw = false;
+        $timeout.cancel($scope.tout);
+        $scope.tout = $timeout(function(){
+            $scope.draw = true;
+            $scope.$digest();                      
+        },1000);
+    });            
+}]);
+
+app.controller('playerContoller', [ '$scope', '$timeout', 'ticker', 'websoc', function( $scope, $timeout, ticker, websoc, container, state ) {
+    $scope.dt = new Date();
+    $scope.draw = true;
+    $scope.tout = null;    
+    $scope.$on('configDateTime', function(event, args) {
+        $scope.dt = args.data; 
+            if ($scope.draw)
+            {
+                $scope.$digest();        
+            }                           
+    });
+    $scope.$on('delayDigest', function(event, args){        
+        $scope.draw = false;
+        $timeout.cancel($scope.tout);
+        $scope.tout = $timeout(function(){
+            $scope.draw = true;
+            $scope.$digest();                      
+        },1000);
+    });            
 }]);
 
 app.controller('heyControllerPopup', [ '$scope', '$rootScope', function( $scope, $rootScope ) {
@@ -139,7 +220,9 @@ app.controller('heyControllerPopup', [ '$scope', '$rootScope', function( $scope,
         },
         onDragStart : function(){},
         onDragEnd : function(){},
-        onResize : function(){}
+        onResize : function(){
+            $rootScope.$broadcast('delayDigest', this);
+        }
     }
 }]);
 
@@ -192,62 +275,81 @@ app.controller('heyControllerNav', [ '$compile', '$scope', '$rootScope', 'websoc
         $rootScope.$broadcast('dockDialog', newItemConfig)
     };    
 
+    $scope.addNewPlayerTemplate = function(){
+        
+        var newItemConfig = {
+            createNew: true,
+            title: "Player",
+            moduleId: "playerModule",
+            templateId: "playerTemplate"
+        }; 
+        
+        $rootScope.$broadcast('dockDialog', newItemConfig)
+    };    
+
     $scope.connected = false;
     $scope.commsmessage = "Disconnected";
     
     $scope.$on('wsConnection', function(event, args) {
-        $scope.connected = args;
-        if (args == true)
-        {
-            $scope.commsmessage = "Connected";                    
-        }
-        else
-        {
-            $scope.commsmessage = "Disconnected";   
+        if (args != connectionEnum.CONNECTING){
+            if (args == connectionEnum.CONNECTED)
+            {
+                $scope.commsmessage = "Connected";                    
+                $scope.connected = true;
+            }
+            else
+            {
+                $scope.commsmessage = "Disconnected";   
+            $scope.connected = false;
+            }            
         }
     });
     
 }]);
 
-app.controller('heyControllerRoot', [ '$templateCache', '$http', '$compile', '$scope', '$rootScope', function( $templateCache, $http, $compile, $scope, $rootScope ) {
+app.controller('heyControllerGldiv', [ '$document', '$scope', function( $document, $scope ) {
+}]);
+
+app.controller('heyControllerRoot', [ '$document', '$templateCache', '$http', '$compile', '$scope', '$rootScope', function( $document, $templateCache, $http, $compile, $scope, $rootScope ) {
     $scope.myLayout = new GoldenLayout({
-        content:[{
-            type: 'row',
-            content: [{
-                title: 'Hey 1',
-                type: 'component',
-                componentName: 'angularModule',
-                componentState: {
-                    module: 'heyModule1',
-                    templateId: 'heyTemplate1',
-                }
-            },{
-                title: 'Hey 2',
-                type: 'component',
-                componentName: 'angularModule',
-                componentState: {
-                    module: 'heyModule2',
-                    templateId: 'heyTemplate2',
-                }
-            },{
-                title: 'Hey 3',
-                type: 'component',
-                componentName: 'angularModule',
-                componentState: {
-                    module: 'heyModule3',
-                    templateId: 'heyTemplate3',
-                }
-            },{
-                title: 'Hey 4',
-                type: 'component',
-                componentName: 'angularModule',
-                componentState: {
-                    module: 'heyModule4',
-                    templateId: 'heyTemplate4',
-                }
-            }]
-        }]
-    });
+
+         content:[{
+             type: 'row',
+             content: [{
+                 title: 'Hey 1',
+                 type: 'component',
+                 componentName: 'angularModule',
+                 componentState: {
+                     module: 'heyModule1',
+                     templateId: 'heyTemplate1',
+                 }
+             },{
+                 title: 'Hey 2',
+                 type: 'component',
+                 componentName: 'angularModule',
+                 componentState: {
+                     module: 'heyModule2',
+                     templateId: 'heyTemplate2',
+                 }
+             },{
+                 title: 'Player',
+                 type: 'component',
+                 componentName: 'angularModule',
+                 componentState: {
+                     module: 'playerModule',
+                     templateId: 'playerTemplate',
+                 }
+             },{
+                 title: 'Hey 4',
+                 type: 'component',
+                 componentName: 'angularModule',
+                 componentState: {
+                     module: 'heyModule4',
+                     templateId: 'heyTemplate4',
+                 }
+             }]
+         }]
+    }, $document.find('#gldiv'));
     
     $scope.$on('dockDialog', function(event, args) {
         var newItemConfig = {
@@ -281,12 +383,16 @@ app.controller('heyControllerRoot', [ '$templateCache', '$http', '$compile', '$s
                         }
                     }]
                 }]
-            });             
+            }, $document.find('#gldiv'));             
             
             $scope.myLayout.on( 'stackCreated', function( stack ){
                 $scope.stackCreated( stack );
             });
             
+            $scope.myLayout.on( 'tabDrag', function( stack ){
+                $rootScope.$broadcast('delayDigest', null);
+            });
+
             $scope.myLayout.registerComponent( 'angularModule', $scope.AngularModuleComponent );
             
             $scope.myLayout.init();             
@@ -362,9 +468,12 @@ app.controller('heyControllerRoot', [ '$templateCache', '$http', '$compile', '$s
     $scope.myLayout.on( 'stackCreated', function( stack ){
         $scope.stackCreated( stack );
     });
+    
+    $scope.myLayout.on( 'tabDrag', function( stack ){
+       $rootScope.$broadcast('delayDigest', null);
+    });
 
     $scope.AngularModuleComponent = function (container, state) {
-        //var html = $( '#' + state.templateId ).html();
         var id = state.templateId + '.html';
         var html = $templateCache.get(id);
         html = $compile('<div>'+html+'</div>')($rootScope);

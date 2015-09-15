@@ -4,35 +4,40 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="mobile-web-app-capable" content="yes">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
 		<title>Golden Demo</title>		
 
-		<link type="text/css" rel="stylesheet" href="bootstrap-3.3.5-dist/css/bootstrap.css"/>
-		<link type="text/css" rel="stylesheet" href="GoldenLayout/css/goldenlayout-base.css"/>
-		<link type="text/css" rel="stylesheet" href="GoldenLayout/css/goldenlayout-dark-theme.css"/>		
-		<link type="text/css" rel="stylesheet" href="ngPopup-0.4.0/dist/ngPopup.css">
-		<link type="text/css" rel="stylesheet" href="defaults.css"
+		<link type="text/css" rel="stylesheet" href="Third-Party/bootstrap-3.3.5-dist/css/bootstrap.css"/>
+		<link type="text/css" rel="stylesheet" href="Third-Party/GoldenLayout/css/goldenlayout-base.css"/>
+		<link type="text/css" rel="stylesheet" href="Third-Party/GoldenLayout/css/goldenlayout-dark-theme.css"/>		
+		<link type="text/css" rel="stylesheet" href="Third-Party/ngPopup-0.4.0/dist/ngPopup.css"/>
+		<link type="text/css" rel="stylesheet" href="defaults.css"/>
 	</head>
-	<body data-ng-app="heyApp">
-		<div class="navdiv" data-ng-controller="heyControllerNav">
-			<button ng-click="addNewTemplate1()">Add 1</button>
-			<button ng-click="addNewTemplate2()">Add 2</button>
-			<button ng-click="addNewTemplate3()">Add 3</button>
-			<button ng-click="addNewTemplate4()">Add 4</button>
-			<span ng-class="{'albl': true, 'albltrue': connected == true, 'alblfalse': connected == false}">{{commsmessage}}</span>
-		</div>
-		<div data-ng-controller="heyControllerRoot">
+	<body data-ng-app="heyApp">		
+		<div class="divroot" data-ng-controller="heyControllerRoot">
+			<div class="navdiv" data-ng-controller="heyControllerNav">
+					<button ng-click="addNewTemplate1()">Add 1</button>
+					<button ng-click="addNewTemplate2()">Add 2</button>
+					<button ng-click="addNewTemplate3()">Add 3</button>
+					<button ng-click="addNewTemplate4()">Add 4</button>
+					<button ng-click="addNewPlayerTemplate()">Add Player</button>
+					<span ng-class="{'albl': true, 'albltrue': connected == true, 'alblfalse': connected == false}">{{commsmessage}}</span>
+			</div>
+			<div id="gldiv" data-ng-controller="heyControllerGldiv">
+				<!-- Golden Layout goes here -->
+			</div>
 			<!-- This is where the templates are placed -->
 		</div>
 
 		<!-- Include modules and js stuff -->
-		<script type="text/javascript" src="jquery/jquery-1.11.3.js"></script>
-		<script type="text/javascript" src="bootstrap-3.3.5-dist/js/bootstrap.js"></script>
-		<script type="text/javascript" src="GoldenLayout/js/goldenlayout.min.js"></script>
-		<script type="text/javascript" src="angular-1.4.x-dist/angular.min.js"></script>
-		<script type="text/javascript" src="ngPopup-0.4.0/dist/ngPopup.js"></script>
-		<script type="text/javascript" src="xmlToJSON-1.3.1/lib/xmlToJSON.js"></script>
+		<script type="text/javascript" src="Third-Party/jquery/jquery-1.11.3.js"></script>
+		<script type="text/javascript" src="Third-Party/bootstrap-3.3.5-dist/js/bootstrap.js"></script>
+		<script type="text/javascript" src="Third-Party/GoldenLayout/js/goldenlayout.js"></script>
+		<script type="text/javascript" src="Third-Party/angular-1.4.x-dist/angular.min.js"></script>
+		<script type="text/javascript" src="Third-Party/ngPopup-0.4.0/dist/ngPopup.js"></script>
+		<script type="text/javascript" src="Third-Party/xmlToJSON-1.3.1/lib/xmlToJSON.js"></script>
 		<script type="text/javascript" src="services.js"></script>
 		<script type="text/javascript" src="directives.js"></script>
 		<script type="text/javascript" src="app.js"></script>

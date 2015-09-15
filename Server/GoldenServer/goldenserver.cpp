@@ -1,23 +1,49 @@
 #include "goldenserver.h"
 #include "QtWebSockets/qwebsocketserver.h"
 #include "QtWebSockets/qwebsocket.h"
+#include <QFile>
 #include <QtCore/QDebug>
 #include <QTimer>
+#include <QXmlStreamReader>
+#include <QCoreApplication>
+#include <QtNetwork/QSslCertificate>
+#include <QtNetwork/QSslKey>
+#include <QStandardPaths>
+#include <QDir>
 
 QT_USE_NAMESPACE
 
-GoldenServer::GoldenServer(quint16 port, bool debug, QObject *parent):
+GoldenServer::GoldenServer(quint16 port, bool debug, QString appDirPath, QObject *parent):
     QObject(parent),
+
     m_pWebSocketServer(new QWebSocketServer(QStringLiteral("goldenserver"),
-                                            QWebSocketServer::NonSecureMode, this)),
+                                            QWebSocketServer::SecureMode, this)),
     m_clients(),
     m_debug(true)
 { 
-    port = 8081;
+    ReadConfigXML(appDirPath);
 
-    if (m_pWebSocketServer->listen(QHostAddress::AnyIPv4, port)) {
+//    port = 8081;
+
+    QString userHome = QDir::homePath();
+    QSslConfiguration sslConfiguration;
+    QFile certFile(userHome + "\\mycert.crt");
+    QFile keyFile(userHome + "\\mykey.key");
+    certFile.open(QIODevice::ReadOnly);
+    keyFile.open(QIODevice::ReadOnly);
+    QSslCertificate certificate(&certFile, QSsl::Pem);
+    QSslKey sslKey(&keyFile, QSsl::Rsa, QSsl::Pem);
+    certFile.close();
+    keyFile.close();
+    sslConfiguration.setPeerVerifyMode(QSslSocket::VerifyNone);
+    sslConfiguration.setLocalCertificate(certificate);
+    sslConfiguration.setPrivateKey(sslKey);
+    sslConfiguration.setProtocol(QSsl::TlsV1SslV3);
+    m_pWebSocketServer->setSslConfiguration(sslConfiguration);
+
+    if (m_pWebSocketServer->listen(QHostAddress::AnyIPv4, wsPort)) {
         if (m_debug)
-            qDebug() << "goldenserver listening on port" << port;
+            qDebug() << "Any IPv4 Address, listening on port" << wsPort;
         connect(m_pWebSocketServer, &QWebSocketServer::newConnection,
                 this, &GoldenServer::onNewConnection);
         connect(m_pWebSocketServer, &QWebSocketServer::closed, this, &GoldenServer::closed);
@@ -33,6 +59,67 @@ GoldenServer::~GoldenServer()
     timer->stop();
     m_pWebSocketServer->close();
     qDeleteAll(m_clients.begin(), m_clients.end());
+}
+
+void GoldenServer::ReadConfigXML(QString appDirPath)
+{
+    wsIP = "0.0.0.0";
+    wsPort = 8080;
+
+    QString fileName = appDirPath + "/../../../config.xml";
+
+    QFile *xmlFile = new QFile(fileName);
+
+    qDebug() << "File Exists - " << xmlFile->exists();
+
+    if (!xmlFile->open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "CRITICAL ERROR - Couldn't open config.xml to load settings";
+        return;
+    }
+
+    QXmlStreamReader *xmlReader = new QXmlStreamReader(xmlFile);
+
+    //Parse the XML until we reach end of it
+    while(!xmlReader->atEnd() && !xmlReader->hasError()) {
+            // Read next element
+            QXmlStreamReader::TokenType token = xmlReader->readNext();
+            //If token is just StartDocument - go to next
+            if(token == QXmlStreamReader::StartDocument) {
+                    continue;
+            }
+            //If token is StartElement - read it
+            if(token == QXmlStreamReader::StartElement) {
+
+                    if(xmlReader->name() == "config") {
+                            continue;
+                    }
+
+                    if(xmlReader->name() == "ws") {
+                            continue;
+                    }
+
+                    if(xmlReader->name() == "ip") {
+                        qDebug() << xmlReader->readElementText();
+                    }
+
+                    if(xmlReader->name() == "port") {
+                        QString strPort = xmlReader->readElementText();
+                        QTextStream ts(&strPort);
+                        wsPort = 0;
+                        ts >> wsPort;
+                    }
+
+            }
+    }
+
+    if(xmlReader->hasError()) {
+        qDebug() << "PARSE ERROR - Could not parse config.xml to load settings";
+        qDebug() << "PARSE ERROR - " << xmlReader->errorString();
+    }
+
+    //close reader and flush file
+    xmlReader->clear();
+    xmlFile->close();
 }
 
 void GoldenServer::update()
