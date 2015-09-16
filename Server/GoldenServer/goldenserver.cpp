@@ -1,4 +1,6 @@
 #include "goldenserver.h"
+#include "configmanager.h"
+#include "singleton.h"
 #include "QtWebSockets/qwebsocketserver.h"
 #include "QtWebSockets/qwebsocket.h"
 #include <QFile>
@@ -10,6 +12,10 @@
 #include <QtNetwork/QSslKey>
 #include <QStandardPaths>
 #include <QDir>
+#include <QJsonObject>
+#include <QJsonDocument>
+
+#define ConfigManagerInstance Singleton<ConfigManager>::instance()
 
 QT_USE_NAMESPACE
 
@@ -17,13 +23,13 @@ GoldenServer::GoldenServer(quint16 port, bool debug, QString appDirPath, QObject
     QObject(parent),
 
     m_pWebSocketServer(new QWebSocketServer(QStringLiteral("goldenserver"),
-                                            QWebSocketServer::SecureMode, this)),
+                                            QWebSocketServer::NonSecureMode, this)),
     m_clients(),
     m_debug(true)
 { 
     ReadConfigXML(appDirPath);
 
-//    port = 8081;
+    //    port = 8081;
 
     QString userHome = QDir::homePath();
     QSslConfiguration sslConfiguration;
@@ -58,7 +64,8 @@ GoldenServer::~GoldenServer()
 {
     timer->stop();
     m_pWebSocketServer->close();
-    qDeleteAll(m_clients.begin(), m_clients.end());
+//    qDeleteAll(m_clients.begin(), m_clients.end());
+    m_clients.clear();
 }
 
 void GoldenServer::ReadConfigXML(QString appDirPath)
@@ -125,14 +132,43 @@ void GoldenServer::ReadConfigXML(QString appDirPath)
 void GoldenServer::update()
 {
     QDateTime dt = QDateTime::currentDateTime();
-    QString sdt = dt.toString(Qt::TextDate);
+    sdt = dt.toString(Qt::TextDate);
     int index = 0;
     while(index < m_clients.length())
     {
         try
         {
-            qDebug() << "message sent: " + sdt + ", index = " + index;
-            m_clients[index]->sendTextMessage(sdt);
+            // send out general date time message
+            sockProtocol newDataOut;
+            newDataOut.taskId = "configDateTime";
+            newDataOut.smString = "strGeneralSmString";
+            newDataOut.type = "string";
+            newDataOut.status = "RxFromSys";
+            newDataOut.value = sdt;
+            sendData(m_clients[index].sock, newDataOut);
+
+            //Send out any updates for each subscription
+            int j = 0;
+            while (j < m_clients[index].subscriptions.length())
+            {
+                try
+                {
+                    QString smString = m_clients[index].subscriptions[j];
+                    newDataOut.taskId = "data-" + smString;
+                    newDataOut.smString = smString;
+                    newDataOut.type = "string";
+                    newDataOut.status = "Idle";
+                    newDataOut.value = smString + " - " + sdt;
+                    sendData(m_clients[index].sock, newDataOut);
+                    j++;
+                }
+                catch(...)
+                {
+                    qDebug() << "GoldenServer::update - Exception";
+                }
+            }
+
+            //Move to next client
             index++;
         }
         catch(...)
@@ -148,30 +184,141 @@ void GoldenServer::onNewConnection()
     qDebug() << "Connection Open";
 
     connect(pSocket, &QWebSocket::textMessageReceived, this, &GoldenServer::processTextMessage);
-    connect(pSocket, &QWebSocket::binaryMessageReceived, this, &GoldenServer::processBinaryMessage);
     connect(pSocket, &QWebSocket::disconnected, this, &GoldenServer::socketDisconnected);
 
-    m_clients << pSocket;
+    sockStruct newSock;
+    newSock.sock = pSocket;
+
+    m_clients << newSock;
+}
+
+QString GoldenServer::EncodeToWsProtocol(sockProtocol dataToEncode)
+{
+    //encode to websocket protocol
+    QJsonObject jsonObj; // define new JSON object
+    jsonObj["taskId"] = dataToEncode.taskId;
+    jsonObj["smString"] = dataToEncode.smString;
+    jsonObj["type"] = dataToEncode.type;
+    jsonObj["value"] = dataToEncode.value;
+    jsonObj["status"] = dataToEncode.status;
+
+    QJsonDocument doc(jsonObj);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+
+    return strJson;
+}
+
+void GoldenServer::DecodeToWsProtocol(sockProtocol *destForData, QString response)
+{
+    //encode to websocket protocol
+    QJsonDocument jsonResponse = QJsonDocument::fromJson(response.toUtf8());
+    QJsonObject jsonObj = jsonResponse.object();
+
+    destForData->taskId = jsonObj["taskId"].toString();
+    destForData->smString = jsonObj["smString"].toString();
+    destForData->type = jsonObj["type"].toString();
+    destForData->value = jsonObj["value"].toString();
+    destForData->status = jsonObj["status"].toString();
+}
+
+void GoldenServer::sendData(QWebSocket *soc, sockProtocol dataToEncode)
+{
+    QString strToSend = EncodeToWsProtocol(dataToEncode);
+
+    //send to specific socket only
+    soc->sendTextMessage(strToSend);
 }
 
 void GoldenServer::processTextMessage(QString message)
-{
+{    
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-    if (m_debug)
-        qDebug() << "Message received:" << message;
-    if (pClient) {
-        pClient->sendTextMessage(message);
-    }
-}
+    sockProtocol data;
+    sockProtocol *destForData = &data;
+    DecodeToWsProtocol(destForData, message);
+        if (destForData->taskId == "uiGeneralReq")
+        {
+            //Do something
+        }
+        else if (destForData->taskId == "subscribe")
+        {
+            //Find entry in clients list
+            int i = 0;
+            while (i < m_clients.length())
+            {
+                if (m_clients[i].sock == pClient)
+                {
+                    int j = m_clients[i].subscriptions.indexOf(destForData->smString);
+                    if (j == -1)
+                    {
+                        ConfigManagerInstance.bindMe();
+                        m_clients[i].subscriptions << destForData->smString;
+                    }
+                    break;
+                }
+                i++;
+            }
+            //send data back
+            destForData->taskId = "data-" + destForData->smString;
+            destForData->status = "SrRx";
+            destForData->value = destForData->smString + " - " + sdt;
+            qDebug() << "Message received:" << message;
+            sendData(pClient, *destForData);
+        }
+        else if (destForData->taskId == "unsubscribe")
+        {
+            //Find entry in clients list
+            int i = 0;
+            while (i < m_clients.length())
+            {
+                if (m_clients[i].sock == pClient)
+                {
+                    int i = m_clients[i].subscriptions.indexOf(destForData->smString);
+                    if (i != -1)
+                    {
+                        ConfigManagerInstance.unbindMe();
+                        m_clients[i].subscriptions.removeAt(i);
+                    }
+                    break;
+                }
+                i++;
+            }
+            //send data back
+            destForData->taskId = "data-" + destForData->smString;
+            destForData->status = "SrRx";
+            destForData->value = destForData->smString + " - " + sdt;
+            qDebug() << "Message received:" << message;
+            sendData(pClient, *destForData);
+        }
+        else if (destForData->taskId == "dataSet")
+        {
+            qDebug() << "Message received:" << message;
 
-void GoldenServer::processBinaryMessage(QByteArray message)
-{
-    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-    if (m_debug)
-        qDebug() << "Binary Message received:" << message;
-    if (pClient) {
-        pClient->sendBinaryMessage(message);
-    }
+            int i = 0;
+            while (i < m_clients.length())
+            {
+                try
+                {
+                    //Check for valid subscription
+                    int j = m_clients[i].subscriptions.indexOf(destForData->smString);
+                    if (j != -1)
+                    {
+                        //send data back
+                        destForData->taskId = "data-" + destForData->smString;
+                        destForData->status = "SrRx";
+                        QDateTime dt = QDateTime::currentDateTime();
+                        sdt = dt.toString(Qt::TextDate);
+                        destForData->value = destForData->smString + " - " + sdt;
+                        sendData(m_clients[i].sock, *destForData);
+                    }
+                    i++;
+                }
+                catch(...)
+                {
+                    qDebug() << "GoldenServer::update - Exception";
+                }
+            }
+
+        }
 }
 
 void GoldenServer::socketDisconnected()
@@ -179,8 +326,18 @@ void GoldenServer::socketDisconnected()
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
     if (m_debug)
         qDebug() << "socketDisconnected:" << pClient;
+
     if (pClient) {
-        m_clients.removeAll(pClient);
+        int i = 0;
+        while(i < m_clients.count()) {
+          if(m_clients.at(i).sock == pClient) {
+            m_clients.removeAt(i);
+          }
+          else
+          {
+              i++;
+          }
+        }
         pClient->deleteLater();
     }
 }

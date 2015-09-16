@@ -124,3 +124,71 @@ servs.service('fileaccessor', ['$http', function($http){
         getFileNamesOnly: getFileNamesOnly
     };            
 }]);
+
+servs.service('websoc', ['$timeout', '$rootScope', 'configmanager', function($timeout, $rootScope, configmanager) {        
+
+    var connected = connectionEnum.DISCONNECTED;    
+    var websock = null;    
+    
+    //define default web sock protocol
+    var protocol = { 
+        'taskId': 'uiGeneralReq',
+        'smString': 'none',
+        'type': 'none',
+        'value': 'none',
+        'status': 'UiTx',
+    }
+
+    var myWebSocket = function() {
+        if (connected === connectionEnum.DISCONNECTED)
+        {
+            if (configmanager.isReady())
+            {
+                var ip = configmanager.getIP();
+                var port = configmanager.getPort();            
+                connected = connectionEnum.CONNECTING;
+                websock = new WebSocket("ws://" + ip + ":" + port + "/goldenserver");    
+                websock.onopen = function(evt){
+                    connected = connectionEnum.CONNECTED;  
+                    $rootScope.$broadcast('wsConnection', connected);
+                }
+                websock.onmessage = function(evt){
+                    var jsonData = JSON.parse(evt.data);
+                    $rootScope.$broadcast(jsonData.taskId, jsonData);
+                }
+                websock.onclose = function(evt){
+                    connected = connectionEnum.DISCONNECTED;  
+                    $rootScope.$broadcast('wsConnection', connected);
+                }   
+                websock.onerror = function(evt){
+                    console.debug("error: " + evt)  
+                    connected = connectionEnum.DISCONNECTED;  
+                }             
+            }
+        }
+        $timeout(myWebSocket, 1000);            
+    };
+        
+    myWebSocket();
+    
+    var sendMyData = function (data) {
+       if (connected == connectionEnum.CONNECTED)
+       {
+           websock.send(data);
+       }                
+    }
+    
+    var getProtocol = function(){
+        return protocol;
+    }
+    
+    var isConnected = function(){
+        return (connected == connectionEnum.CONNECTED);
+    };
+    
+    return {
+        sendMyData: sendMyData,
+        getProtocol: getProtocol,
+        isConnected: isConnected
+    };    
+}]);

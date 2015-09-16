@@ -44,13 +44,21 @@ OBJECTS_DIR   = release
 ####### Files
 
 SOURCES       = ..\GoldenServer\main.cpp \
-		..\GoldenServer\goldenserver.cpp release\moc_goldenserver.cpp
+		..\GoldenServer\goldenserver.cpp \
+		..\GoldenServer\configmanager.cpp release\moc_goldenserver.cpp \
+		release\moc_configmanager.cpp
 OBJECTS       = release\main.obj \
 		release\goldenserver.obj \
-		release\moc_goldenserver.obj
+		release\configmanager.obj \
+		release\moc_goldenserver.obj \
+		release\moc_configmanager.obj
 
-DIST          =  ..\GoldenServer\goldenserver.h ..\GoldenServer\main.cpp \
-		..\GoldenServer\goldenserver.cpp
+DIST          =  ..\GoldenServer\goldenserver.h \
+		..\GoldenServer\configmanager.h \
+		..\GoldenServer\call_once.h \
+		..\GoldenServer\singleton.h ..\GoldenServer\main.cpp \
+		..\GoldenServer\goldenserver.cpp \
+		..\GoldenServer\configmanager.cpp
 QMAKE_TARGET  = GoldenServer
 DESTDIR        = release\ #avoid trailing-slash linebreak
 TARGET         = GoldenServer.exe
@@ -140,7 +148,7 @@ dist:
 	$(ZIP) GoldenServer.zip $(SOURCES) $(DIST) ..\GoldenServer\GoldenServer.pro C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\spec_pre.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\common\msvc-desktop.conf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\qconfig.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_3dcore.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_3dcore_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_3dinput.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_3dinput_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_3dquick.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_3dquick_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_3dquickrenderer.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_3dquickrenderer_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_3drenderer.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_3drenderer_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_axbase.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_axbase_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_axcontainer.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_axcontainer_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_axserver.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_axserver_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_bluetooth.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_bluetooth_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_bootstrap_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_charts.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_charts_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_clucene_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_concurrent.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_concurrent_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_core.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_core_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_datavisualization.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_datavisualization_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_dbus.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_dbus_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_declarative.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_declarative_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_designer.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_designer_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_designercomponents_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_enginio.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_enginio_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_gui.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_gui_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_help.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_help_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_location.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_location_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_multimedia.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_multimedia_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_multimediawidgets.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_multimediawidgets_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_network.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_network_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_nfc.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_nfc_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_opengl.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_opengl_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_openglextensions.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_openglextensions_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_platformsupport_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_positioning.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_positioning_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_printsupport.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_printsupport_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_purchasing.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_purchasing_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_qml.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_qml_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_qmldevtools_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_qmltest.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_qmltest_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_quick.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_quick_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_quickparticles_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_quickwidgets.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_quickwidgets_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_script.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_script_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_scripttools.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_scripttools_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_sensors.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_sensors_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_serialport.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_serialport_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_sql.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_sql_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_svg.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_svg_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_testlib.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_testlib_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_uiplugin.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_uitools.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_uitools_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_webchannel.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_webchannel_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_webkit.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_webkit_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_webkitwidgets.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_webkitwidgets_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_websockets.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_websockets_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_widgets.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_widgets_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_winextras.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_winextras_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_xml.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_xml_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_xmlpatterns.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\modules\qt_lib_xmlpatterns_private.pri C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\qt_functions.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\qt_config.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\win32\qt_config.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\win32-msvc2012\qmake.conf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\spec_post.prf .qmake.stash C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\exclusive_builds.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\default_pre.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\win32\default_pre.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\resolve_config.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\exclusive_builds_post.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\default_post.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\build_pass.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\win32\console.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\win32\rtti.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\c++11.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\precompile_header.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\warn_on.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\qt.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\resources.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\moc.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\testcase_targets.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\exceptions.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\yacc.prf C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\lex.prf ..\GoldenServer\GoldenServer.pro C:/Qt-Enterprise/Qt5.5.0/5.5/msvc2012/lib/Qt5WebSockets.prl C:/Qt-Enterprise/Qt5.5.0/5.5/msvc2012/lib/Qt5Network.prl C:/Qt-Enterprise/Qt5.5.0/5.5/msvc2012/lib/Qt5Core.prl  NO_PCH_SOURCES RESOURCES HEADERS SOURCES OBJECTIVE_SOURCES YACCSOURCES YACCSOURCES LEXSOURCES 
 
 clean: compiler_clean 
-	-$(DEL_FILE) release\main.obj release\goldenserver.obj release\moc_goldenserver.obj
+	-$(DEL_FILE) release\main.obj release\goldenserver.obj release\configmanager.obj release\moc_goldenserver.obj release\moc_configmanager.obj
 	-$(DEL_FILE) release\GoldenServer.exp release\GoldenServer.exe.embed.manifest
 
 distclean: clean 
@@ -158,10 +166,11 @@ compiler_no_pch_compiler_make_all:
 compiler_no_pch_compiler_clean:
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: release\moc_goldenserver.cpp
+compiler_moc_header_make_all: release\moc_goldenserver.cpp release\moc_configmanager.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) release\moc_goldenserver.cpp
-release\moc_goldenserver.cpp: C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QObject \
+	-$(DEL_FILE) release\moc_goldenserver.cpp release\moc_configmanager.cpp
+release\moc_goldenserver.cpp: ..\GoldenServer\configmanager.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QObject \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qobject.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qobjectdefs.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qnamespace.h \
@@ -216,8 +225,109 @@ release\moc_goldenserver.cpp: C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCo
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qobject_impl.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QList \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QByteArray \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QCoreApplication \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qcoreapplication.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qeventloop.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtWebSockets\QWebSocket \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtWebSockets\qwebsocket.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QUrl \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qurl.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qpair.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qurlquery.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qshareddata.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qhash.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QAbstractSocket \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qabstractsocket.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qiodevice.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qdebug.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qmap.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qtextstream.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qlocale.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qvariant.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qvector.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qpoint.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qset.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qcontiguouscache.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QNetworkProxy \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qnetworkproxy.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qhostaddress.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qnetworkrequest.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QSharedDataPointer \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QString \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QVariant \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QSslError \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qsslerror.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qsslcertificate.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qcryptographichash.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qdatetime.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qsharedpointer.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qsharedpointer_impl.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qssl.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QFlags \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QSslConfiguration \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qsslconfiguration.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qsslsocket.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qtcpsocket.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtWebSockets\qwebsockets_global.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtWebSockets\qwebsocketprotocol.h \
 		..\GoldenServer\goldenserver.h
 	C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\bin\moc.exe $(DEFINES) -D_MSC_VER=1700 -D_WIN32 -IC:/Qt-Enterprise/Qt5.5.0/5.5/msvc2012/mkspecs/win32-msvc2012 -IC:/Users/kpspr/Documents/GitHub/GoldenDemo/Server/GoldenServer -IC:/Qt-Enterprise/Qt5.5.0/5.5/msvc2012/include -IC:/Qt-Enterprise/Qt5.5.0/5.5/msvc2012/include/QtWebSockets -IC:/Qt-Enterprise/Qt5.5.0/5.5/msvc2012/include/QtNetwork -IC:/Qt-Enterprise/Qt5.5.0/5.5/msvc2012/include/QtCore -I. ..\GoldenServer\goldenserver.h -o release\moc_goldenserver.cpp
+
+release\moc_configmanager.cpp: C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QObject \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qobject.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qobjectdefs.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qnamespace.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qglobal.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qconfig.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qfeatures.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qsystemdetection.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qprocessordetection.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qcompilerdetection.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qtypeinfo.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qtypetraits.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qsysinfo.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qlogging.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qflags.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qbasicatomic.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_bootstrap.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qgenericatomic.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_cxx11.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_gcc.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_msvc.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_armv7.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_armv6.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_armv5.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_ia64.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_mips.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_x86.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_unix.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qglobalstatic.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qmutex.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qnumeric.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qobjectdefs_impl.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qstring.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qchar.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qbytearray.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qrefcount.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qarraydata.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qstringbuilder.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qlist.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qalgorithms.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qiterator.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qbytearraylist.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qstringlist.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qregexp.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qstringmatcher.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qcoreevent.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qscopedpointer.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qmetatype.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qvarlengtharray.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qcontainerfwd.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qisenum.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qobject_impl.h \
+		..\GoldenServer\configmanager.h
+	C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\bin\moc.exe $(DEFINES) -D_MSC_VER=1700 -D_WIN32 -IC:/Qt-Enterprise/Qt5.5.0/5.5/msvc2012/mkspecs/win32-msvc2012 -IC:/Users/kpspr/Documents/GitHub/GoldenDemo/Server/GoldenServer -IC:/Qt-Enterprise/Qt5.5.0/5.5/msvc2012/include -IC:/Qt-Enterprise/Qt5.5.0/5.5/msvc2012/include/QtWebSockets -IC:/Qt-Enterprise/Qt5.5.0/5.5/msvc2012/include/QtNetwork -IC:/Qt-Enterprise/Qt5.5.0/5.5/msvc2012/include/QtCore -I. ..\GoldenServer\configmanager.h -o release\moc_configmanager.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -296,11 +406,52 @@ release\main.obj: ..\GoldenServer\main.cpp C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qpair.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QCommandLineOption \
 		../GoldenServer/goldenserver.h \
+		../GoldenServer/configmanager.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QObject \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QList \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QByteArray
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QByteArray \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtWebSockets\QWebSocket \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtWebSockets\qwebsocket.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QUrl \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qurl.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qurlquery.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QAbstractSocket \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qabstractsocket.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qiodevice.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qdebug.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qmap.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qtextstream.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qlocale.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qvariant.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qvector.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qpoint.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qset.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qcontiguouscache.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QNetworkProxy \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qnetworkproxy.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qhostaddress.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qnetworkrequest.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QSharedDataPointer \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QString \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QVariant \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QSslError \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qsslerror.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qsslcertificate.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qcryptographichash.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qdatetime.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qsharedpointer.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qsharedpointer_impl.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qssl.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QFlags \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QSslConfiguration \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qsslconfiguration.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qsslsocket.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qtcpsocket.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtWebSockets\qwebsockets_global.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtWebSockets\qwebsocketprotocol.h
 
 release\goldenserver.obj: ..\GoldenServer\goldenserver.cpp ../GoldenServer/goldenserver.h \
+		../GoldenServer/configmanager.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QObject \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qobject.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qobjectdefs.h \
@@ -356,30 +507,37 @@ release\goldenserver.obj: ..\GoldenServer\goldenserver.cpp ../GoldenServer/golde
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qobject_impl.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QList \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QByteArray \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtWebSockets\qwebsocketserver.h \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtWebSockets\qwebsockets_global.h \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtWebSockets\qwebsocketprotocol.h \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QString \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QHostAddress \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qhostaddress.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QCoreApplication \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qcoreapplication.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qeventloop.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtWebSockets\QWebSocket \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtWebSockets\qwebsocket.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QUrl \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qurl.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qpair.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qurlquery.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qshareddata.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qhash.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QAbstractSocket \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qabstractsocket.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qiodevice.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qdebug.h \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qhash.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qmap.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qtextstream.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qlocale.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qvariant.h \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qshareddata.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qvector.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qpoint.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qset.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qcontiguouscache.h \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QSslConfiguration \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qsslconfiguration.h \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qsslsocket.h \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qtcpsocket.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QNetworkProxy \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qnetworkproxy.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qhostaddress.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qnetworkrequest.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QSharedDataPointer \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QString \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QVariant \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QSslError \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qsslerror.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qsslcertificate.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qcryptographichash.h \
@@ -388,23 +546,121 @@ release\goldenserver.obj: ..\GoldenServer\goldenserver.cpp ../GoldenServer/golde
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qsharedpointer_impl.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qssl.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QFlags \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QSslError \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtWebSockets\qwebsocket.h \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QUrl \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qurl.h \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qurlquery.h \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QAbstractSocket \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QNetworkProxy \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qnetworkproxy.h \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qnetworkrequest.h \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QSharedDataPointer \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QVariant \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QSslConfiguration \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qsslconfiguration.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qsslsocket.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qtcpsocket.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtWebSockets\qwebsockets_global.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtWebSockets\qwebsocketprotocol.h \
+		../GoldenServer/singleton.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QtGlobal \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QScopedPointer \
+		../GoldenServer/call_once.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QAtomicInt \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QMutex \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QWaitCondition \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qwaitcondition.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QThreadStorage \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qthreadstorage.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QThread \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qthread.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtWebSockets\qwebsocketserver.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QHostAddress \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QFile \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qfile.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qfiledevice.h \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QDebug \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QTimer \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qtimer.h \
-		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qbasictimer.h
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qbasictimer.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QXmlStreamReader \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qxmlstream.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QSslCertificate \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\QSslKey \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtNetwork\qsslkey.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QStandardPaths \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qstandardpaths.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QDir \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qdir.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qfileinfo.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QJsonObject \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qjsonobject.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qjsonvalue.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QJsonDocument \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qjsondocument.h
+
+release\configmanager.obj: ..\GoldenServer\configmanager.cpp ../GoldenServer/configmanager.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QObject \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qobject.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qobjectdefs.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qnamespace.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qglobal.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qconfig.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qfeatures.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qsystemdetection.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qprocessordetection.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qcompilerdetection.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qtypeinfo.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qtypetraits.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qsysinfo.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qlogging.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qflags.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qbasicatomic.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_bootstrap.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qgenericatomic.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_cxx11.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_gcc.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_msvc.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_armv7.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_armv6.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_armv5.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_ia64.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_mips.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_x86.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qatomic_unix.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qglobalstatic.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qmutex.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qnumeric.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qobjectdefs_impl.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qstring.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qchar.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qbytearray.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qrefcount.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qarraydata.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qstringbuilder.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qlist.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qalgorithms.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qiterator.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qbytearraylist.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qstringlist.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qregexp.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qstringmatcher.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qcoreevent.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qscopedpointer.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qmetatype.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qvarlengtharray.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qcontainerfwd.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qisenum.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qobject_impl.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\QDebug \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qdebug.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qhash.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qpair.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qmap.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qtextstream.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qiodevice.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qlocale.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qvariant.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qshareddata.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qvector.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qpoint.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qset.h \
+		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\include\QtCore\qcontiguouscache.h
 
 release\moc_goldenserver.obj: release\moc_goldenserver.cpp 
+
+release\moc_configmanager.obj: release\moc_configmanager.cpp 
 
 ####### Install
 

@@ -16,7 +16,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    goldenserver.cpp
+    goldenserver.cpp \
+    configmanager.cpp
 
 HEADERS += \
-    goldenserver.h
+    goldenserver.h \
+    configmanager.h \
+    call_once.h \
+    singleton.h

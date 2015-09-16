@@ -15,10 +15,10 @@ body{
 	overflow: hidden;
 }
 
-#robOuter {
+.robOuter {
 	display: inline-block;
-	width: auto;
-	height: auto;
+	width: auto; /*200px;*/
+	height: auto; /*128px;*/
 	padding: 3px;
 	border-radius: 10px;
 	margin: 5px;
@@ -30,12 +30,7 @@ body{
 	background: linear-gradient(to bottom, #354563 100%, #476e9e 5%);
 }
 
-dir-read-out-button:active{
-	position: relative;
-	top: 1px;
-}
-
-#robInner {
+.robInner-robIdle {
 	width: 100%;
 	height: 100%;
 	padding: 3px;
@@ -48,8 +43,67 @@ dir-read-out-button:active{
 	background: linear-gradient(to bottom, #374969 5%, #476e9e 100%);
 }
 
-#robInner:hover {
+.robInner-robDisconnected {
+	width: 100%;
+	height: 100%;
+	padding: 3px;
+	border-radius: 8px;
+/*	background:	-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #7892c2), color-stop(1, #476e9e));*/
+	background:	-moz-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+	background:	-webkit-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+	background:	-o-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+	background:	-ms-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+	background: linear-gradient(to bottom, grey 5%, grey 100%);
+}
+
+.robInner-robSmTx {
+	width: 100%;
+	height: 100%;
+	padding: 3px;
+	border-radius: 8px;
+/*	background:	-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #7892c2), color-stop(1, #476e9e));*/
+	background:	-moz-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+	background:	-webkit-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+	background:	-o-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+	background:	-ms-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+	background: linear-gradient(to bottom, green 5%, green 100%);
+}
+
+
+.robInner-robSrRx {
+	width: 100%;
+	height: 100%;
+	padding: 3px;
+	border-radius: 8px;
+	/*	background:	-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #7892c2), color-stop(1, #476e9e));*/
+	background:	
+	-moz-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+	background:	
+	-webkit-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+	background:	
+	-o-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+	background:	
+	-ms-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+	background: linear-gradient(to bottom, yellow 5%, yellow 100%);
+}
+
+.robInner-robUiTx {
+	width: 100%;
+	height: 100%;
+	padding: 3px;
+	border-radius: 8px;
+/*	background:	-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #7892c2), color-stop(1, #476e9e));*/
+	background:	-moz-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+	background:	-webkit-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+	background:	-o-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+	background:	-ms-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+	background: linear-gradient(to bottom, orangered 5%, orangered 100%);
+}
+
+.robInner:hover {
 	cursor: pointer;
+	width: 100%;
+	height: 100%;
 	padding: 3px;
 	border-radius: 8px;
 /*	background:	-webkit-gradient(linear, left top, left bottom, color-stop(1, #476e9e), color-stop(0.05, #7892c2)); */
@@ -60,11 +114,11 @@ dir-read-out-button:active{
 	background: linear-gradient(to bottom, #112D52 100%, #7892c2 5%);
 }
 
-#robCentre {
+.robCentre {
 	margin: 5% 0% 5% 0%;
 }
 
-#robCaption {
+.robCaption {
 	line-height: 20px;
 	margin: 0 auto;
 	padding: 3px;
@@ -75,7 +129,7 @@ dir-read-out-button:active{
 	text-align: center;
 }
 
-#robValue {
+.robValue {
 	line-height: 20px;
 	margin: 0 auto;
 	padding: 3px;
@@ -176,10 +230,6 @@ Button:hover {
 	background: linear-gradient(to bottom, #4249B1 5%, #7892c2 100%);
 	/*filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#476e9e', endColorstr='#7892c2',GradientType=0);*/
 	background-color:#476e9e;
-}
-Button:active {
-	position:relative;
-	top:1px;
 }
 
 .leftdiv {

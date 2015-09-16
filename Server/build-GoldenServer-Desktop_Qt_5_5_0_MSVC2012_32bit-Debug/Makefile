@@ -187,6 +187,7 @@ Makefile: ..\GoldenServer\GoldenServer.pro C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\win32\qt_config.prf \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\win32-msvc2012\qmake.conf \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\spec_post.prf \
+		.qmake.stash \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\exclusive_builds.prf \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\default_pre.prf \
 		C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\win32\default_pre.prf \
@@ -324,6 +325,7 @@ C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\qt_config.prf:
 C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\win32\qt_config.prf:
 C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\win32-msvc2012\qmake.conf:
 C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\spec_post.prf:
+.qmake.stash:
 C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\exclusive_builds.prf:
 C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\default_pre.prf:
 C:\Qt-Enterprise\Qt5.5.0\5.5\msvc2012\mkspecs\features\win32\default_pre.prf:

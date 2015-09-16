@@ -34,71 +34,12 @@ app.run(['$rootScope', '$templateCache', '$http', 'fileaccessor', 'configmanager
     fileaccessor.getFileNamesOnly('Partials', getTemplates);
 }]);
 
-app.service('websoc', ['$timeout', '$rootScope', 'configmanager', function($timeout, $rootScope, configmanager) {        
-
-    var connected = connectionEnum.DISCONNECTED;    
-    var websock = null;    
-
-    var myWebSocket = function() {
-        if (connected === connectionEnum.DISCONNECTED)
-        {
-            if (configmanager.isReady())
-            {
-                var ip = configmanager.getIP();
-                var port = configmanager.getPort();            
-                connected = connectionEnum.CONNECTING;
-                websock = new WebSocket("wss://" + ip + ":" + port + "/goldenserver");    
-                websock.onopen = function(evt){
-                    connected = connectionEnum.CONNECTED;  
-                    $rootScope.$broadcast('wsConnection', connected);
-                }
-                websock.onmessage = function(evt){
-                    $rootScope.$broadcast('configDateTime', evt);
-                }
-                websock.onclose = function(evt){
-                    connected = connectionEnum.DISCONNECTED;  
-                    $rootScope.$broadcast('wsConnection', connected);
-                }   
-                websock.onerror = function(evt){
-                    console.debug("error: " + evt)  
-                    connected = connectionEnum.DISCONNECTED;  
-                }             
-            }
-        }
-        $timeout(myWebSocket, 1000);            
-    };
-    
-    myWebSocket();
-    
-    var sendMyData = function (data) {
-       if (connected == true)
-       {
-           websock.send(data);
-       }                
-    }
-    
-    return {
-        sendMyData: sendMyData 
-    };
-}]);
-
-app.service('ticker', ['$interval', '$rootScope', 'websoc', function($interval, $rootScope, websoc) {
-  
-  function beat() {
-      var dt = Date.now();
-      websoc.sendMyData(dt);
-  }
-
-  // start periodic checking
-  //$interval(beat, 50);
-}]);
-
-app.controller('heyController1', [ '$scope', '$timeout', 'ticker', 'websoc', function( $scope, $timeout, ticker, websoc, container, state ) {
+app.controller('heyController1', [ '$scope', '$timeout', 'websoc', function( $scope, $timeout, websoc, container, state ) {
     $scope.dt = new Date();
     $scope.draw = true;
     $scope.tout = null;    
     $scope.$on('configDateTime', function(event, args) {
-        $scope.dt = args.data; 
+        $scope.dt = args.value; 
             if ($scope.draw)
             {
                 $scope.$digest();        
@@ -114,12 +55,12 @@ app.controller('heyController1', [ '$scope', '$timeout', 'ticker', 'websoc', fun
     });            
 }]);
 
-app.controller('heyController2', [ '$scope', '$timeout', 'ticker', 'websoc', function( $scope, $timeout, ticker, websoc, container, state ) {
+app.controller('heyController2', [ '$scope', '$timeout', 'websoc', function( $scope, $timeout, websoc, container, state ) {
     $scope.dt = new Date();
     $scope.draw = true;
     $scope.tout = null;    
     $scope.$on('configDateTime', function(event, args) {
-        $scope.dt = args.data; 
+        $scope.dt = args.value; 
             if ($scope.draw)
             {
                 $scope.$digest();        
@@ -135,12 +76,12 @@ app.controller('heyController2', [ '$scope', '$timeout', 'ticker', 'websoc', fun
     });            
 }]);
 
-app.controller('heyController3', [ '$scope', '$timeout', 'ticker', 'websoc', function( $scope, $timeout, ticker, websoc, container, state ) {
+app.controller('heyController3', [ '$scope', '$timeout', 'websoc', function( $scope, $timeout, websoc, container, state ) {
     $scope.dt = new Date();
     $scope.draw = true;
     $scope.tout = null;    
     $scope.$on('configDateTime', function(event, args) {
-        $scope.dt = args.data; 
+        $scope.dt = args.value; 
             if ($scope.draw)
             {
                 $scope.$digest();        
@@ -156,12 +97,12 @@ app.controller('heyController3', [ '$scope', '$timeout', 'ticker', 'websoc', fun
     });            
 }]);
 
-app.controller('heyController4', [ '$scope', '$timeout', 'ticker', 'websoc', function( $scope, $timeout, ticker, websoc, container, state ) {
+app.controller('heyController4', [ '$scope', '$timeout', 'websoc', function( $scope, $timeout, websoc, container, state ) {
     $scope.dt = new Date();
     $scope.draw = true;    
     $scope.tout = null;    
     $scope.$on('configDateTime', function(event, args) {
-        $scope.dt = args.data; 
+        $scope.dt = args.value; 
             if ($scope.draw)
             {
                 $scope.$digest();        
@@ -177,12 +118,12 @@ app.controller('heyController4', [ '$scope', '$timeout', 'ticker', 'websoc', fun
     });            
 }]);
 
-app.controller('playerContoller', [ '$scope', '$timeout', 'ticker', 'websoc', function( $scope, $timeout, ticker, websoc, container, state ) {
+app.controller('playerContoller', [ '$scope', '$timeout', 'websoc', function( $scope, $timeout, websoc, container, state ) {
     $scope.dt = new Date();
     $scope.draw = true;
     $scope.tout = null;    
     $scope.$on('configDateTime', function(event, args) {
-        $scope.dt = args.data; 
+        $scope.dt = args.value; 
             if ($scope.draw)
             {
                 $scope.$digest();        
@@ -218,7 +159,10 @@ app.controller('heyControllerPopup', [ '$scope', '$rootScope', function( $scope,
         {
             $rootScope.$broadcast('dockDialog', this);
         },
-        onDragStart : function(){},
+        onDragStart : function()
+        {
+            $rootScope.$broadcast('delayDigest', this);            
+        },
         onDragEnd : function(){},
         onResize : function(){
             $rootScope.$broadcast('delayDigest', this);
@@ -316,22 +260,6 @@ app.controller('heyControllerRoot', [ '$document', '$templateCache', '$http', '$
          content:[{
              type: 'row',
              content: [{
-                 title: 'Hey 1',
-                 type: 'component',
-                 componentName: 'angularModule',
-                 componentState: {
-                     module: 'heyModule1',
-                     templateId: 'heyTemplate1',
-                 }
-             },{
-                 title: 'Hey 2',
-                 type: 'component',
-                 componentName: 'angularModule',
-                 componentState: {
-                     module: 'heyModule2',
-                     templateId: 'heyTemplate2',
-                 }
-             },{
                  title: 'Player',
                  type: 'component',
                  componentName: 'angularModule',
@@ -340,12 +268,12 @@ app.controller('heyControllerRoot', [ '$document', '$templateCache', '$http', '$
                      templateId: 'playerTemplate',
                  }
              },{
-                 title: 'Hey 4',
+                 title: 'Player',
                  type: 'component',
                  componentName: 'angularModule',
                  componentState: {
-                     module: 'heyModule4',
-                     templateId: 'heyTemplate4',
+                     module: 'playerModule',
+                     templateId: 'playerTemplate',
                  }
              }]
          }]

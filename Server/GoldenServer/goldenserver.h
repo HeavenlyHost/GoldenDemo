@@ -1,10 +1,12 @@
 #ifndef GOLDENSERVER_H
 #define GOLDENSERVER_H
 
+#include "configmanager.h"
 #include <QtCore/QObject>
 #include <QtCore/QList>
 #include <QtCore/QByteArray>
 #include <QCoreApplication>
+#include <QWebSocket>
 
 QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
@@ -24,18 +26,35 @@ Q_SIGNALS:
 private Q_SLOTS:
     void onNewConnection();
     void processTextMessage(QString message);
-    void processBinaryMessage(QByteArray message);
     void socketDisconnected();
     void update();
 
 private:
+    struct sockStruct
+    {
+        QWebSocket *sock; // 2 bytes
+        QList<QString> subscriptions;  // 1 byte
+    };
+    QList<sockStruct> m_clients;
+    struct sockProtocol
+    {
+        QString taskId;
+        QString smString;
+        QString type;
+        QString value;
+        QString status;
+    };
     QString wsIP;
     quint16 wsPort;
     QWebSocketServer *m_pWebSocketServer;
-    QList<QWebSocket *> m_clients;
     bool m_debug;
     QTimer *timer;
+    QString sdt;
     void ReadConfigXML(QString appDirPath);
+    QString EncodeToWsProtocol(sockProtocol dataToEncode);
+    void DecodeToWsProtocol(sockProtocol *destForData, QString response);
+    void sendData(QWebSocket *soc, sockProtocol dataToEncode);
+    ConfigManager cMan;
 };
 
 #endif // GOLDENSERVER_H
