@@ -14,17 +14,47 @@
 		<link type="text/css" rel="stylesheet" href="Third-Party/GoldenLayout/css/goldenlayout-dark-theme.css"/>		
 		<link type="text/css" rel="stylesheet" href="Third-Party/ngPopup-0.4.0/dist/ngPopup.css"/>
 		<link type="text/css" rel="stylesheet" href="defaults.css"/>
+		<link type="text/css" rel="stylesheet" href="grids.css"/>		
 	</head>
-	<body data-ng-app="heyApp">		
-		<div class="divroot" data-ng-controller="heyControllerRoot">
-			<div class="navdiv" data-ng-controller="heyControllerNav">
+	<body data-ng-app="heyApp">			
+		<div class="divroot" data-ng-controller="heyControllerRoot">			
+			<nav class="navbar navbar-default navbar-inverse">
+				<div class="container-fluid">
+					<!-- Brand and toggle get grouped for better mobile display -->
+					<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#">Golden Demo</a>
+					</div>
+				
+					<!-- Collect the nav links, forms, and other content for toggling -->
+					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" data-ng-controller="heyControllerNav">
+						<ul class="nav navbar-nav">
+							<li><a ng-click="addNewTemplate1()" role="button">Add 1</a></li>
+							<li><a nohref ng-click="addNewTemplate2()" role="button">Add 2</a></li>
+							<li><a nohref ng-click="addNewTemplate3()" role="button">Add 3</a></li>
+							<li><a nohref ng-click="addNewTemplate4()" role="button">Add 4</a></li>
+							<li><a nohref ng-click="addNewPlayerTemplate()" role="button">Add Player</a><li>
+						</ul>	
+						<ul class="nav navbar-nav navbar-right">
+							<li><a nohref ng-class="navbar-text {'albl': true, 'albltrue': connected == true, 'alblfalse': connected == false}">{{commsmessage}}</a><li>
+						</ul>
+					</div><!-- /.navbar-collapse -->
+				</div><!-- /.container-fluid -->
+			</nav>	
+		
+<!--			<div class="navdiv" data-ng-controller="heyControllerNav">
 					<button ng-click="addNewTemplate1()">Add 1</button>
 					<button ng-click="addNewTemplate2()">Add 2</button>
 					<button ng-click="addNewTemplate3()">Add 3</button>
 					<button ng-click="addNewTemplate4()">Add 4</button>
 					<button ng-click="addNewPlayerTemplate()">Add Player</button>
 					<span ng-class="{'albl': true, 'albltrue': connected == true, 'alblfalse': connected == false}">{{commsmessage}}</span>
-			</div>
+			</div>-->
 			<div id="gldiv" data-ng-controller="heyControllerGldiv">
 				<!-- Golden Layout goes here -->
 			</div>

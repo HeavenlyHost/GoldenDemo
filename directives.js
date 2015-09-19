@@ -15,6 +15,7 @@ dirs.directive('dirReadOutButton', [ '$rootScope', '$templateCache', '$timeout',
             $scope.outValue = "---";         
             $scope.draw = true;
             $scope.tout = null;
+            $scope.tin = null;
             $scope.statusLocked = false;  
             $scope.$on('delayDigest', function(event, args){        
                 $scope.draw = false;
@@ -28,7 +29,7 @@ dirs.directive('dirReadOutButton', [ '$rootScope', '$templateCache', '$timeout',
                 if ($scope.initialised === true) 
                 {
                     var myData = websoc.getProtocol();
-                    myData.taskId = "dataSet";
+                    myData.taskId = "setData";
                     myData.smString = $scope.smid;                    
                     $scope.status = "robUiTx";
                     websoc.sendMyData(JSON.stringify(myData));
@@ -45,24 +46,51 @@ dirs.directive('dirReadOutButton', [ '$rootScope', '$templateCache', '$timeout',
                 }
             };
             $scope.releaseLock = function(){
-                $scope.statusLocked = false;
-                if ($scope.status == "robSmTx")
-                {
-                    $scope.status == "robIdle";
-                }
+                $scope.status = "robGiIdle";
+                $scope.statusLocked = false;     
+                $scope.$digest();        
             };
-            $scope.$on('data-' + $scope.smid, function(event, args){
-                $scope.initialised = true;
-                if ($scope.status === "robSrRx")
+            $scope.$on('subscribe-' + $scope.smid, function(event, args){
+                if (args.status == "GiAck")
                 {
-                    $scope.status = "robSmTx";           
-                    $scope.statusLocked = true;     
-                    $timeout(function(){$scope.releaseLock()}, 500);
+                    //Do something positive, i am subscribed
+                    $scope.status = "rob" + args.status;
+                    $scope.initialised = true;
+                } 
+                else if (args.status == "GiNack")
+                {
+                    //Do something negative, subscription failed  
                 }
-                else
+                else if (args.status == "DsAck")
                 {
-                    if (!$scope.statusLocked)
-                        $scope.status = "rob" + args.status;                
+                    console.debug("DsAck");
+
+                    //Server recieved request
+                    $scope.status = "rob" + args.status;
+                }                
+            });
+            $scope.$on('unsubscribe-' + $scope.smid, function(event, args){
+                //Do Nothing 
+            });
+            $scope.$on('setData-' + $scope.smid, function(event, args){                
+                if (args.status == "DsAck")
+                {
+                    //Server recieved request
+                    $scope.status = "rob" + args.status;                    
+                }
+                else if (args.status == "GiDataAck")
+                {
+                    $scope.status = "rob" + args.status;
+                    $timeout.cancel($scope.tin);                
+                    $scope.statusLocked = true;     
+                    $scope.tin = $timeout(function(){$scope.releaseLock()}, 1000);    
+                }
+            });            
+            $scope.$on('GiData-' + $scope.smid, function(event, args){
+                $scope.initialised = true;                
+                if (!$scope.statusLocked)
+                {
+                    $scope.status = "rob" + args.status;                
                 }                
                 $scope.outValue = args.value;                
                     if ($scope.draw)
@@ -73,16 +101,16 @@ dirs.directive('dirReadOutButton', [ '$rootScope', '$templateCache', '$timeout',
             $scope.$on('wsConnection', function(event, args){
                if (args == connectionEnum.CONNECTED)
                {
-                   $scope.status = "robIdle";
-               }
-               else if (args == connectionEnum.CONNECTING)
-               {
+                   $scope.status = "robConnected";
                    $scope.outValue = "Intialising";         
                }
                else if (args == connectionEnum.DISCONNECTED)
-               {               
-                   $scope.initialised = false;
+               {   
+                   $timeout.cancel($scope.tin);                
+                   //Switch the class to disconnected
                    $scope.status = "robDisconnected";                   
+                   //set to defaults                              
+                   $scope.initialised = false;
                    $scope.outValue = "---";
                }          
                $scope.$digest();          

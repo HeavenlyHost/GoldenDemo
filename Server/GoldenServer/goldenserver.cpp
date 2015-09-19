@@ -140,10 +140,10 @@ void GoldenServer::update()
         {
             // send out general date time message
             sockProtocol newDataOut;
-            newDataOut.taskId = "configDateTime";
             newDataOut.smString = "strGeneralSmString";
+            newDataOut.taskId = "GiData-" + newDataOut.smString;
             newDataOut.type = "string";
-            newDataOut.status = "RxFromSys";
+            newDataOut.status = "GiIdle";
             newDataOut.value = sdt;
             sendData(m_clients[index].sock, newDataOut);
 
@@ -154,10 +154,8 @@ void GoldenServer::update()
                 try
                 {
                     QString smString = m_clients[index].subscriptions[j];
-                    newDataOut.taskId = "data-" + smString;
+                    newDataOut.taskId = "GiData-" + smString;
                     newDataOut.smString = smString;
-                    newDataOut.type = "string";
-                    newDataOut.status = "Idle";
                     newDataOut.value = smString + " - " + sdt;
                     sendData(m_clients[index].sock, newDataOut);
                     j++;
@@ -233,92 +231,85 @@ void GoldenServer::processTextMessage(QString message)
 {    
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
     sockProtocol data;
-    sockProtocol *destForData = &data;
+    sockProtocol *destForData = &data;    
     DecodeToWsProtocol(destForData, message);
-        if (destForData->taskId == "uiGeneralReq")
+    //Send confirm straignt away
+    QString taskId = destForData->taskId;
+    destForData->taskId = destForData->taskId + "-" + destForData->smString;
+    destForData->status = "DsAck";
+    sendData(pClient, *destForData);
+    //Process the message
+    if (taskId == "generalRqt")
+    {
+        //Do something
+    }
+    else if (taskId == "subscribe")
+    {
+        //Find entry in clients list
+        int i = 0;
+        while (i < m_clients.length())
         {
-            //Do something
-        }
-        else if (destForData->taskId == "subscribe")
-        {
-            //Find entry in clients list
-            int i = 0;
-            while (i < m_clients.length())
+            if (m_clients[i].sock == pClient)
             {
-                if (m_clients[i].sock == pClient)
+                int j = m_clients[i].subscriptions.indexOf(destForData->smString);
+                if (j == -1)
                 {
-                    int j = m_clients[i].subscriptions.indexOf(destForData->smString);
-                    if (j == -1)
-                    {
-                        ConfigManagerInstance.bindMe();
-                        m_clients[i].subscriptions << destForData->smString;
-                    }
-                    break;
+                    ConfigManagerInstance.bindMe();
+                    m_clients[i].subscriptions << destForData->smString;
+                }
+                break;
+            }
+            i++;
+        }
+        destForData->status = "GiAck";
+        sendData(pClient, *destForData);
+    }
+    else if (taskId == "unsubscribe")
+    {
+        //Find entry in clients list
+        int i = 0;
+        while (i < m_clients.length())
+        {
+            if (m_clients[i].sock == pClient)
+            {
+                int i = m_clients[i].subscriptions.indexOf(destForData->smString);
+                if (i != -1)
+                {
+                    ConfigManagerInstance.unbindMe();
+                    m_clients[i].subscriptions.removeAt(i);
+                }
+                break;
+            }
+            i++;
+        }
+    }
+    else if (taskId == "setData")
+    {
+        int i = 0;
+        while (i < m_clients.length())
+        {
+            try
+            {
+                //Check for valid subscription
+                int j = m_clients[i].subscriptions.indexOf(destForData->smString);
+                if (j != -1)
+                {
+                    //send data back
+                    destForData->status = "GiDataAck";
+                    QDateTime dt = QDateTime::currentDateTime();
+                    sdt = dt.toString(Qt::TextDate);
+                    destForData->value = destForData->smString + " - " + sdt;
+                    sendData(m_clients[i].sock, *destForData);
                 }
                 i++;
             }
-            //send data back
-            destForData->taskId = "data-" + destForData->smString;
-            destForData->status = "SrRx";
-            destForData->value = destForData->smString + " - " + sdt;
-            qDebug() << "Message received:" << message;
-            sendData(pClient, *destForData);
-        }
-        else if (destForData->taskId == "unsubscribe")
-        {
-            //Find entry in clients list
-            int i = 0;
-            while (i < m_clients.length())
+            catch(...)
             {
-                if (m_clients[i].sock == pClient)
-                {
-                    int i = m_clients[i].subscriptions.indexOf(destForData->smString);
-                    if (i != -1)
-                    {
-                        ConfigManagerInstance.unbindMe();
-                        m_clients[i].subscriptions.removeAt(i);
-                    }
-                    break;
-                }
-                i++;
+                qDebug() << "GoldenServer::update - Exception";
             }
-            //send data back
-            destForData->taskId = "data-" + destForData->smString;
-            destForData->status = "SrRx";
-            destForData->value = destForData->smString + " - " + sdt;
-            qDebug() << "Message received:" << message;
-            sendData(pClient, *destForData);
         }
-        else if (destForData->taskId == "dataSet")
-        {
-            qDebug() << "Message received:" << message;
-
-            int i = 0;
-            while (i < m_clients.length())
-            {
-                try
-                {
-                    //Check for valid subscription
-                    int j = m_clients[i].subscriptions.indexOf(destForData->smString);
-                    if (j != -1)
-                    {
-                        //send data back
-                        destForData->taskId = "data-" + destForData->smString;
-                        destForData->status = "SrRx";
-                        QDateTime dt = QDateTime::currentDateTime();
-                        sdt = dt.toString(Qt::TextDate);
-                        destForData->value = destForData->smString + " - " + sdt;
-                        sendData(m_clients[i].sock, *destForData);
-                    }
-                    i++;
-                }
-                catch(...)
-                {
-                    qDebug() << "GoldenServer::update - Exception";
-                }
-            }
-
-        }
+    }
+    qDebug() << "Message received:" << message;
 }
 
 void GoldenServer::socketDisconnected()
