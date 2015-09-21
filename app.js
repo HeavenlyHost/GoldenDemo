@@ -38,7 +38,7 @@ app.controller('heyController1', [ '$scope', '$timeout', 'websoc', function( $sc
     $scope.dt = new Date();
     $scope.draw = true;
     $scope.tout = null;    
-    $scope.$on('configDateTime', function(event, args) {
+    $scope.$on('GiData-strSmDateTime', function(event, args) {
         $scope.dt = args.value; 
             if ($scope.draw)
             {
@@ -59,12 +59,12 @@ app.controller('heyController2', [ '$scope', '$timeout', 'websoc', function( $sc
     $scope.dt = new Date();
     $scope.draw = true;
     $scope.tout = null;    
-    $scope.$on('configDateTime', function(event, args) {
+    $scope.$on('GiData-strSmDateTime', function(event, args) {
         $scope.dt = args.value; 
             if ($scope.draw)
             {
                 $scope.$digest();        
-            }                           
+            }                          
     });
     $scope.$on('delayDigest', function(event, args){        
         $scope.draw = false;
@@ -73,14 +73,17 @@ app.controller('heyController2', [ '$scope', '$timeout', 'websoc', function( $sc
             $scope.draw = true;
             $scope.$digest();                      
         },1000);
-    });            
+    });       
+    $scope.$on('_$destroy', function(event, args){
+        console.debug("heyController2_$destroy")
+    })     
 }]);
 
 app.controller('heyController3', [ '$scope', '$timeout', 'websoc', function( $scope, $timeout, websoc, container, state ) {
     $scope.dt = new Date();
     $scope.draw = true;
     $scope.tout = null;    
-    $scope.$on('configDateTime', function(event, args) {
+    $scope.$on('GiData-strSmDateTime', function(event, args) {
         $scope.dt = args.value; 
             if ($scope.draw)
             {
@@ -101,7 +104,7 @@ app.controller('heyController4', [ '$scope', '$timeout', 'websoc', function( $sc
     $scope.dt = new Date();
     $scope.draw = true;    
     $scope.tout = null;    
-    $scope.$on('configDateTime', function(event, args) {
+    $scope.$on('GiData-strSmDateTime', function(event, args) {
         $scope.dt = args.value; 
             if ($scope.draw)
             {
@@ -122,7 +125,7 @@ app.controller('playerContoller', [ '$scope', '$timeout', 'websoc', function( $s
     $scope.dt = new Date();
     $scope.draw = true;
     $scope.tout = null;    
-    $scope.$on('configDateTime', function(event, args) {
+    $scope.$on('GiData-strSmDateTime', function(event, args) {
         $scope.dt = args.value; 
             if ($scope.draw)
             {
@@ -260,14 +263,6 @@ app.controller('heyControllerRoot', [ '$document', '$templateCache', '$http', '$
          content:[{
              type: 'row',
              content: [{
-                 title: 'Player',
-                 type: 'component',
-                 componentName: 'angularModule',
-                 componentState: {
-                     module: 'playerModule',
-                     templateId: 'playerTemplate',
-                 }
-             },{
                  title: 'Player',
                  type: 'component',
                  componentName: 'angularModule',

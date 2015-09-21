@@ -140,33 +140,12 @@ void GoldenServer::update()
         {
             // send out general date time message
             sockProtocol newDataOut;
-            newDataOut.smString = "strGeneralSmString";
+            newDataOut.smString = "strSmDateTime";
             newDataOut.taskId = "GiData-" + newDataOut.smString;
             newDataOut.type = "string";
             newDataOut.status = "GiIdle";
             newDataOut.value = sdt;
             sendData(m_clients[index].sock, newDataOut);
-
-            //Send out any updates for each subscription
-            int j = 0;
-            while (j < m_clients[index].subscriptions.length())
-            {
-                try
-                {
-                    QString smString = m_clients[index].subscriptions[j];
-                    newDataOut.taskId = "GiData-" + smString;
-                    newDataOut.smString = smString;
-                    newDataOut.value = smString + " - " + sdt;
-                    sendData(m_clients[index].sock, newDataOut);
-                    j++;
-                }
-                catch(...)
-                {
-                    qDebug() << "GoldenServer::update - Exception";
-                }
-            }
-
-            //Move to next client
             index++;
         }
         catch(...)
@@ -251,17 +230,17 @@ void GoldenServer::processTextMessage(QString message)
         {
             if (m_clients[i].sock == pClient)
             {
-                int j = m_clients[i].subscriptions.indexOf(destForData->smString);
-                if (j == -1)
-                {
-                    ConfigManagerInstance.bindMe();
-                    m_clients[i].subscriptions << destForData->smString;
-                }
+                ConfigManagerInstance.bindMe();
+                m_clients[i].subscriptions << destForData->smString;
                 break;
             }
             i++;
         }
         destForData->status = "GiAck";
+        sendData(pClient, *destForData);
+        destForData->taskId = "GiData-" + destForData->smString;
+        destForData->value = destForData->smString + " - Click Me";
+        destForData->status = "GiIdle";
         sendData(pClient, *destForData);
     }
     else if (taskId == "unsubscribe")
@@ -272,11 +251,11 @@ void GoldenServer::processTextMessage(QString message)
         {
             if (m_clients[i].sock == pClient)
             {
-                int i = m_clients[i].subscriptions.indexOf(destForData->smString);
-                if (i != -1)
+                int j = m_clients[i].subscriptions.indexOf(destForData->smString);
+                if (j != -1)
                 {
                     ConfigManagerInstance.unbindMe();
-                    m_clients[i].subscriptions.removeAt(i);
+                    m_clients[i].subscriptions.removeAt(j);
                 }
                 break;
             }
@@ -286,6 +265,7 @@ void GoldenServer::processTextMessage(QString message)
     else if (taskId == "setData")
     {
         int i = 0;
+        QString storedValue = destForData->value;
         while (i < m_clients.length())
         {
             try
@@ -295,10 +275,8 @@ void GoldenServer::processTextMessage(QString message)
                 if (j != -1)
                 {
                     //send data back
+                    destForData->value = destForData->smString + " - " + storedValue;
                     destForData->status = "GiDataAck";
-                    QDateTime dt = QDateTime::currentDateTime();
-                    sdt = dt.toString(Qt::TextDate);
-                    destForData->value = destForData->smString + " - " + sdt;
                     sendData(m_clients[i].sock, *destForData);
                 }
                 i++;

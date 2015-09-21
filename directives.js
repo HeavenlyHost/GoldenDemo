@@ -22,7 +22,7 @@ dirs.directive('dirReadOutButton', [ '$rootScope', '$templateCache', '$timeout',
                 $timeout.cancel($scope.tout);
                 $scope.tout = $timeout(function(){
                     $scope.draw = true;
-                    $scope.$digest();                      
+                    $scope.forceRedraw();                
                 },1000);
             });
             $scope.OnClick = function(){
@@ -31,7 +31,8 @@ dirs.directive('dirReadOutButton', [ '$rootScope', '$templateCache', '$timeout',
                     var myData = websoc.getProtocol();
                     myData.taskId = "setData";
                     myData.smString = $scope.smid;                    
-                    $scope.status = "robUiTx";
+                    myData.value = "Bounce!!!";
+                    $scope.status = "robUiTx";                    
                     websoc.sendMyData(JSON.stringify(myData));
                 }                   
             };
@@ -47,8 +48,15 @@ dirs.directive('dirReadOutButton', [ '$rootScope', '$templateCache', '$timeout',
             };
             $scope.releaseLock = function(){
                 $scope.status = "robGiIdle";
+                $scope.outValue = "Click Me !!!"
                 $scope.statusLocked = false;     
-                $scope.$digest();        
+                $scope.forceRedraw();
+            };
+            $scope.forceRedraw = function(){
+                if ($scope.draw)
+                {
+                    $scope.$digest();        
+                }  
             };
             $scope.$on('subscribe-' + $scope.smid, function(event, args){
                 if (args.status == "GiAck")
@@ -68,22 +76,30 @@ dirs.directive('dirReadOutButton', [ '$rootScope', '$templateCache', '$timeout',
                     //Server recieved request
                     $scope.status = "rob" + args.status;
                 }                
+                $scope.forceRedraw();
             });
             $scope.$on('unsubscribe-' + $scope.smid, function(event, args){
                 //Do Nothing 
             });
-            $scope.$on('setData-' + $scope.smid, function(event, args){                
+            $scope.$on('setData-' + $scope.smid, function(event, args){              
+                console.debug(args.status);  
                 if (args.status == "DsAck")
                 {
                     //Server recieved request
-                    $scope.status = "rob" + args.status;                    
+                    //$scope.status = "rob" + args.status;                    
                 }
                 else if (args.status == "GiDataAck")
                 {
                     $scope.status = "rob" + args.status;
+                    $scope.outValue = args.value;                
+                        if ($scope.draw)
+                        {
+                            $scope.$digest();        
+                        }      
                     $timeout.cancel($scope.tin);                
                     $scope.statusLocked = true;     
-                    $scope.tin = $timeout(function(){$scope.releaseLock()}, 1000);    
+                    $scope.tin = $timeout(function(){$scope.releaseLock()}, 500);    
+                    $scope.forceRedraw();
                 }
             });            
             $scope.$on('GiData-' + $scope.smid, function(event, args){
@@ -91,19 +107,17 @@ dirs.directive('dirReadOutButton', [ '$rootScope', '$templateCache', '$timeout',
                 if (!$scope.statusLocked)
                 {
                     $scope.status = "rob" + args.status;                
+                    $scope.outValue = args.value;                
+                    $scope.forceRedraw();
                 }                
-                $scope.outValue = args.value;                
-                    if ($scope.draw)
-                    {
-                        $scope.$digest();        
-                    }      
             });
             $scope.$on('wsConnection', function(event, args){
                if (args == connectionEnum.CONNECTED)
                {
                    $scope.status = "robConnected";
                    $scope.outValue = "Intialising";         
-               }
+                   $scope.forceRedraw();
+           }
                else if (args == connectionEnum.DISCONNECTED)
                {   
                    $timeout.cancel($scope.tin);                
@@ -112,15 +126,22 @@ dirs.directive('dirReadOutButton', [ '$rootScope', '$templateCache', '$timeout',
                    //set to defaults                              
                    $scope.initialised = false;
                    $scope.outValue = "---";
+                   $scope.forceRedraw();
                }          
-               $scope.$digest();          
             });            
             $interval(function(){$scope.reqtInit()}, 1000);
         },
         link: function ($scope, element, attrs) {
             element.bind("click", function() {
                 $scope.OnClick();
-            });            
+            });
+            element.bind("$destroy", function() {
+                var myData = websoc.getProtocol();
+                myData.taskId = "unsubscribe";
+                myData.smString = $scope.smid;
+                websoc.sendMyData(JSON.stringify(myData));
+                $scope.$destroy();
+            });
         } //DOM manipulation
     }
 }]);
