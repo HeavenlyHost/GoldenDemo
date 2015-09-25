@@ -19,15 +19,22 @@ public:
     explicit GoldenServer(quint16 port, bool debug = false, QString appDirPath = "", QObject *parent = Q_NULLPTR);
     ~GoldenServer();
 
-Q_SIGNALS:
-    void closed();
-    void timeout();
-
-private Q_SLOTS:
+public slots:
     void onNewConnection();
     void processTextMessage(QString message);
     void socketDisconnected();
     void update();
+
+    void triggerUpdateSlot(dataStruct data);
+    void dataChangedSlot(dataStruct data);
+    void interfaceStatusSlot(dataStruct data);
+
+signals:
+    void closed();
+    void timeout();
+    void triggerUpdateSignal(dataStruct data);
+    void dataChangedSignal(dataStruct data);
+    void interfaceStatusSignal(dataStruct data);
 
 private:
     struct sockStruct
@@ -35,14 +42,38 @@ private:
         QWebSocket *sock; // 2 bytes
         QList<QString> subscriptions;  // 1 byte
     };
+
     QList<sockStruct> m_clients;
     struct sockProtocol
     {
-        QString taskId;
-        QString smString;
-        QString type;
-        QString value;
-        QString status;
+        QString title;
+        QString interfaceTag;
+        QString actionType;
+        QString Parameter;
+        QString FormatString;
+        QString UnitSuffix;
+        int Gain;
+        int Offset;
+        QString Quantity;
+        int Period;
+        int Phase;
+        QString valueType;
+        bool Boolean;
+        int Integer;
+        double Double;
+        QString String;
+        QString notComputed;
+        QString FormatType;
+        QString FormattedValue;
+        bool disabledState;
+        bool errorState;
+        QString disabledReason;
+        QString errorReason;
+        int minimumVal;
+        int maximumVal;
+        QString handshake;
+        QString menu;
+        QString description;
     };
     QString wsIP;
     quint16 wsPort;
@@ -51,10 +82,15 @@ private:
     QTimer *timer;
     QString sdt;
     void ReadConfigXML(QString appDirPath);
-    QString EncodeToWsProtocol(sockProtocol dataToEncode);
-    void DecodeToWsProtocol(sockProtocol *destForData, QString response);
-    void sendData(QWebSocket *soc, sockProtocol dataToEncode);
-    ConfigManager cMan;
+
+    QString EncodeToWsProtocol_ReportScalar(sockProtocol dataToEncode);
+    QString EncodeToWsProtocol_InterfaceStatus(sockProtocol dataToEncode);
+
+    void DecodeToWsProtocol_Base(sockProtocol *destForData, QString response);
+    void DecodeToWsProtocol_ScalarSubscription(sockProtocol *destForData, QString response);
+    void DecodeToWsProtocol_RequestScalar(sockProtocol *destForData, QString response);
+
+    QMutex mutex;
 };
 
 #endif // GOLDENSERVER_H

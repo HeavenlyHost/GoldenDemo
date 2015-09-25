@@ -29,7 +29,7 @@ body{
 	background: linear-gradient(to bottom, #354563 100%, #476e9e 5%);
 }
 
-.robInner-robGiIdle {
+.robInner-robIdle {
 	padding: 3px;
 	border-radius: 8px;
 	width: 100%;
@@ -66,7 +66,7 @@ body{
 	background: linear-gradient(to bottom, grey 5%, grey 100%);
 }
 
-.robInner-robGiDataAck {
+.robInner-robGreen {
 	padding: 3px;
 	border-radius: 8px;
 	width: 100%;
@@ -78,7 +78,7 @@ body{
 	background: linear-gradient(to bottom, green 5%, green 100%);
 }
 
-.robInner-robGiAck {
+.robInner-rebYellow {
 	padding: 3px;
 	border-radius: 8px;
 	width: 100%;
@@ -90,7 +90,7 @@ body{
 	background: linear-gradient(to bottom, yellow 5%, yellow 100%);
 }
 
-.robInner-robUiTx {
+.robInner-robOrange {
 	padding: 3px;
 	border-radius: 8px;
 	width: 100%;
@@ -99,7 +99,7 @@ body{
 	background:	-webkit-linear-gradient(top, #7892c2 5%, #476e9e 100%);
 	background:	-o-linear-gradient(top, #7892c2 5%, #476e9e 100%);
 	background:	-ms-linear-gradient(top, #7892c2 5%, #476e9e 100%);
-	background: linear-gradient(to bottom, darkgoldenrod 5%, darkgoldenrod 100%);
+	background: linear-gradient(to bottom, orange 5%, orange 100%);
 }
 
 .robCentre {
@@ -246,10 +246,18 @@ video {
 	margin: 0 auto;
 }
 
+h1 {
+	color:orange;
+}
+
 h2 {
 	color:orange;
 }
 
 h3 {
 	color:orange
+}
+
+h4 {
+	color:orange;
 }

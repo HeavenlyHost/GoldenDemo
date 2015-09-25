@@ -63,3 +63,6 @@ Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/GoldenServ
 *.obj
 Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/goldenserver.pdb
 *.obj
+*.obj
+Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/configmanager.obj
+*.pdb

@@ -121,6 +121,27 @@ app.controller('heyController4', [ '$scope', '$timeout', 'websoc', function( $sc
     });            
 }]);
 
+app.controller('checkBoxDemoController', [ '$scope', '$timeout', 'websoc', function( $scope, $timeout, websoc, container, state ) {
+    $scope.dt = new Date();
+    $scope.draw = true;    
+    $scope.tout = null;    
+    $scope.$on('GiData-strSmDateTime', function(event, args) {
+        $scope.dt = args.value; 
+            if ($scope.draw)
+            {
+                $scope.$digest();        
+            }                           
+    });
+    $scope.$on('delayDigest', function(event, args){        
+        $scope.draw = false;
+        $timeout.cancel($scope.tout);
+        $scope.tout = $timeout(function(){
+            $scope.draw = true;
+            $scope.$digest();                      
+        },1000);
+    });            
+}]);
+
 app.controller('playerContoller', [ '$scope', '$timeout', 'websoc', function( $scope, $timeout, websoc, container, state ) {
     $scope.dt = new Date();
     $scope.draw = true;
@@ -226,9 +247,21 @@ app.controller('heyControllerNav', [ '$compile', '$scope', '$rootScope', 'websoc
         
         var newItemConfig = {
             createNew: true,
-            title: "Player",
+            title: "Rob Demo",
             moduleId: "playerModule",
             templateId: "playerTemplate"
+        }; 
+        
+        $rootScope.$broadcast('dockDialog', newItemConfig)
+    };    
+
+    $scope.addNewCheckBoxDemoTemplate = function(){
+        
+        var newItemConfig = {
+            createNew: true,
+            title: "CheckBoxes",
+            moduleId: "checkBoxDemoModule",
+            templateId: "checkBoxDemoTemplate"
         }; 
         
         $rootScope.$broadcast('dockDialog', newItemConfig)

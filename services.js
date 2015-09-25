@@ -137,7 +137,35 @@ servs.service('websoc', ['$timeout', '$rootScope', 'configmanager', function($ti
         'type': 'none',
         'value': 'none',
         'status': 'UiTx',
+        'bvalue': 'False'
     }
+
+    var protocol_Request_Scalar = {
+        'title': 'Request Subscription',
+        'interfaceTag': '',
+        'valueType': 'Boolean',
+        'Boolean': 'false',
+        'Integer': '0',
+        'Double': '0',
+        'String': ''
+    }
+
+    var protocol_Scalar_Subscription = {
+        'title': 'Scalar Subscription',
+        'interfaceTag': '',
+        'actionType': 'InsertConstant',
+        'Parameter': '',
+        'formatType': 'None',
+        'FormatString': '',
+        'UnitsSource': 'InterfaceDatabase',
+        'UnitSuffix': '',
+        'Gain': '0',
+        'Offset': '0',
+        'Quantity': 'Height',
+        'Period': '0',
+        'Phase': '0'
+    }
+
 
     var myWebSocket = function() {
         if (connected === connectionEnum.DISCONNECTED)
@@ -154,7 +182,7 @@ servs.service('websoc', ['$timeout', '$rootScope', 'configmanager', function($ti
                 }
                 websock.onmessage = function(evt){
                     var jsonData = JSON.parse(evt.data);
-                    $rootScope.$broadcast(jsonData.taskId, jsonData);
+                    $rootScope.$broadcast(jsonData.title + "-" + jsonData.interfaceTag, jsonData);
                 }
                 websock.onclose = function(evt){
                     connected = connectionEnum.DISCONNECTED;  
@@ -181,7 +209,15 @@ servs.service('websoc', ['$timeout', '$rootScope', 'configmanager', function($ti
     var getProtocol = function(){
         return protocol;
     }
-    
+
+    var getprotocol_Scalar_Subscription = function () {
+        return protocol_Scalar_Subscription;
+    }
+
+    var getprotocol_Request_Scalar = function () {
+        return protocol_Request_Scalar;
+    }
+
     var isConnected = function(){
         return (connected == connectionEnum.CONNECTED);
     };
@@ -189,6 +225,8 @@ servs.service('websoc', ['$timeout', '$rootScope', 'configmanager', function($ti
     return {
         sendMyData: sendMyData,
         getProtocol: getProtocol,
+        getprotocol_Request_Scalar: getprotocol_Request_Scalar,
+        getprotocol_Scalar_Subscription: getprotocol_Scalar_Subscription,
         isConnected: isConnected
     };    
 }]);
