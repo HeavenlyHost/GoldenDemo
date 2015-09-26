@@ -171,7 +171,6 @@ void GoldenServer::update()
 void GoldenServer::onNewConnection()
 {
     QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
-    qDebug() << "Connection Open";
 
     connect(pSocket, &QWebSocket::textMessageReceived, this, &GoldenServer::processTextMessage);
     connect(pSocket, &QWebSocket::disconnected, this, &GoldenServer::socketDisconnected);
@@ -180,6 +179,8 @@ void GoldenServer::onNewConnection()
     newSock.sock = pSocket;
 
     m_clients << newSock;
+
+    qDebug() << "Connection Open";
 }
 
 QString GoldenServer::EncodeToWsProtocol_ReportScalar(sockProtocol dataToEncode)
@@ -278,8 +279,6 @@ void GoldenServer::processTextMessage(QString message)
     {
         DecodeToWsProtocol_ScalarSubscription(destForData, message);
 
-        qDebug() << "scalar subscription";
-
         //Find entry in clients list
         int i = 0;
         while (i < m_clients.length())
@@ -292,9 +291,6 @@ void GoldenServer::processTextMessage(QString message)
             }
             i++;
         }
-
-        qDebug() << "PASS scalar subscription";
-
     }
     else if (destForData->title == "Scalar Unsubscription")
     {
@@ -312,7 +308,6 @@ void GoldenServer::processTextMessage(QString message)
                     int index = m_clients[i].subscriptions.indexOf(destForData->interfaceTag);
                     if (index != -1)
                     {
-                        qDebug() << "unsubscribed:" << destForData->interfaceTag;
                         m_clients[i].subscriptions.removeAt(index);
                     }
                 }
@@ -341,7 +336,6 @@ void GoldenServer::processTextMessage(QString message)
                     int index = m_clients[i].subscriptions.indexOf(destForData->interfaceTag);
                     if (index != -1)
                     {
-                        qDebug() << "Request Scaler - Found subscription";
                         dataStruct myStruct = dataStruct(   destForData->interfaceTag,
                                                             destForData->valueType,
                                                             destForData->Boolean,
@@ -361,14 +355,13 @@ void GoldenServer::processTextMessage(QString message)
             }
         }
     }
+
     qDebug() << "Message received:" << message;
 }
 
 void GoldenServer::socketDisconnected()
 {
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-    if (m_debug)
-        qDebug() << "socketDisconnected:" << pClient;
 
     if (pClient) {
         int i = 0;
@@ -383,6 +376,8 @@ void GoldenServer::socketDisconnected()
         }
         pClient->deleteLater();
     }
+
+    qDebug() << "socketDisconnected:" << pClient;
 }
 
 void GoldenServer::dataChangedSlot(dataStruct data)
@@ -399,36 +394,25 @@ void GoldenServer::dataChangedSlot(dataStruct data)
     baseProtocol.String = data.getstr();
     baseProtocol.FormattedValue = data.getformattedValue();
 
-    qDebug() << data.getsock();
-
-
-    if (data.getsock() != NULL)
+    int i = 0;
+    while (i < m_clients.length())
     {
-        int i = 0;
-        while (i < m_clients.length())
+        try
         {
-            try
+            int index = m_clients[i].subscriptions.indexOf(baseProtocol.interfaceTag);
+            if (index != -1)
             {
-                qDebug() << "Data Change";
-
-                int index = m_clients[i].subscriptions.indexOf(baseProtocol.interfaceTag);
-                if (index != -1)
-                {
-
-                    //Check for valid subscription
-                    QString jsonstr = EncodeToWsProtocol_ReportScalar(baseProtocol);
-                    m_clients[i].sock->sendTextMessage(jsonstr);
-                }
-                i++;
+                //Check for valid subscription
+                QString jsonstr = EncodeToWsProtocol_ReportScalar(baseProtocol);
+                m_clients[i].sock->sendTextMessage(jsonstr);
             }
-            catch(...)
-            {
-                qDebug() << "GoldenServer::update - Exception";
-            }
+            i++;
+        }
+        catch(...)
+        {
+            qDebug() << "GoldenServer::update - Exception";
         }
     }
-
-    //Send to web sockets
 }
 
 void GoldenServer::triggerUpdateSlot(dataStruct data)
@@ -444,8 +428,6 @@ void GoldenServer::triggerUpdateSlot(dataStruct data)
     baseProtocol.Double = data.getdbl();
     baseProtocol.String = data.getstr();
     baseProtocol.FormattedValue = data.getformattedValue();
-
-    qDebug() << "GoldenServer::triggerUpdateSlot";
 
     if (data.getsock() != NULL)
     {
@@ -470,14 +452,8 @@ void GoldenServer::interfaceStatusSlot(dataStruct data)
     baseProtocol.handshake = data.gethandshake();
     baseProtocol.menu = data.getmenu();
 
-    qDebug() << "HandShake:" + baseProtocol.handshake;
-
-    qDebug() << data.getsock();
-
     if (data.getsock() != NULL)
     {
-        qDebug() << "HandShake:" + baseProtocol.handshake;
-
         QString jsonstr = EncodeToWsProtocol_InterfaceStatus(baseProtocol);
         data.getsock()->sendTextMessage(jsonstr);
         if (data.gethandshake() == "HostComplete")
@@ -491,9 +467,6 @@ void GoldenServer::interfaceStatusSlot(dataStruct data)
                     break;
                 }
             }
-
-            qDebug() << "Host Complete";
-
             emit triggerUpdateSignal(data);
         }
     }

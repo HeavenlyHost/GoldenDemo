@@ -1,0 +1,12 @@
+﻿/* dirReadOut */
+.smrodiv {	
+	display: inline-flex;
+	width: auto;
+	height: auto;
+	margin: 10px;
+	position: relative;
+}
+
+.smroIdle {
+    color: orange;
+}

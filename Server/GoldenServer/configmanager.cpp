@@ -1,13 +1,26 @@
 #include "configmanager.h"
 #include <QtCore/QDebug>
+#include <QTimer>
 
 ConfigManager::ConfigManager()
 {
     //Intialise strings
+    GiData << dataStruct("strServerDateTime", "String", false,0,0,"system date/time");
     GiData << dataStruct("strItem1", "String");
     GiData << dataStruct("strItem2", "String");
     GiData << dataStruct("strItem3", "String");
     GiData << dataStruct("strItem4", "String");
+    GiData << dataStruct("strItem5", "String");
+    GiData << dataStruct("strItem6", "String");
+    GiData << dataStruct("strItem7", "String");
+    GiData << dataStruct("strItem8", "String");
+    GiData << dataStruct("strItem9", "String");
+    GiData << dataStruct("strItem10", "String");
+    GiData << dataStruct("strItem11", "String");
+    GiData << dataStruct("strItem12", "String");
+    GiData << dataStruct("strItem13", "String");
+    GiData << dataStruct("strItem14", "String");
+    GiData << dataStruct("strItem15", "String");
 
     //Intialise doubles
     GiData << dataStruct("dblItem1", "Double");
@@ -37,16 +50,34 @@ ConfigManager::ConfigManager()
     GiData << dataStruct("blnItem13", "Boolean");
     GiData << dataStruct("blnItem14", "Boolean");
     GiData << dataStruct("blnItem15", "Boolean");
+
+    updateDateTime = new QTimer(this);
+    connect(updateDateTime, SIGNAL(timeout()), this, SLOT(updateDateTimeSlot()));
+    updateDateTime->start(500);
 }
 
-void ConfigManager::bindMe()
-{
-    qDebug() << "bindMe!!!";
-}
+void ConfigManager::updateDateTimeSlot(){
+    QDateTime dt = QDateTime::currentDateTime();
+    QString tdt = dt.toString(Qt::TextDate);
+    for (int index = 0; index < GiData.length(); index++)
+    {
+        if (GiData[index].gettag() == "strServerDateTime")
+        {
+            //store new value
+            GiData[index].setstr(tdt);
 
-void ConfigManager::unbindMe()
-{
-    qDebug() << "unbindMe!!!";
+            //send data to GS via signaling
+            dataStruct myStruct(GiData[index].gettag(),
+                                GiData[index].getvalueType(),
+                                GiData[index].getbln(),
+                                GiData[index].getint(),
+                                GiData[index].getdbl(),
+                                GiData[index].getstr());
+
+            emit dataChangedSignal(myStruct);
+            break;
+        }
+    }
 }
 
 void ConfigManager::triggerUpdateSlot(dataStruct data){
@@ -54,9 +85,6 @@ void ConfigManager::triggerUpdateSlot(dataStruct data){
     {
         if (GiData[index].gettag() == data.gettag())
         {
-            qDebug() << "ConfigManager::triggerUpdateSlot";
-            qDebug() << data.getsock();
-
             data.setvalueType(GiData[index].getvalueType());
             data.setbln(GiData[index].getbln());
             data.setdbl(GiData[index].getdbl());
@@ -75,12 +103,8 @@ void ConfigManager::dataChangedSlot(dataStruct data){
     {
         if (GiData[index].gettag() == data.gettag())
         {
-            qDebug() << "ConfigManager::dataChangedSlot, found tag !!!";
-
             if (GiData[index].getvalueType() == data.getvalueType())
             {
-                qDebug() << "ConfigManager::dataChangedSlot, valueType found !!!";
-
                 //raise correct data change event
                 if (data.getvalueType() == "String")
                 {

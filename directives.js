@@ -1,5 +1,93 @@
 var dirs = angular.module('myDirectives', ['myServices']);
 
+dirs.directive('dirReadOut', ['$timeout', '$interval', 'websoc', function ($timeout, $interval, websoc) {
+    return {
+        restrict: 'EA',
+        scope: {
+            interfacetag: '@',
+            actiontype: '@',
+            parameter: '@',
+            formattype: '@',
+            unitsuffix: '@',
+            period: '@',
+            phase: '@'
+        },
+        templateUrl: 'CtrlAssets/html/SMReadOut.html',
+        controller: function ($scope) {
+            $scope.myvalue = "---";
+            $scope.subscribed = false;
+            $scope.destroyTimer = null;
+            $scope.subscribe = function () {
+                if ($scope.subscribed == false && websoc.isConnected()) {
+                    var myData = $.extend(true, {}, websoc.getprotocol_Scalar_Subscription());
+                    myData.interfaceTag = $scope.interfacetag;
+                    websoc.sendMyData(JSON.stringify(myData));
+                }
+            };
+            $scope.forceRedraw = function () {
+                if ($scope.draw) {
+                    $scope.$digest();
+                }
+            };
+            $scope.$on('InterfaceStatus-' + $scope.interfacetag, function (event, args) {
+                if (args.handshake == "requestSent") {
+                    //Do nothing
+                }
+                else if (args.handshake == "HostInProgress") {
+                    //Do nothing
+                }
+                else if (args.handshake == "HostComplete") {
+                    $scope.subscribed = true;
+                }
+            });
+            $scope.$on('ReportScalar-' + $scope.interfacetag, function (event, args) {
+                if ($scope.subscribed == true) {
+                    $scope.valuetype = args.valueType;
+                    if ($scope.valuetype == "String") {
+                        $scope.myvalue = args.String;
+                    }
+                    else if ($scope.valuetype == "Boolean") {
+                        $scope.myvalue = args.Boolean;
+                    }
+                    else if ($scope.valuetype == "Integer") {
+                        $scope.myvalue = args.Integer;
+                    }
+                    else if ($scope.valuetype == "Double") {
+                        $scope.myvalue = args.Double;
+                    }
+                    else {
+                        return;
+                    }
+                    $scope.forceRedraw();
+                }
+            });
+            $scope.$on('wsConnection', function (event, args) {
+                if (args == connectionEnum.CONNECTED) {
+                    $scope.myvalue = "Initialising...";
+                }
+                else
+                {
+                    $scope.myvalue = "---";
+                }
+                $scope.forceRedraw();
+            });
+            $interval(function () { $scope.subscribe() }, 2500);
+        },
+        link: function ($scope, element, attrs) {
+            element.bind("$destroy", function () {
+                var myData = $.extend(true, {}, websoc.getprotocol_Request_Scalar());
+                myData.title = "Scalar Unsubscribe";
+                myData.interfaceTag = $scope.interfacetag;
+                websoc.sendMyData(JSON.stringify(myData));
+                $timeout.cancel($scope.destroyTimer);
+                $scope.destroyTimer = $timeout(function () {
+                    $scope.$destroy();
+                }, 1000);
+            });
+        }
+    }
+}]);
+
 dirs.directive('dirCheckBox', [ '$timeout', '$interval', 'websoc', function ($timeout, $interval, websoc) {
     var uniqueId = 1;
     return {
@@ -86,7 +174,7 @@ dirs.directive('dirCheckBox', [ '$timeout', '$interval', 'websoc', function ($ti
                     }
 
                     if ($scope.status == "smcbISHIP") {
-                        if (!statusLockeded) {
+                        if (!$scope.statusLockeded) {
                             $scope.status = "smcbRS";
                             $timeout.cancel($scope.tin);
                             $scope.statusLocked = true;
@@ -170,14 +258,14 @@ dirs.directive('dirReadOutButton', [ '$rootScope', '$templateCache', '$timeout',
                 formattype: '@',
                 unitsuffix: '@',
                 period: '@',
-                phase: '@'
+                phase: '@',
+                caption: '@'
 			},
         templateUrl: 'CtrlAssets/html/ReadOutButton.html',
         controller: function ($scope) {
             $scope.valuetype = "";
             $scope.status = "robDisconnected";
             $scope.subscribed = false;
-            $scope.initialised = false;
             $scope.outValue = "---";         
             $scope.draw = true;
             $scope.tout = null;
@@ -194,7 +282,7 @@ dirs.directive('dirReadOutButton', [ '$rootScope', '$templateCache', '$timeout',
                 },1000);
             });
             $scope.OnClick = function(){
-                if ($scope.initialised == true) 
+                if ($scope.subscribed == true) 
                 {
                     var myData = $.extend(true, {}, websoc.getprotocol_Request_Scalar());
                     myData.title = "Request Scalar";
@@ -217,6 +305,8 @@ dirs.directive('dirReadOutButton', [ '$rootScope', '$templateCache', '$timeout',
                         return;
                     }
                     websoc.sendMyData(JSON.stringify(myData));
+                    $scope.status = "robYellow";
+                    $scope.forceRedraw();
                 }                   
             };
             $scope.reqtInit = function(){
@@ -261,7 +351,6 @@ dirs.directive('dirReadOutButton', [ '$rootScope', '$templateCache', '$timeout',
             $scope.$on('ReportScalar-' + $scope.interfacetag, function (event, args) {
                 if ($scope.subscribed == true)
                 {
-                    $scope.initialised = true;
                     $scope.valuetype = args.valueType;
                     if ($scope.valuetype == "String") {
                         $scope.outValue = args.String;
@@ -279,18 +368,18 @@ dirs.directive('dirReadOutButton', [ '$rootScope', '$templateCache', '$timeout',
                         return;
                     }
 
-                    if ($scope.status == "robYellow") {
-                        if (!statusLockeded) {
+//                    if ($scope.status == "robYellow") {
+                        if (!$scope.statusLocked) {
                             $scope.status = "robGreen";
                             $timeout.cancel($scope.tin);
                             $scope.statusLocked = true;
                             $scope.tin = $timeout(function () { $scope.releaseLock() }, 500);
                             $scope.forceRedraw();
                         }
-                    }
-                    else {
-                        $scope.forceRedraw();
-                    }
+    //                }
+      //              else {
+        //                $scope.forceRedraw();
+          //          }
                 }
             });            
             $scope.$on('wsConnection', function(event, args){
@@ -307,12 +396,11 @@ dirs.directive('dirReadOutButton', [ '$rootScope', '$templateCache', '$timeout',
                    $scope.status = "robDisconnected";                   
                    //set to defaults     
                    $scope.subscribed = false;
-                   $scope.initialised = false;
                    $scope.outValue = "---";
                    $scope.forceRedraw();
                }          
             });            
-            $scope.ipoll = $interval(function () { $scope.reqtInit() }, 2000);
+            $scope.ipoll = $interval(function () { $scope.reqtInit() }, 2500);
         },
         link: function ($scope, element, attrs) {
             element.bind("click", function() {

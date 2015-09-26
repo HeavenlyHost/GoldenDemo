@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QWebSocket>
+#include <QTimer>
 
 class dataStruct
 {
@@ -71,23 +72,24 @@ class ConfigManager : public QObject
 
 public:
     ConfigManager();
-    void bindMe();
-    void unbindMe();
 
 public slots:
 
     void triggerUpdateSlot(dataStruct data);
     void dataChangedSlot(dataStruct data);
     void interfaceStatusSlot(dataStruct data);
+    void updateDateTimeSlot();
 
 signals:
 
     void triggerUpdateSignal(dataStruct data);
     void dataChangedSignal(dataStruct data);
     void interfaceStatusSignal(dataStruct data);
+    void timeout();
 
 private:
     QList<dataStruct> GiData;
+    QTimer *updateDateTime;
 };
 
 
