@@ -84,7 +84,7 @@ signals:
 
     void triggerUpdateSignal(dataStruct data);
     void dataChangedSignal(dataStruct data);
-    void interfaceStatusSignal(dataStruct data);
+    void interfaceStatusSignal(dataStruct data, bool triggerUpdate);
     void timeout();
 
 private:

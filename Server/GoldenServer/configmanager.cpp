@@ -1,6 +1,7 @@
 #include "configmanager.h"
 #include <QtCore/QDebug>
 #include <QTimer>
+#include <QThread>
 
 ConfigManager::ConfigManager()
 {
@@ -53,7 +54,7 @@ ConfigManager::ConfigManager()
 
     updateDateTime = new QTimer(this);
     connect(updateDateTime, SIGNAL(timeout()), this, SLOT(updateDateTimeSlot()));
-    updateDateTime->start(500);
+    updateDateTime->start(50);
 }
 
 void ConfigManager::updateDateTimeSlot(){
@@ -105,6 +106,18 @@ void ConfigManager::dataChangedSlot(dataStruct data){
         {
             if (GiData[index].getvalueType() == data.getvalueType())
             {
+                //simulate change in handshake state
+                data.sethandshake("requestSent");
+                emit interfaceStatusSignal(data, false);
+
+                //simulate change in handshake state
+                data.sethandshake("HostInProgress");
+                emit interfaceStatusSignal(data, false);
+
+                //simulate change in handshake state
+                data.sethandshake("HostComplete");
+                emit interfaceStatusSignal(data, false);
+
                 //raise correct data change event
                 if (data.getvalueType() == "String")
                 {
@@ -141,22 +154,22 @@ void ConfigManager::interfaceStatusSlot(dataStruct data){
                 //simulate change in handshake state
                 GiData[index].sethandshake("requestSent");
                 data.sethandshake(GiData[index].gethandshake());
-                emit interfaceStatusSignal(data);
+                emit interfaceStatusSignal(data, true);
 
                 //simulate change in handshake state
                 GiData[index].sethandshake("HostInProgress");
                 data.sethandshake(GiData[index].gethandshake());
-                emit interfaceStatusSignal(data);
+                emit interfaceStatusSignal(data, true);
 
                 //simulate change in handshake state
                 GiData[index].sethandshake("HostComplete");
                 data.sethandshake(GiData[index].gethandshake());
-                emit interfaceStatusSignal(data);
+                emit interfaceStatusSignal(data, true);
             }
             else
             {
                 data.sethandshake(GiData[index].gethandshake());
-                emit interfaceStatusSignal(data);
+                emit interfaceStatusSignal(data, true);
             }
 
             break;

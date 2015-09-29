@@ -64,7 +64,7 @@ GoldenServer::GoldenServer(quint16 port, bool debug, QString appDirPath, QObject
     connect(this, SIGNAL(interfaceStatusSignal(dataStruct)), &ConfigManagerInstance, SLOT(interfaceStatusSlot(dataStruct)));
     connect(&ConfigManagerInstance, SIGNAL(dataChangedSignal(dataStruct)), this, SLOT(dataChangedSlot(dataStruct)));
     connect(&ConfigManagerInstance, SIGNAL(triggerUpdateSignal(dataStruct)), this, SLOT(triggerUpdateSlot(dataStruct)));
-    connect(&ConfigManagerInstance, SIGNAL(interfaceStatusSignal(dataStruct)), this, SLOT(interfaceStatusSlot(dataStruct)));
+    connect(&ConfigManagerInstance, SIGNAL(interfaceStatusSignal(dataStruct, bool)), this, SLOT(interfaceStatusSlot(dataStruct, bool)));
 }
 
 GoldenServer::~GoldenServer()
@@ -79,7 +79,7 @@ GoldenServer::~GoldenServer()
     disconnect(this, SIGNAL(interfaceStatusSignal(dataStruct)), &ConfigManagerInstance, SLOT(interfaceStatusSlot(dataStruct)));
     disconnect(&ConfigManagerInstance, SIGNAL(dataChangedSignal(dataStruct)), this, SLOT(dataChangedSlot(dataStruct)));
     disconnect(&ConfigManagerInstance, SIGNAL(triggerUpdateSignal(dataStruct)), this, SLOT(triggerUpdateSlot(dataStruct)));
-    disconnect(&ConfigManagerInstance, SIGNAL(interfaceStatusSignal(dataStruct)), this, SLOT(interfaceStatusSlot(dataStruct)));
+    disconnect(&ConfigManagerInstance, SIGNAL(interfaceStatusSignal(dataStruct, bool)), this, SLOT(interfaceStatusSlot(dataStruct, bool)));
 }
 
 void GoldenServer::ReadConfigXML(QString appDirPath)
@@ -436,7 +436,7 @@ void GoldenServer::triggerUpdateSlot(dataStruct data)
     }
 }
 
-void GoldenServer::interfaceStatusSlot(dataStruct data)
+void GoldenServer::interfaceStatusSlot(dataStruct data, bool triggerUpdate)
 {
     //Send to web sockets
     sockProtocol baseProtocol;
@@ -467,7 +467,8 @@ void GoldenServer::interfaceStatusSlot(dataStruct data)
                     break;
                 }
             }
-            emit triggerUpdateSignal(data);
+            if (triggerUpdate)
+                emit triggerUpdateSignal(data);
         }
     }
 }

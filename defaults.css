@@ -16,6 +16,7 @@ body{
 }
 
 .robOuter {
+    cursor: pointer;
 	display: inline-flex;
 	padding: 3px;
 	border-radius: 10px;
@@ -29,11 +30,16 @@ body{
 	background: linear-gradient(to bottom, #354563 100%, #476e9e 5%);
 }
 
-.robInner-robIdle {
+.robInnerBase
+{
+    cursor: pointer;
 	padding: 3px;
 	border-radius: 8px;
 	width: 100%;
 	height: 100%;
+}
+
+.robIdle {
 	background:	-moz-linear-gradient(top, #7892c2 5%, #476e9e 100%);
 	background:	-webkit-linear-gradient(top, #7892c2 5%, #476e9e 100%);
 	background:	-o-linear-gradient(top, #7892c2 5%, #476e9e 100%);
@@ -41,24 +47,7 @@ body{
 	background: linear-gradient(to bottom, #374969 5%, #476e9e 100%);
 }
 
-.robInner-robConnected {
-	padding: 3px;
-	border-radius: 8px;
-	width: 100%;
-	height: 100%;
-	background:	-moz-linear-gradient(top, #7892c2 5%, #476e9e 100%);
-	background:	-webkit-linear-gradient(top, #7892c2 5%, #476e9e 100%);
-	background:	-o-linear-gradient(top, #7892c2 5%, #476e9e 100%);
-	background:	-ms-linear-gradient(top, #7892c2 5%, #476e9e 100%);
-	background: linear-gradient(to bottom, #374969 5%, #476e9e 100%);
-}
-
-
-.robInner-robDisconnected {
-	padding: 3px;
-	border-radius: 8px;
-	width: 100%;
-	height: 100%;
+.robDisabled {
 	background:	-moz-linear-gradient(top, #7892c2 5%, #476e9e 100%);
 	background:	-webkit-linear-gradient(top, #7892c2 5%, #476e9e 100%);
 	background:	-o-linear-gradient(top, #7892c2 5%, #476e9e 100%);
@@ -66,11 +55,7 @@ body{
 	background: linear-gradient(to bottom, grey 5%, grey 100%);
 }
 
-.robInner-robGreen {
-	padding: 3px;
-	border-radius: 8px;
-	width: 100%;
-	height: 100%;
+.robGreen {
 	background:	-moz-linear-gradient(top, #7892c2 5%, #476e9e 100%);
 	background:	-webkit-linear-gradient(top, #7892c2 5%, #476e9e 100%);
 	background:	-o-linear-gradient(top, #7892c2 5%, #476e9e 100%);
@@ -78,11 +63,12 @@ body{
 	background: linear-gradient(to bottom, green 5%, green 100%);
 }
 
-.robInner-robYellow {
+.robYellow {
+/*    cursor: pointer;
 	padding: 3px;
 	border-radius: 8px;
 	width: 100%;
-	height: 100%;
+	height: 100%;*/
 	background:	-moz-linear-gradient(top, #7892c2 5%, #476e9e 100%);
 	background:	-webkit-linear-gradient(top, #7892c2 5%, #476e9e 100%);
 	background:	-o-linear-gradient(top, #7892c2 5%, #476e9e 100%);
@@ -90,11 +76,12 @@ body{
 	background: linear-gradient(to bottom, yellow 5%, yellow 100%);
 }
 
-.robInner-robOrange {
+.robOrange {
+/*    cursor: pointer;
 	padding: 3px;
 	border-radius: 8px;
 	width: 100%;
-	height: 100%;
+	height: 100%;*/
 	background:	-moz-linear-gradient(top, #7892c2 5%, #476e9e 100%);
 	background:	-webkit-linear-gradient(top, #7892c2 5%, #476e9e 100%);
 	background:	-o-linear-gradient(top, #7892c2 5%, #476e9e 100%);
@@ -103,10 +90,12 @@ body{
 }
 
 .robCentre {
+    cursor: pointer;
 	margin: 5% 0% 5% 0%;
 }
 
 .robCaption {
+    cursor: pointer;
 	line-height: 20px;
 	margin: 0 auto;
 	padding: 3px;
@@ -118,6 +107,7 @@ body{
 }
 
 .robValue {
+    cursor: pointer;
 	line-height: 20px;
 	margin: 0 auto;
 	padding: 3px;

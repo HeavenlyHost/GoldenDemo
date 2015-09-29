@@ -1,7 +1,7 @@
 <div class="robOuter">
-	<div class="robInner-{{status}}">
+	<div class="robInnerBase" ng-class="{'robIdle': status == 'Idle', 'robDisabled': status == 'Disabled', 'robGreen': status == 'Green', 'robOrange': status == 'Orange', 'robYellow': status == 'Yellow', 'robGreen': status == 'Green'}">
 		<div class="robCentre">
-			<p class="robCaption">{{caption}}</p>
+			<p class="robCaption">{{::caption}}</p>
 			<p class="robValue">{{outValue}}</p>
 		</div>
 	</div>

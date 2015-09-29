@@ -27,7 +27,7 @@ public slots:
 
     void triggerUpdateSlot(dataStruct data);
     void dataChangedSlot(dataStruct data);
-    void interfaceStatusSlot(dataStruct data);
+    void interfaceStatusSlot(dataStruct data, bool triggerUpdate);
 
 signals:
     void closed();

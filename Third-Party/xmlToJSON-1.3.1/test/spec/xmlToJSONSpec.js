@@ -28,7 +28,6 @@ describe("Parsing - grokAttr=true, grokText=true", function() {
 			'	 <f>false</f>',			
 			'</xml>'].join('\n');
 
-//		console.debug(xml);
     	result = xmlToJSON.parseString(xml, options);
     	console.log(JSON.stringify(result))
 
@@ -81,7 +80,6 @@ describe("Parsing - grokAttr=false, grokTest=false", function() {
 			'	 <f>false</f>',				
 			'</xml>'].join('\n');
 
-//		console.debug(xml);
     	result = xmlToJSON.parseString(xml, options);
     	console.log(JSON.stringify(result))
 

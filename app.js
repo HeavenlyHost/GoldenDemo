@@ -1,4 +1,4 @@
-var app = angular.module('heyApp', ['ngPopup', 'myServices', 'myDirectives']);
+var app = angular.module('heyApp', ['ngAnimate', 'ui.bootstrap', 'ngPopup', 'myServices', 'myDirectives']);
 
 var connectionEnum = {
     DISCONNECTED : 0,
@@ -34,134 +34,17 @@ app.run(['$rootScope', '$templateCache', '$http', 'fileaccessor', 'configmanager
     fileaccessor.getFileNamesOnly('Partials', getTemplates);
 }]);
 
-app.controller('heyController1', [ '$scope', '$timeout', 'websoc', function( $scope, $timeout, websoc, container, state ) {
-    $scope.dt = new Date();
-    $scope.draw = true;
-    $scope.tout = null;    
-    $scope.$on('GiData-strSmDateTime', function(event, args) {
-        $scope.dt = args.value; 
-            if ($scope.draw)
-            {
-                $scope.$digest();        
-            }                           
-    });
-    $scope.$on('delayDigest', function(event, args){        
-        $scope.draw = false;
-        $timeout.cancel($scope.tout);
-        $scope.tout = $timeout(function(){
-            $scope.draw = true;
-            $scope.$digest();                      
-        },1000);
-    });            
-}]);
+app.controller('heyController1', [ '$scope', function( $scope ) {}]);
 
-app.controller('heyController2', [ '$scope', '$timeout', 'websoc', function( $scope, $timeout, websoc, container, state ) {
-    $scope.dt = new Date();
-    $scope.draw = true;
-    $scope.tout = null;    
-    $scope.$on('GiData-strSmDateTime', function(event, args) {
-        $scope.dt = args.value; 
-            if ($scope.draw)
-            {
-                $scope.$digest();        
-            }                          
-    });
-    $scope.$on('delayDigest', function(event, args){        
-        $scope.draw = false;
-        $timeout.cancel($scope.tout);
-        $scope.tout = $timeout(function(){
-            $scope.draw = true;
-            $scope.$digest();                      
-        },1000);
-    });       
-    $scope.$on('_$destroy', function(event, args){
-        console.debug("heyController2_$destroy")
-    })     
-}]);
+app.controller('heyController2', [ '$scope', function( $scope ) {}]);
 
-app.controller('heyController3', [ '$scope', '$timeout', 'websoc', function( $scope, $timeout, websoc, container, state ) {
-    $scope.dt = new Date();
-    $scope.draw = true;
-    $scope.tout = null;    
-    $scope.$on('GiData-strSmDateTime', function(event, args) {
-        $scope.dt = args.value; 
-            if ($scope.draw)
-            {
-                $scope.$digest();        
-            }                           
-    });
-    $scope.$on('delayDigest', function(event, args){        
-        $scope.draw = false;
-        $timeout.cancel($scope.tout);
-        $scope.tout = $timeout(function(){
-            $scope.draw = true;
-            $scope.$digest();                      
-        },1000);
-    });            
-}]);
+app.controller('heyController3', [ '$scope', function( $scope ) {}]);
 
-app.controller('heyController4', [ '$scope', '$timeout', 'websoc', function( $scope, $timeout, websoc, container, state ) {
-    $scope.dt = new Date();
-    $scope.draw = true;    
-    $scope.tout = null;    
-    $scope.$on('GiData-strSmDateTime', function(event, args) {
-        $scope.dt = args.value; 
-            if ($scope.draw)
-            {
-                $scope.$digest();        
-            }                           
-    });
-    $scope.$on('delayDigest', function(event, args){        
-        $scope.draw = false;
-        $timeout.cancel($scope.tout);
-        $scope.tout = $timeout(function(){
-            $scope.draw = true;
-            $scope.$digest();                      
-        },1000);
-    });            
-}]);
+app.controller('heyController4', [ '$scope', function( $scope ) {}]);
 
-app.controller('checkBoxDemoController', [ '$scope', '$timeout', 'websoc', function( $scope, $timeout, websoc, container, state ) {
-    $scope.dt = new Date();
-    $scope.draw = true;    
-    $scope.tout = null;    
-    $scope.$on('GiData-strSmDateTime', function(event, args) {
-        $scope.dt = args.value; 
-            if ($scope.draw)
-            {
-                $scope.$digest();        
-            }                           
-    });
-    $scope.$on('delayDigest', function(event, args){        
-        $scope.draw = false;
-        $timeout.cancel($scope.tout);
-        $scope.tout = $timeout(function(){
-            $scope.draw = true;
-            $scope.$digest();                      
-        },1000);
-    });            
-}]);
+app.controller('checkBoxDemoController', [ '$scope', function( $scope ) {}]);
 
-app.controller('playerContoller', [ '$scope', '$timeout', 'websoc', function( $scope, $timeout, websoc, container, state ) {
-    $scope.dt = new Date();
-    $scope.draw = true;
-    $scope.tout = null;    
-    $scope.$on('GiData-strSmDateTime', function(event, args) {
-        $scope.dt = args.value; 
-            if ($scope.draw)
-            {
-                $scope.$digest();        
-            }                           
-    });
-    $scope.$on('delayDigest', function(event, args){        
-        $scope.draw = false;
-        $timeout.cancel($scope.tout);
-        $scope.tout = $timeout(function(){
-            $scope.draw = true;
-            $scope.$digest();                      
-        },1000);
-    });            
-}]);
+app.controller('playerContoller', [ '$scope', function( $scope ) {}]);
 
 app.controller('heyControllerPopup', [ '$scope', '$rootScope', function( $scope, $rootScope ) {
     $scope.ngPopupOption = {
@@ -183,93 +66,69 @@ app.controller('heyControllerPopup', [ '$scope', '$rootScope', function( $scope,
         {
             $rootScope.$broadcast('dockDialog', this);
         },
-        onDragStart : function()
-        {
-            $rootScope.$broadcast('delayDigest', this);            
-        },
+        onDragStart : function(){},
         onDragEnd : function(){},
-        onResize : function(){
-            $rootScope.$broadcast('delayDigest', this);
-        }
+        onResize : function(){}
     }
 }]);
 
 app.controller('heyControllerNav', [ '$compile', '$scope', '$rootScope', 'websoc', function( $compile, $scope, $rootScope, websoc ) {
-    $scope.addNewTemplate1 = function(){
-        
+    $scope.connected = false;
+    $scope.commsmessage = "Disconnected";
+    $scope.addNewTemplate1 = function () {
         var newItemConfig = {
             createNew: true,
             title: "Hey 1",
             moduleId: "heyModule1",
             templateId: "heyTemplate1"
         }; 
-        
         $rootScope.$broadcast('dockDialog', newItemConfig)
     };        
-    
     $scope.addNewTemplate2 = function(){
-        
         var newItemConfig = {
             createNew: true,
             title: "Hey 2",
             moduleId: "heyModule2",
             templateId: "heyTemplate2"
         }; 
-        
         $rootScope.$broadcast('dockDialog', newItemConfig)
     };
-    
     $scope.addNewTemplate3 = function(){
-        
         var newItemConfig = {
             createNew: true,
             title: "Hey 3",
             moduleId: "heyModule3",
             templateId: "heyTemplate3"
         }; 
-        
         $rootScope.$broadcast('dockDialog', newItemConfig)
     };
-    
     $scope.addNewTemplate4 = function(){
-        
         var newItemConfig = {
             createNew: true,
             title: "Hey 4",
             moduleId: "heyModule4",
             templateId: "heyTemplate4"
         }; 
-        
         $rootScope.$broadcast('dockDialog', newItemConfig)
     };    
-
-    $scope.addNewPlayerTemplate = function(){
-        
+    $scope.addNewPlayerTemplate = function(){        
         var newItemConfig = {
             createNew: true,
             title: "Rob Demo",
             moduleId: "playerModule",
             templateId: "playerTemplate"
-        }; 
-        
+        };         
         $rootScope.$broadcast('dockDialog', newItemConfig)
     };    
-
     $scope.addNewCheckBoxDemoTemplate = function(){
-        
         var newItemConfig = {
             createNew: true,
             title: "CheckBoxes",
             moduleId: "checkBoxDemoModule",
             templateId: "checkBoxDemoTemplate"
         }; 
-        
         $rootScope.$broadcast('dockDialog', newItemConfig)
-    };    
-
-    $scope.connected = false;
-    $scope.commsmessage = "Disconnected";
-    
+    };        
     $scope.$on('wsConnection', function(event, args) {
         if (args != connectionEnum.CONNECTING){
             if (args == connectionEnum.CONNECTED)
@@ -280,19 +139,16 @@ app.controller('heyControllerNav', [ '$compile', '$scope', '$rootScope', 'websoc
             else
             {
                 $scope.commsmessage = "Disconnected";   
-            $scope.connected = false;
+                $scope.connected = false;
             }            
         }
-    });
-    
+    });    
 }]);
 
-app.controller('heyControllerGldiv', [ '$document', '$scope', function( $document, $scope ) {
-}]);
+app.controller('heyControllerGldiv', [ '$document', '$scope', function( $document, $scope ) {}]);
 
 app.controller('heyControllerRoot', [ '$document', '$templateCache', '$http', '$compile', '$scope', '$rootScope', function( $document, $templateCache, $http, $compile, $scope, $rootScope ) {
     $scope.myLayout = new GoldenLayout({
-
          content:[{
              type: 'row',
              content: [{
@@ -305,8 +161,7 @@ app.controller('heyControllerRoot', [ '$document', '$templateCache', '$http', '$
                  }
              }]
          }]
-    }, $document.find('#gldiv'));
-    
+    }, $document.find('#gldiv'));    
     $scope.$on('dockDialog', function(event, args) {
         var newItemConfig = {
             title: args.title,
@@ -346,7 +201,6 @@ app.controller('heyControllerRoot', [ '$document', '$templateCache', '$http', '$
             });
             
             $scope.myLayout.on( 'tabDrag', function( stack ){
-                $rootScope.$broadcast('delayDigest', null);
             });
 
             $scope.myLayout.registerComponent( 'angularModule', $scope.AngularModuleComponent );
@@ -364,7 +218,6 @@ app.controller('heyControllerRoot', [ '$document', '$templateCache', '$http', '$
             $("div[id=pop" + args.templateId + "]").remove();            
         }
     });
-    
     $scope.stackCreated = function( stack ){
         /*
         * Re-use the label
@@ -419,26 +272,20 @@ app.controller('heyControllerRoot', [ '$document', '$templateCache', '$http', '$
         * so the popout icon is now last...might be worth doing something hack-ish here
         */
         new GoldenLayout.__lm.controls.HeaderButton( stack.header, label, 'lm_popout', popout );       
-    }
-        
+    }        
     $scope.myLayout.on( 'stackCreated', function( stack ){
         $scope.stackCreated( stack );
     });
-    
     $scope.myLayout.on( 'tabDrag', function( stack ){
-       $rootScope.$broadcast('delayDigest', null);
     });
-
     $scope.AngularModuleComponent = function (container, state) {
         var id = state.templateId + '.html';
         var html = $templateCache.get(id);
         html = $compile('<div>'+html+'</div>')($rootScope);
         container.getElement().html(html);                
     };
-
     $scope.$on('initGolden', function(event, args){
         $scope.myLayout.registerComponent( 'angularModule', $scope.AngularModuleComponent );
         $scope.myLayout.init();    
     });
-    
 }]);

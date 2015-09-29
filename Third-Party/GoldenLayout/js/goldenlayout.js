@@ -364,8 +364,6 @@ lm.utils.copy( lm.utils.DragListener.prototype, {
 
 	onTouchStart: function(oEvent)
 	{		
-		console.debug(oEvent.type);
-				
 		var coordinates = this._getCoordinates( oEvent );
 		
 		this._nOriginalX = coordinates.x;
@@ -380,8 +378,6 @@ lm.utils.copy( lm.utils.DragListener.prototype, {
 	
 	onTouchMove: function(oEvent)
 	{
-		console.debug(oEvent.type);
-
 		oEvent.preventDefault();
 		
 		var coordinates = this._getCoordinates( oEvent );
@@ -407,8 +403,6 @@ lm.utils.copy( lm.utils.DragListener.prototype, {
 
 	onTouchEnd: function(oEvent)
 	{				
-		console.debug(oEvent.type);
-
 		clearTimeout( this._timeout );
 
 		this._eBody.removeClass( 'lm_dragging' );
@@ -433,8 +427,6 @@ lm.utils.copy( lm.utils.DragListener.prototype, {
 
 	onMouseDown: function(oEvent)
 	{		
-		console.debug(oEvent.type);
-				
 		var coordinates = this._getCoordinates( oEvent );
 		
 		this._nOriginalX = coordinates.x;
@@ -448,8 +440,6 @@ lm.utils.copy( lm.utils.DragListener.prototype, {
 	
 	onMouseMove: function(oEvent)
 	{
-		console.debug(oEvent.type);
-
 		oEvent.preventDefault();
 
 		var coordinates = this._getCoordinates( oEvent );
@@ -475,8 +465,6 @@ lm.utils.copy( lm.utils.DragListener.prototype, {
 
 	onMouseUp: function(oEvent)
 	{				
-		console.debug(oEvent.type);
-
 		clearTimeout( this._timeout );
 
 		this._eBody.removeClass( 'lm_dragging' );
@@ -493,8 +481,6 @@ lm.utils.copy( lm.utils.DragListener.prototype, {
 
 	onContextMenu: function(oEvent)
 	{
-		console.debug(oEvent.type);
-
 		oEvent.preventDefault();		
 	},
 

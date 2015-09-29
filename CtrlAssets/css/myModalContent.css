@@ -1,0 +1,11 @@
+﻿.ModalRoot{
+    background-color: black;
+    border-bottom-color: orange;
+}
+
+.modal-input{
+    color: white;
+    background-color:black;
+    border-color: white;
+    border-radius: 2px;
+}

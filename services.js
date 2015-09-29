@@ -196,6 +196,12 @@ servs.service('websoc', ['$timeout', '$rootScope', 'configmanager', function($ti
         }
         $timeout(myWebSocket, 1000);            
     };
+
+    $rootScope.$on('sendMyData', function (event, args) {
+        if (connected == connectionEnum.CONNECTED) {
+            websock.send(JSON.stringify(args));
+        }
+    })
         
     myWebSocket();
     
