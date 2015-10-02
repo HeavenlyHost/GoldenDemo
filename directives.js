@@ -1,4 +1,194 @@
-var dirs = angular.module('myDirectives', ['ngAnimate', 'ui.bootstrap', 'myServices']);
+var dirs = angular.module('myDirectives', ['ngAnimate', 'ui.bootstrap', 'myServices', 'ui.grid', 'ui.grid.selection', 'ui.grid.autoResize']);
+
+dirs.directive('dirTable', ['$rootScope', '$timeout', '$interval', 'websoc', 'uiGridConstants', function ($rootScope, $timeout, $interval, websoc, uiGridConstants) {
+    return {
+        restrict: 'EA',
+        scope: {
+            interfacetags: '@',
+            actiontype: '@',
+            parameter: '@',
+            formattype: '@',
+            unitsuffix: '@',
+            period: '@',
+            phase: '@'
+        },
+        templateUrl: 'CtrlAssets/html/SMTable.html',
+        controller: function ($scope) {
+            $scope.ipoll = null;
+            $scope.myTableData = [];
+
+            $scope.gridOptions = {
+                data: $scope.myTableData,
+                enableFullRowSelection: true,
+                multiSelect: false,
+                columnDefs: []
+            };
+            $scope.addItem = function () {
+               // $scope.myTableData.push(
+               //     {
+               //         "firstName": "New",
+               //         "lastName": "Item"
+               //     }
+               // );
+            }
+            $scope.$on('wsConnection', function (event, args) {
+                if (args == connectionEnum.CONNECTED) {
+                    //Connected
+                }
+                else if (args == connectionEnum.DISCONNECTED) {
+                    //Reset the settings
+                    $scope.settings = eval('(' + $scope.interfacetags + ')');
+                }
+            });
+        },
+        link: function ($scope, element, attrs) {
+            $scope.ipolllink = null
+            $scope.arrayData = {}
+            element.bind("$destroy", function () {
+                $interval.cancel($scope.ipoll);
+            });
+            $scope.settings = eval('(' + $scope.interfacetags + ')');
+            $scope.newitem = {}
+            for (var item in $scope.settings.tags)
+            {
+
+                $scope.gridOptions.columnDefs.push({
+                    field: $scope.settings.tags[item].colname,
+                    displayName: $scope.settings.tags[item].displayname
+                });
+
+                $scope.newitem[$scope.gridOptions.columnDefs[item].field] = "";
+
+                var value = $scope.settings.tags[item].tag;
+
+                $scope.$on('reportArray-' + value, function (event, args) {
+                    console.debug(args);
+                    var index = $scope.settings.tags.map(function (x) { return x.tag; }).indexOf(args.interfaceTag);
+                    if (index != -1) {
+
+                        //Check for null tag                        
+                        if ($scope.settings.tags[index].tag == null)
+                            return;
+
+                        //Extract correct data type based on returned valueType
+                        if (args.valueType == "Boolean")
+                        {
+                            $scope.settings.tags[index].data = args.BooleanValues;
+                        }
+                        else if (args.valueType == "Integer")
+                        {
+                            $scope.settings.tags[index].data = args.IntegerValues;
+                        }
+                        else if (args.valueType == "Double")
+                        {
+                            $scope.settings.tags[index].data = args.DoubleValues;
+                        }
+                        else if (args.valueType == "String")
+                        {
+                            $scope.settings.tags[index].data = args.StringValues;
+                        }
+                        else
+                        {
+                            //Type not known so return now !!!
+                            return;
+                        }
+                            
+                        //Update table data
+                        for (var i = 0; i < $scope.settings.tags[index].data.length; i++)
+                        {
+                            if ($scope.myTableData.length <= i)
+                            {
+                                //Get blank item, do JSON to from as we don't want a reference
+                                var blankitem = JSON.parse(JSON.stringify($scope.newitem));
+
+                                //Add new object - if data is added to new item then push onto myTableData
+                                var propupdated = false;
+                                for (property in blankitem)
+                                {
+                                    //if property found for column then save and break loop 
+                                    if (property == $scope.settings.tags[index].colname) {
+                                        blankitem[property] = $scope.settings.tags[index].data[i];
+                                        propupdated = true;
+                                        break;
+                                    }
+                                }
+                                    
+                                //New data item populated ? Yes, then save into data store
+                                if (propupdated)
+                                {
+                                    $scope.myTableData.push(JSON.parse(JSON.stringify(blankitem)));
+                                }
+                            }
+                            else
+                            {
+                                //Search for existing property within the data table under current index
+                                for (property in $scope.myTableData[i]) {
+                                    //if property found for column then save and break loop 
+                                    if (property == $scope.settings.tags[index].colname) {
+                                            $scope.myTableData[i][property] = $scope.settings.tags[index].data[i];
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        //This is here to remove extra items if the item count reduces from server, don't need old values so delete
+                        while ($scope.myTableData.length > $scope.settings.tags[index].data.length) {
+                            $scope.myTableData.pop(i);
+                        }
+                    }
+                });
+                $scope.$on('interfaceStatus-' + value, function (event, args) {                    
+                    for (var index = 0; index < $scope.settings.tags.length; index++) {
+                        var subitem = $scope.settings.tags[index];
+                        var tag = subitem.tag || null;
+                        if (tag !== null && tag == args.interfaceTag)
+                        {
+                            if (args.handshake == "requestSent") {
+                                //Do nothing
+                            }
+                            else if (args.handshake == "HostInProgress") {
+                                //Do nothing
+                            }
+                            else if (args.handshake == "HostComplete") {
+                                $scope.settings.tags[index].subscribed = true;
+                            }
+                            break;
+                        }
+                    }
+                });
+            }
+            $scope.subscribe = function () {
+                for (var index = 0; index < $scope.settings.tags.length; index++) {
+                    var item = $scope.settings.tags[index];
+                    var subscribed = item.subscribed || null;
+                    if ((subscribed == null || subscribed == false) &&  websoc.isConnected())
+                    {
+                        var myData = $.extend(true, {}, websoc.getprotocol_Array_Subscription());
+                        myData.interfaceTag = item.tag;
+                        $rootScope.$emit('sendMyData', myData);
+                    }
+                }
+            };
+            $scope.ipolllink = $interval(function () { $scope.subscribe() }, 2500);
+            $scope.destroyTimer = null;
+            element.bind("$destroy", function () {
+                $interval.cancel($scope.ipolllink);
+                for (var index = 0; index < $scope.settings.tags.length; index++) {
+                    var myData = $.extend(true, {}, websoc.getprotocol_Array_Unsubscription());
+                    myData.title = "arrayUnsubscribe";
+                    myData.interfaceTag = $scope.settings.tags[index].tag;
+                    $rootScope.$emit('sendMyData', myData);
+                }
+                $timeout.cancel($scope.destroyTimer);
+                $scope.destroyTimer = $timeout(function () {
+                    $scope.$destroy();
+                }, 1000);
+            });
+        }
+    }
+
+}]);
 
 dirs.directive('dirReadOut', [ '$rootScope', '$timeout', '$interval', 'websoc', function ( $rootScope, $timeout, $interval, websoc) {
     return {
@@ -25,7 +215,7 @@ dirs.directive('dirReadOut', [ '$rootScope', '$timeout', '$interval', 'websoc', 
                     $rootScope.$emit('sendMyData', myData);
                 }
             };
-            $scope.$on('InterfaceStatus-' + $scope.interfacetag, function (event, args) {
+            $scope.$on('interfaceStatus-' + $scope.interfacetag, function (event, args) {
                 if (args.handshake == "requestSent") {
                     //Do nothing
                 }
@@ -36,7 +226,7 @@ dirs.directive('dirReadOut', [ '$rootScope', '$timeout', '$interval', 'websoc', 
                     $scope.subscribed = true;
                 }
             });
-            $scope.$on('ReportScalar-' + $scope.interfacetag, function (event, args) {
+            $scope.$on('reportScalar-' + $scope.interfacetag, function (event, args) {
                 if ($scope.subscribed == true) {
                     $scope.valuetype = args.valueType;
                     switch ($scope.valuetype) {
@@ -70,8 +260,8 @@ dirs.directive('dirReadOut', [ '$rootScope', '$timeout', '$interval', 'websoc', 
         link: function ($scope, element, attrs) {
             element.bind("$destroy", function () {
                 $interval.cancel($scope.ipoll);
-                var myData = $.extend(true, {}, websoc.getprotocol_Request_Scalar());
-                myData.title = "Scalar Unsubscribe";
+                var myData = $.extend(true, {}, websoc.getprotocol_Scalar_Unsubscription());
+                myData.title = "scalarUnsubscribe";
                 myData.interfaceTag = $scope.interfacetag;
                 $rootScope.$emit('sendMyData', myData);
                 $timeout.cancel($scope.destroyTimer);
@@ -114,7 +304,7 @@ dirs.directive('dirCheckBox', [ '$rootScope', '$timeout', '$interval', 'websoc',
                     $rootScope.$emit('sendMyData', myData);
                 }
             };
-            $scope.$on('InterfaceStatus-' + $scope.interfacetag, function (event, args) {
+            $scope.$on('interfaceStatus-' + $scope.interfacetag, function (event, args) {
                 if (args.handshake == "requestSent") {
                     $scope.status = "cbRS";
                 }
@@ -130,7 +320,7 @@ dirs.directive('dirCheckBox', [ '$rootScope', '$timeout', '$interval', 'websoc',
                     return;
                 }
             });
-            $scope.$on('ReportScalar-' + $scope.interfacetag, function (event, args) {
+            $scope.$on('reportScalar-' + $scope.interfacetag, function (event, args) {
                 if ($scope.subscribed == true) {
                     $scope.initialised = true;
                     $scope.valuetype = args.valueType;
@@ -182,7 +372,6 @@ dirs.directive('dirCheckBox', [ '$rootScope', '$timeout', '$interval', 'websoc',
                 {
                     if ($scope.initialised == true) {
                         var myData = $.extend(true, {}, websoc.getprotocol_Request_Scalar());
-                        myData.title = "Request Scalar";
                         myData.interfaceTag = $scope.interfacetag;
                         myData.valueType = $scope.valuetype;
                         if ($scope.valuetype == "String") {
@@ -209,8 +398,8 @@ dirs.directive('dirCheckBox', [ '$rootScope', '$timeout', '$interval', 'websoc',
         link: function ($scope, element, attrs) {
             element.bind("$destroy", function() {
                 $interval.cancel($scope.ipoll);
-                var myData = $.extend(true, {}, websoc.getprotocol_Request_Scalar());
-                myData.title = "Scalar Unsubscribe";
+                var myData = $.extend(true, {}, websoc.getprotocol_Scalar_Unsubscription());
+                myData.title = "scalarUnsubscribe";
                 myData.interfaceTag = $scope.interfacetag;
                 $rootScope.$emit('sendMyData', myData);
                 $timeout.cancel($scope.destroyTimer);
@@ -236,7 +425,7 @@ dirs.directive('dirReadOutButton', [ '$modal', '$rootScope', '$templateCache', '
                 phase: '@',
                 caption: '@'
 			},
-        templateUrl: 'CtrlAssets/html/ReadOutButton.html',
+        templateUrl: 'CtrlAssets/html/SMReadOutButton.html',
         controller: function ($scope) {
             $scope.valuetype = "";
             $scope.status = "Disabled";
@@ -252,7 +441,7 @@ dirs.directive('dirReadOutButton', [ '$modal', '$rootScope', '$templateCache', '
                 {
                     var modalInstance = $modal.open({
                         animation: true,
-                        templateUrl: 'CtrlAssets/html/myModalContent.html',
+                        templateUrl: 'CtrlAssets/html/SMModalBasic.html',
                         scope: $scope,
                         controller: function ($scope)
                         {
@@ -269,7 +458,6 @@ dirs.directive('dirReadOutButton', [ '$modal', '$rootScope', '$templateCache', '
     
                     modalInstance.result.then(function (result) {
                         var myData = $.extend(true, {}, websoc.getprotocol_Request_Scalar());
-                        myData.title = "Request Scalar";
                         myData.interfaceTag = $scope.interfacetag;
                         myData.valueType = $scope.valuetype;
                         if ($scope.valuetype == "String") {
@@ -304,7 +492,7 @@ dirs.directive('dirReadOutButton', [ '$modal', '$rootScope', '$templateCache', '
                 $scope.statusLocked = false;
                 //$scope.$digest();
             };
-            $scope.$on('InterfaceStatus-' + $scope.interfacetag, function (event, args) {
+            $scope.$on('interfaceStatus-' + $scope.interfacetag, function (event, args) {
                 if (args.handshake == "requestSent") {
                     $scope.status = "Orange";
                 }
@@ -321,7 +509,7 @@ dirs.directive('dirReadOutButton', [ '$modal', '$rootScope', '$templateCache', '
                 }
                 //$scope.$digest();
             });
-            $scope.$on('ReportScalar-' + $scope.interfacetag, function (event, args) {
+            $scope.$on('reportScalar-' + $scope.interfacetag, function (event, args) {
                 if ($scope.subscribed == true) {
                     $scope.valuetype = args.valueType;
                     if ($scope.valuetype == "String") {
@@ -379,8 +567,8 @@ dirs.directive('dirReadOutButton', [ '$modal', '$rootScope', '$templateCache', '
             });
             element.bind("$destroy", function() {
                 $interval.cancel($scope.ipoll);
-                var myData = $.extend(true, {}, websoc.getprotocol_Scalar_Subscription());
-                myData.title = "Scalar Unsubscription";
+                var myData = $.extend(true, {}, websoc.getprotocol_Scalar_Unsubscription());
+                myData.title = "scalarUnsubscription";
                 myData.interfaceTag = $scope.interfacetag;
                 $rootScope.$emit('sendMyData', myData);
                 $timeout.cancel($scope.destroyTimer);

@@ -130,18 +130,8 @@ servs.service('websoc', ['$timeout', '$rootScope', 'configmanager', function($ti
     var connected = connectionEnum.DISCONNECTED;    
     var websock = null;    
     
-    //define default web sock protocol
-    var protocol = { 
-        'taskId': 'uiGeneralReq',
-        'smString': 'none',
-        'type': 'none',
-        'value': 'none',
-        'status': 'UiTx',
-        'bvalue': 'False'
-    }
-
     var protocol_Request_Scalar = {
-        'title': 'Request Subscription',
+        'title': 'requestScalar',
         'interfaceTag': '',
         'valueType': 'Boolean',
         'Boolean': 'false',
@@ -151,7 +141,7 @@ servs.service('websoc', ['$timeout', '$rootScope', 'configmanager', function($ti
     }
 
     var protocol_Scalar_Subscription = {
-        'title': 'Scalar Subscription',
+        'title': 'scalarSubscription',
         'interfaceTag': '',
         'actionType': 'InsertConstant',
         'Parameter': '',
@@ -166,6 +156,31 @@ servs.service('websoc', ['$timeout', '$rootScope', 'configmanager', function($ti
         'Phase': '0'
     }
 
+    var protocol_Scalar_Unsubscription = {
+        'title': 'scalarUnsubscription',
+        'interfaceTag': '',
+    }
+
+    var protocol_Array_Subscription = {
+        'title': 'arraySubscription',
+        'interfaceTag': '',
+        'actionType': 'InsertConstant',
+        'Parameter': '',
+        'formatType': 'None',
+        'FormatString': '',
+        'UnitsSource': 'InterfaceDatabase',
+        'UnitSuffix': '',
+        'Gain': '0',
+        'Offset': '0',
+        'Quantity': 'Height',
+        'Period': '0',
+        'Phase': '0'
+    }
+
+    var protocol_Array_Unsubscription = {
+        'title': 'arrayUnsubscription',
+        'interfaceTag': '',
+    }
 
     var myWebSocket = function() {
         if (connected === connectionEnum.DISCONNECTED)
@@ -205,19 +220,20 @@ servs.service('websoc', ['$timeout', '$rootScope', 'configmanager', function($ti
         
     myWebSocket();
     
-    var sendMyData = function (data) {
-       if (connected == connectionEnum.CONNECTED)
-       {
-           websock.send(data);
-       }                
-    }
-    
-    var getProtocol = function(){
-        return protocol;
-    }
-
     var getprotocol_Scalar_Subscription = function () {
         return protocol_Scalar_Subscription;
+    }
+
+    var getprotocol_Array_Subscription = function () {
+        return protocol_Array_Subscription;
+    }
+
+    var getprotocol_Scalar_Unsubscription = function () {
+        return protocol_Scalar_Unsubscription;
+    }
+
+    var getprotocol_Array_Unsubscription = function () {
+        return protocol_Array_Unsubscription;
     }
 
     var getprotocol_Request_Scalar = function () {
@@ -229,10 +245,11 @@ servs.service('websoc', ['$timeout', '$rootScope', 'configmanager', function($ti
     };
     
     return {
-        sendMyData: sendMyData,
-        getProtocol: getProtocol,
         getprotocol_Request_Scalar: getprotocol_Request_Scalar,
         getprotocol_Scalar_Subscription: getprotocol_Scalar_Subscription,
+        getprotocol_Array_Subscription: getprotocol_Array_Subscription,
+        getprotocol_Scalar_Unsubscription: getprotocol_Scalar_Unsubscription,
+        getprotocol_Array_Unsubscription: getprotocol_Array_Unsubscription,
         isConnected: isConnected
     };    
 }]);

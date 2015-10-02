@@ -1,0 +1,12 @@
+<div class="templatetabdiv" data-ng-controller="tableDemoController">			
+    <header>
+        <h1>Table Demo</h1>
+        <dir-read-out interfacetag="strServerDateTime"></dir-read-out>
+    </header>
+    <div>
+        <dir-table interfacetags="{'tags':[ {tag: 'strArray1', colname: 'colName', displayname: 'My Name'},
+                                        {tag: 'dblArray1', colname: 'colMark', displayname: 'My Mark'},
+                                        {tag: 'blnArray1', colname: 'colLive', displayname: 'My Live'},
+                                        {tag: 'intArray1', colname: 'colPriority', displayname: 'My Priority'}]}" />
+    </div>
+</div>

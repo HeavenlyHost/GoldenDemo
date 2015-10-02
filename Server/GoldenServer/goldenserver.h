@@ -62,6 +62,11 @@ private:
         int Integer;
         double Double;
         QString String;
+        QList<bool> BooleanArray;
+        QList<int> IntegerArray;
+        QList<double> DoubleArray;
+        QList<QString> StringArray;
+        QList<QString> FormattedArray;
         QString notComputed;
         QString FormatType;
         QString FormattedValue;
@@ -85,10 +90,17 @@ private:
 
     QString EncodeToWsProtocol_ReportScalar(sockProtocol dataToEncode);
     QString EncodeToWsProtocol_InterfaceStatus(sockProtocol dataToEncode);
+    QString EncodeToWsProtocol_ReportArray(sockProtocol dataToEncode);
 
     void DecodeToWsProtocol_Base(sockProtocol *destForData, QString response);
     void DecodeToWsProtocol_ScalarSubscription(sockProtocol *destForData, QString response);
+    void DecodeToWsProtocol_ScalarUnsubscription(sockProtocol *destForData, QString response);
+    void DecodeToWsProtocol_ArraySubscription(sockProtocol *destForData, QString response);
+    void DecodeToWsProtocol_ArrayUnsubscription(sockProtocol *destForData, QString response);
     void DecodeToWsProtocol_RequestScalar(sockProtocol *destForData, QString response);
+
+    template <typename T>
+    QVariantList ToVariantList( const QList<T> &list );
 
     QMutex mutex;
 };

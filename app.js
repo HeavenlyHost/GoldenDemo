@@ -1,4 +1,4 @@
-var app = angular.module('heyApp', ['ngAnimate', 'ui.bootstrap', 'ngPopup', 'myServices', 'myDirectives']);
+var app = angular.module('demoApp', ['ngAnimate', 'ui.bootstrap', 'ngPopup', 'myServices', 'myDirectives']);
 
 var connectionEnum = {
     DISCONNECTED : 0,
@@ -34,9 +34,9 @@ app.run(['$rootScope', '$templateCache', '$http', 'fileaccessor', 'configmanager
     fileaccessor.getFileNamesOnly('Partials', getTemplates);
 }]);
 
-app.controller('heyController1', [ '$scope', function( $scope ) {}]);
+app.controller('videoDemoController', [ '$scope', function( $scope ) {}]);
 
-app.controller('heyController2', [ '$scope', function( $scope ) {}]);
+app.controller('tableDemoController', [ '$scope', function( $scope ) {}]);
 
 app.controller('heyController3', [ '$scope', function( $scope ) {}]);
 
@@ -44,9 +44,9 @@ app.controller('heyController4', [ '$scope', function( $scope ) {}]);
 
 app.controller('checkBoxDemoController', [ '$scope', function( $scope ) {}]);
 
-app.controller('playerContoller', [ '$scope', function( $scope ) {}]);
+app.controller('readOutButtonDemoContoller', [ '$scope', function( $scope ) {}]);
 
-app.controller('heyControllerPopup', [ '$scope', '$rootScope', function( $scope, $rootScope ) {
+app.controller('popupDemoController', [ '$scope', '$rootScope', function( $scope, $rootScope ) {
     $scope.ngPopupOption = {
         createNew: false,
         modelName: $rootScope.ngPopupOptionRoot.modelName,
@@ -75,55 +75,37 @@ app.controller('heyControllerPopup', [ '$scope', '$rootScope', function( $scope,
 app.controller('heyControllerNav', [ '$compile', '$scope', '$rootScope', 'websoc', function( $compile, $scope, $rootScope, websoc ) {
     $scope.connected = false;
     $scope.commsmessage = "Disconnected";
-    $scope.addNewTemplate1 = function () {
+    $scope.addNewVideoDemoTemplate = function () {
         var newItemConfig = {
             createNew: true,
-            title: "Hey 1",
-            moduleId: "heyModule1",
-            templateId: "heyTemplate1"
+            title: "Video Demo",
+            moduleId: "videoDemoModule",
+            templateId: "videoDemoTemplate"
         }; 
         $rootScope.$broadcast('dockDialog', newItemConfig)
     };        
-    $scope.addNewTemplate2 = function(){
+    $scope.addNewTableDemoTemplate = function(){
         var newItemConfig = {
             createNew: true,
-            title: "Hey 2",
-            moduleId: "heyModule2",
-            templateId: "heyTemplate2"
+            title: "Table Demo",
+            moduleId: "tableDemoModule",
+            templateId: "tableDemoTemplate"
         }; 
         $rootScope.$broadcast('dockDialog', newItemConfig)
     };
-    $scope.addNewTemplate3 = function(){
+    $scope.addNewReadOutButtonDemoTemplate = function(){        
         var newItemConfig = {
             createNew: true,
-            title: "Hey 3",
-            moduleId: "heyModule3",
-            templateId: "heyTemplate3"
-        }; 
-        $rootScope.$broadcast('dockDialog', newItemConfig)
-    };
-    $scope.addNewTemplate4 = function(){
-        var newItemConfig = {
-            createNew: true,
-            title: "Hey 4",
-            moduleId: "heyModule4",
-            templateId: "heyTemplate4"
-        }; 
-        $rootScope.$broadcast('dockDialog', newItemConfig)
-    };    
-    $scope.addNewPlayerTemplate = function(){        
-        var newItemConfig = {
-            createNew: true,
-            title: "Rob Demo",
-            moduleId: "playerModule",
-            templateId: "playerTemplate"
+            title: "Read Out Button Demo",
+            moduleId: "readOutButtonDemoModule",
+            templateId: "readOutButtonDemoTemplate"
         };         
         $rootScope.$broadcast('dockDialog', newItemConfig)
     };    
     $scope.addNewCheckBoxDemoTemplate = function(){
         var newItemConfig = {
             createNew: true,
-            title: "CheckBoxes",
+            title: "Check Boxes Demo",
             moduleId: "checkBoxDemoModule",
             templateId: "checkBoxDemoTemplate"
         }; 
@@ -145,19 +127,19 @@ app.controller('heyControllerNav', [ '$compile', '$scope', '$rootScope', 'websoc
     });    
 }]);
 
-app.controller('heyControllerGldiv', [ '$document', '$scope', function( $document, $scope ) {}]);
+app.controller('glDivController', [ '$document', '$scope', function( $document, $scope ) {}]);
 
-app.controller('heyControllerRoot', [ '$document', '$templateCache', '$http', '$compile', '$scope', '$rootScope', function( $document, $templateCache, $http, $compile, $scope, $rootScope ) {
+app.controller('rootController', [ '$document', '$templateCache', '$http', '$compile', '$scope', '$rootScope', function( $document, $templateCache, $http, $compile, $scope, $rootScope ) {
     $scope.myLayout = new GoldenLayout({
          content:[{
              type: 'row',
              content: [{
-                 title: 'Player',
+                 title: 'Read Out Button Demo',
                  type: 'component',
                  componentName: 'angularModule',
                  componentState: {
-                     module: 'playerModule',
-                     templateId: 'playerTemplate',
+                     module: 'readOutButtonDemoModule',
+                     templateId: 'readOutButtonDemoTemplate',
                  }
              }]
          }]
@@ -261,7 +243,7 @@ app.controller('heyControllerRoot', [ '$document', '$templateCache', '$http', '$
                 title: item.config.title,
             }
 
-            var myPopup = angular.element('<div id=pop' + templateId + ' data-ng-controller="heyControllerPopup"><ng-pop-up option="ngPopupOption"></ng-pop-up></div>');
+            var myPopup = angular.element('<div id=pop' + templateId + ' data-ng-controller="popupDemoController"><ng-pop-up option="ngPopupOption"></ng-pop-up></div>');
             html = $compile(myPopup)($rootScope);
             angular.element(document.body).append(html);
         };
