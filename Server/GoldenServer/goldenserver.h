@@ -1,12 +1,14 @@
 #ifndef GOLDENSERVER_H
 #define GOLDENSERVER_H
 
-#include "configmanager.h"
 #include <QtCore/QObject>
 #include <QtCore/QList>
 #include <QtCore/QByteArray>
 #include <QCoreApplication>
 #include <QWebSocket>
+
+#include "configmanager.h"
+#include "datastruct.h"
 
 QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
@@ -23,7 +25,6 @@ public slots:
     void onNewConnection();
     void processTextMessage(QString message);
     void socketDisconnected();
-    void update();
 
     void triggerUpdateSlot(dataStruct data);
     void dataChangedSlot(dataStruct data);
@@ -31,7 +32,6 @@ public slots:
 
 signals:
     void closed();
-    void timeout();
     void triggerUpdateSignal(dataStruct data);
     void dataChangedSignal(dataStruct data);
     void interfaceStatusSignal(dataStruct data);
@@ -49,27 +49,27 @@ private:
         QString title;
         QString interfaceTag;
         QString actionType;
-        QString Parameter;
-        QString FormatString;
-        QString UnitSuffix;
-        int Gain;
-        int Offset;
-        QString Quantity;
-        int Period;
-        int Phase;
+        QString parameter;
+        QString formatString;
+        QString unitSuffix;
+        int gain;
+        int offset;
+        QString quantity;
+        int period;
+        int phase;
         QString valueType;
-        bool Boolean;
-        int Integer;
-        double Double;
-        QString String;
-        QList<bool> BooleanArray;
-        QList<int> IntegerArray;
-        QList<double> DoubleArray;
-        QList<QString> StringArray;
-        QList<QString> FormattedArray;
+        bool booleanVal;
+        int integerVal;
+        double doubleVal;
+        QString stringVal;
+        QList<bool> booleanArray;
+        QList<int> integerArray;
+        QList<double> doubleArray;
+        QList<QString> stringArray;
+        QList<QString> formattedArray;
         QString notComputed;
-        QString FormatType;
-        QString FormattedValue;
+        QString formatType;
+        QString formattedValue;
         bool disabledState;
         bool errorState;
         QString disabledReason;

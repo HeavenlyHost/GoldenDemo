@@ -133,27 +133,24 @@ servs.service('websoc', ['$timeout', '$rootScope', 'configmanager', function($ti
     var protocol_Request_Scalar = {
         'title': 'requestScalar',
         'interfaceTag': '',
-        'valueType': 'Boolean',
-        'Boolean': 'false',
-        'Integer': '0',
-        'Double': '0',
-        'String': ''
+        'valueType': '',
+        'parameter': ''
     }
 
     var protocol_Scalar_Subscription = {
         'title': 'scalarSubscription',
         'interfaceTag': '',
         'actionType': 'InsertConstant',
-        'Parameter': '',
+        'parameter': '',
         'formatType': 'None',
-        'FormatString': '',
-        'UnitsSource': 'InterfaceDatabase',
-        'UnitSuffix': '',
-        'Gain': '0',
-        'Offset': '0',
-        'Quantity': 'Height',
-        'Period': '0',
-        'Phase': '0'
+        'formatString': '',
+        'unitsSource': 'InterfaceDatabase',
+        'unitSuffix': '',
+        'gain': '0',
+        'offset': '0',
+        'quantity': 'Height',
+        'period': '0',
+        'phase': '0'
     }
 
     var protocol_Scalar_Unsubscription = {
@@ -165,16 +162,16 @@ servs.service('websoc', ['$timeout', '$rootScope', 'configmanager', function($ti
         'title': 'arraySubscription',
         'interfaceTag': '',
         'actionType': 'InsertConstant',
-        'Parameter': '',
+        'parameter': '',
         'formatType': 'None',
-        'FormatString': '',
-        'UnitsSource': 'InterfaceDatabase',
-        'UnitSuffix': '',
-        'Gain': '0',
-        'Offset': '0',
-        'Quantity': 'Height',
-        'Period': '0',
-        'Phase': '0'
+        'formatString': '',
+        'unitsSource': 'InterfaceDatabase',
+        'unitSuffix': '',
+        'gain': '0',
+        'offset': '0',
+        'quantity': 'Height',
+        'period': '0',
+        'phase': '0'
     }
 
     var protocol_Array_Unsubscription = {

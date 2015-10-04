@@ -1,6 +1,7 @@
 #include "goldenserver.h"
 #include "configmanager.h"
 #include "singleton.h"
+#include "datastruct.h"
 #include "QtWebSockets/qwebsocketserver.h"
 #include "QtWebSockets/qwebsocket.h"
 #include <QFile>
@@ -58,10 +59,6 @@ GoldenServer::GoldenServer(quint16 port, bool debug, QString appDirPath, QObject
         connect(m_pWebSocketServer, &QWebSocketServer::closed, this, &GoldenServer::closed);
     }
 
-    timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(50);
-
     connect(this, SIGNAL(dataChangedSignal(dataStruct)), &ConfigManagerInstance, SLOT(dataChangedSlot(dataStruct)));
     connect(this, SIGNAL(triggerUpdateSignal(dataStruct)), &ConfigManagerInstance, SLOT(triggerUpdateSlot(dataStruct)));
     connect(this, SIGNAL(interfaceStatusSignal(dataStruct)), &ConfigManagerInstance, SLOT(interfaceStatusSlot(dataStruct)));
@@ -72,9 +69,7 @@ GoldenServer::GoldenServer(quint16 port, bool debug, QString appDirPath, QObject
 
 GoldenServer::~GoldenServer()
 {
-    timer->stop();
     m_pWebSocketServer->close();
-//    qDeleteAll(m_clients.begin(), m_clients.end());
     m_clients.clear();
     //Disconnects
     disconnect(this, SIGNAL(dataChangedSignal(dataStruct)), &ConfigManagerInstance, SLOT(dataChangedSlot(dataStruct)));
@@ -146,31 +141,6 @@ void GoldenServer::ReadConfigXML(QString appDirPath)
     xmlFile->close();
 }
 
-void GoldenServer::update()
-{
-    QDateTime dt = QDateTime::currentDateTime();
-    sdt = dt.toString(Qt::TextDate);
-    int index = 0;
-    while(index < m_clients.length())
-    {
-        try
-        {
-            // send out general date time message
-            sockProtocol newDataOut;
-            newDataOut.title = "ReportScaler";
-            newDataOut.valueType = "String";
-            newDataOut.FormattedValue = sdt;
-            QString jsonstr = EncodeToWsProtocol_ReportScalar(newDataOut);
-            m_clients[index].sock->sendTextMessage(jsonstr);
-            index++;
-        }
-        catch(...)
-        {
-            qDebug() << "GoldenServer::update - Exception";
-        }
-    }
-}
-
 void GoldenServer::onNewConnection()
 {
     QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
@@ -194,11 +164,25 @@ QString GoldenServer::EncodeToWsProtocol_ReportScalar(sockProtocol dataToEncode)
     jsonObj["interfaceTag"] = dataToEncode.interfaceTag;
     jsonObj["notComputed"] = dataToEncode.notComputed;
     jsonObj["valueType"] = dataToEncode.valueType;
-    jsonObj["Boolean"] = dataToEncode.Boolean;
-    jsonObj["Integer"] = dataToEncode.Integer;
-    jsonObj["Double"] = dataToEncode.Double;
-    jsonObj["String"] = dataToEncode.String;
-    jsonObj["FormattedValue"] = dataToEncode.FormattedValue;
+    //Check for type
+    if (dataToEncode.valueType == "Boolean")
+    {
+        jsonObj["booleanVal"] = dataToEncode.booleanVal;
+    }
+    else if (dataToEncode.valueType == "Integer")
+    {
+        jsonObj["integerVal"] = dataToEncode.integerVal;
+    }
+    else if (dataToEncode.valueType == "Double")
+    {
+        jsonObj["doubleVal"] = dataToEncode.doubleVal;
+    }
+    else if (dataToEncode.valueType == "String")
+    {
+        jsonObj["stringVal"] = dataToEncode.stringVal;
+    }
+    //Add formatted value
+    jsonObj["formattedValue"] = dataToEncode.formattedValue;
 
     QJsonDocument doc(jsonObj);
     QString strJson(doc.toJson(QJsonDocument::Compact));
@@ -214,17 +198,17 @@ QString GoldenServer::EncodeToWsProtocol_ReportArray(sockProtocol dataToEncode)
     jsonObj["interfaceTag"] = dataToEncode.interfaceTag;
     jsonObj["notComputed"] = dataToEncode.notComputed;
     jsonObj["valueType"] = dataToEncode.valueType;
-
+    //Check for value type
     if (dataToEncode.valueType == "Boolean")
-        jsonObj["BooleanValues"] = QJsonArray::fromVariantList(ToVariantList(dataToEncode.BooleanArray));
+        jsonObj["booleanValues"] = QJsonArray::fromVariantList(ToVariantList(dataToEncode.booleanArray));
     else if (dataToEncode.valueType == "Integer")
-        jsonObj["IntegerValues"] = QJsonArray::fromVariantList(ToVariantList(dataToEncode.IntegerArray));
+        jsonObj["integerValues"] = QJsonArray::fromVariantList(ToVariantList(dataToEncode.integerArray));
     else if (dataToEncode.valueType == "Double")
-        jsonObj["DoubleValues"] = QJsonArray::fromVariantList(ToVariantList(dataToEncode.DoubleArray));
+        jsonObj["doubleValues"] = QJsonArray::fromVariantList(ToVariantList(dataToEncode.doubleArray));
     else if (dataToEncode.valueType == "String")
-        jsonObj["StringValues"] = QJsonArray::fromVariantList(ToVariantList(dataToEncode.StringArray));
-
-    jsonObj["FormattedValue"] = QJsonArray::fromVariantList(ToVariantList(dataToEncode.FormattedArray));
+        jsonObj["stringValues"] = QJsonArray::fromVariantList(ToVariantList(dataToEncode.stringArray));
+    //Add formatted type
+    jsonObj["formattedValues"] = QJsonArray::fromVariantList(ToVariantList(dataToEncode.formattedArray));
 
     QJsonDocument doc(jsonObj);
     QString strJson(doc.toJson(QJsonDocument::Compact));
@@ -247,7 +231,6 @@ QString GoldenServer::EncodeToWsProtocol_InterfaceStatus(sockProtocol dataToEnco
     //encode to websocket protocol
     QJsonObject jsonObj; // define new JSON object
     jsonObj["title"] = dataToEncode.title;
-    jsonObj["description"] = dataToEncode.description;
     jsonObj["interfaceTag"] = dataToEncode.interfaceTag;
     jsonObj["disabledState"] = dataToEncode.disabledState;
     jsonObj["errorState"] = dataToEncode.errorState;
@@ -281,16 +264,16 @@ void GoldenServer::DecodeToWsProtocol_ScalarSubscription(sockProtocol *destForDa
     destForData->title = jsonObj["title"].toString();
     destForData->interfaceTag = jsonObj["interfaceTag"].toString();
     destForData->actionType = jsonObj["actionType"].toString();
-    destForData->Parameter = jsonObj["Parameter"].toString();
-    destForData->FormatType = jsonObj["FormatType"].toString();
-    destForData->FormatString = jsonObj["FormatString"].toString();
-    destForData->UnitSuffix = jsonObj["UnitSuffix"].toBool();
-    destForData->Period = jsonObj["Period"].toBool();
-    destForData->Gain = jsonObj["Gain"].toInt();
-    destForData->Offset = jsonObj["Offset"].toInt();
-    destForData->Quantity = jsonObj["Quantity"].toString();
-    destForData->Period = jsonObj["Period"].toInt();
-    destForData->Phase = jsonObj["Phase"].toInt();
+    destForData->parameter = jsonObj["parameter"].toString();
+    destForData->formatType = jsonObj["formatType"].toString();
+    destForData->formatString = jsonObj["formatString"].toString();
+    destForData->unitSuffix = jsonObj["unitSuffix"].toBool();
+    destForData->period = jsonObj["period"].toBool();
+    destForData->gain = jsonObj["gain"].toInt();
+    destForData->offset = jsonObj["offset"].toInt();
+    destForData->quantity = jsonObj["quantity"].toString();
+    destForData->period = jsonObj["period"].toInt();
+    destForData->phase = jsonObj["phase"].toInt();
 }
 
 void GoldenServer::DecodeToWsProtocol_ScalarUnsubscription(sockProtocol *destForData, QString response)
@@ -312,16 +295,16 @@ void GoldenServer::DecodeToWsProtocol_ArraySubscription(sockProtocol *destForDat
     destForData->title = jsonObj["title"].toString();
     destForData->interfaceTag = jsonObj["interfaceTag"].toString();
     destForData->actionType = jsonObj["actionType"].toString();
-    destForData->Parameter = jsonObj["Parameter"].toString();
-    destForData->FormatType = jsonObj["FormatType"].toString();
-    destForData->FormatString = jsonObj["FormatString"].toString();
-    destForData->UnitSuffix = jsonObj["UnitSuffix"].toBool();
-    destForData->Period = jsonObj["Period"].toBool();
-    destForData->Gain = jsonObj["Gain"].toInt();
-    destForData->Offset = jsonObj["Offset"].toInt();
-    destForData->Quantity = jsonObj["Quantity"].toString();
-    destForData->Period = jsonObj["Period"].toInt();
-    destForData->Phase = jsonObj["Phase"].toInt();}
+    destForData->parameter = jsonObj["parameter"].toString();
+    destForData->formatType = jsonObj["formatType"].toString();
+    destForData->formatString = jsonObj["formatString"].toString();
+    destForData->unitSuffix = jsonObj["unitSuffix"].toBool();
+    destForData->period = jsonObj["period"].toBool();
+    destForData->gain = jsonObj["gain"].toInt();
+    destForData->offset = jsonObj["offset"].toInt();
+    destForData->quantity = jsonObj["quantity"].toString();
+    destForData->period = jsonObj["period"].toInt();
+    destForData->phase = jsonObj["phase"].toInt();}
 
 void GoldenServer::DecodeToWsProtocol_ArrayUnsubscription(sockProtocol *destForData, QString response)
 {
@@ -342,10 +325,10 @@ void GoldenServer::DecodeToWsProtocol_RequestScalar(sockProtocol *destForData, Q
     destForData->title = jsonObj["title"].toString();
     destForData->interfaceTag = jsonObj["interfaceTag"].toString();
     destForData->valueType = jsonObj["valueType"].toString();
-    destForData->Boolean = jsonObj["Boolean"].toBool();
-    destForData->Integer = jsonObj["Integer"].toInt();
-    destForData->Double = jsonObj["Double"].toDouble();
-    destForData->String = jsonObj["String"].toString();
+    destForData->booleanVal = jsonObj["parameter"].toBool();
+    destForData->integerVal = jsonObj["parameter"].toInt();
+    destForData->doubleVal = jsonObj["parameter"].toDouble();
+    destForData->stringVal = jsonObj["parameter"].toString();
 }
 
 void GoldenServer::processTextMessage(QString message)
@@ -463,10 +446,10 @@ void GoldenServer::processTextMessage(QString message)
                     {
                         dataStruct myStruct = dataStruct(   destForData->interfaceTag,
                                                             destForData->valueType,
-                                                            destForData->Boolean,
-                                                            destForData->Integer,
-                                                            destForData->Double,
-                                                            destForData->String,
+                                                            destForData->booleanVal,
+                                                            destForData->integerVal,
+                                                            destForData->doubleVal,
+                                                            destForData->stringVal,
                                                             m_clients[i].sock);
                         emit dataChangedSignal(myStruct);
                         break;
@@ -516,11 +499,11 @@ void GoldenServer::dataChangedSlot(dataStruct data)
         baseProtocol.interfaceTag = data.gettag();
         baseProtocol.notComputed = data.getnotComputed();
         baseProtocol.valueType = data.getvalueType();
-        baseProtocol.BooleanArray = data.get_bool_arr_values();
-        baseProtocol.IntegerArray = data.get_int_arr_values();
-        baseProtocol.DoubleArray = data.get_dbl_arr_values();
-        baseProtocol.StringArray = data.get_str_arr_values();
-        baseProtocol.FormattedArray = data.get_ftd_arr_values();
+        baseProtocol.booleanArray = data.get_bool_arr_values();
+        baseProtocol.integerArray = data.get_int_arr_values();
+        baseProtocol.doubleArray = data.get_dbl_arr_values();
+        baseProtocol.stringArray = data.get_str_arr_values();
+        baseProtocol.formattedArray = data.get_ftd_arr_values();
 
         int i = 0;
         while (i < m_clients.length())
@@ -548,11 +531,11 @@ void GoldenServer::dataChangedSlot(dataStruct data)
         baseProtocol.notComputed = data.getnotComputed();
         baseProtocol.interfaceTag = data.gettag();
         baseProtocol.valueType = data.getvalueType();
-        baseProtocol.Boolean = data.getbln();
-        baseProtocol.Integer = data.getint();
-        baseProtocol.Double = data.getdbl();
-        baseProtocol.String = data.getstr();
-        baseProtocol.FormattedValue = data.getformattedValue();
+        baseProtocol.booleanVal = data.getbln();
+        baseProtocol.integerVal = data.getint();
+        baseProtocol.doubleVal = data.getdbl();
+        baseProtocol.stringVal = data.getstr();
+        baseProtocol.formattedValue = data.getformattedValue();
 
         int i = 0;
         while (i < m_clients.length())
@@ -575,7 +558,6 @@ void GoldenServer::dataChangedSlot(dataStruct data)
         }
 
     }
-
 }
 
 void GoldenServer::triggerUpdateSlot(dataStruct data)
@@ -592,11 +574,11 @@ void GoldenServer::triggerUpdateSlot(dataStruct data)
         baseProtocol.interfaceTag = data.gettag();
         baseProtocol.notComputed = data.getnotComputed();
         baseProtocol.valueType = data.getvalueType();
-        baseProtocol.BooleanArray = data.get_bool_arr_values();
-        baseProtocol.IntegerArray = data.get_int_arr_values();
-        baseProtocol.DoubleArray = data.get_dbl_arr_values();
-        baseProtocol.StringArray = data.get_str_arr_values();
-        baseProtocol.FormattedArray = data.get_ftd_arr_values();
+        baseProtocol.booleanArray = data.get_bool_arr_values();
+        baseProtocol.integerArray = data.get_int_arr_values();
+        baseProtocol.doubleArray = data.get_dbl_arr_values();
+        baseProtocol.stringArray = data.get_str_arr_values();
+        baseProtocol.formattedArray = data.get_ftd_arr_values();
 
         if (data.getsock() != NULL)
         {
@@ -615,11 +597,11 @@ void GoldenServer::triggerUpdateSlot(dataStruct data)
         baseProtocol.interfaceTag = data.gettag();
         baseProtocol.notComputed = data.getnotComputed();
         baseProtocol.valueType = data.getvalueType();
-        baseProtocol.Boolean = data.getbln();
-        baseProtocol.Integer = data.getint();
-        baseProtocol.Double = data.getdbl();
-        baseProtocol.String = data.getstr();
-        baseProtocol.FormattedValue = data.getformattedValue();
+        baseProtocol.booleanVal = data.getbln();
+        baseProtocol.integerVal = data.getint();
+        baseProtocol.doubleVal = data.getdbl();
+        baseProtocol.stringVal = data.getstr();
+        baseProtocol.formattedValue = data.getformattedValue();
 
         if (data.getsock() != NULL)
         {
@@ -634,7 +616,6 @@ void GoldenServer::interfaceStatusSlot(dataStruct data, bool triggerUpdate)
     //Send to web sockets
     sockProtocol baseProtocol;
     baseProtocol.title = "interfaceStatus";
-    baseProtocol.description = "Interface Status";
     baseProtocol.interfaceTag = data.gettag();
     baseProtocol.disabledState = data.getdisabledState();
     baseProtocol.errorState = data.geterrorState();

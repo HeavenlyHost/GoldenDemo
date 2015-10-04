@@ -23,14 +23,6 @@ dirs.directive('dirTable', ['$rootScope', '$timeout', '$interval', 'websoc', 'ui
                 multiSelect: false,
                 columnDefs: []
             };
-            $scope.addItem = function () {
-               // $scope.myTableData.push(
-               //     {
-               //         "firstName": "New",
-               //         "lastName": "Item"
-               //     }
-               // );
-            }
             $scope.$on('wsConnection', function (event, args) {
                 if (args == connectionEnum.CONNECTED) {
                     //Connected
@@ -73,19 +65,19 @@ dirs.directive('dirTable', ['$rootScope', '$timeout', '$interval', 'websoc', 'ui
                         //Extract correct data type based on returned valueType
                         if (args.valueType == "Boolean")
                         {
-                            $scope.settings.tags[index].data = args.BooleanValues;
+                            $scope.settings.tags[index].data = args.booleanValues;
                         }
                         else if (args.valueType == "Integer")
                         {
-                            $scope.settings.tags[index].data = args.IntegerValues;
+                            $scope.settings.tags[index].data = args.integerValues;
                         }
                         else if (args.valueType == "Double")
                         {
-                            $scope.settings.tags[index].data = args.DoubleValues;
+                            $scope.settings.tags[index].data = args.doubleValues;
                         }
                         else if (args.valueType == "String")
                         {
-                            $scope.settings.tags[index].data = args.StringValues;
+                            $scope.settings.tags[index].data = args.stringValues;
                         }
                         else
                         {
@@ -176,7 +168,6 @@ dirs.directive('dirTable', ['$rootScope', '$timeout', '$interval', 'websoc', 'ui
                 $interval.cancel($scope.ipolllink);
                 for (var index = 0; index < $scope.settings.tags.length; index++) {
                     var myData = $.extend(true, {}, websoc.getprotocol_Array_Unsubscription());
-                    myData.title = "arrayUnsubscribe";
                     myData.interfaceTag = $scope.settings.tags[index].tag;
                     $rootScope.$emit('sendMyData', myData);
                 }
@@ -231,16 +222,16 @@ dirs.directive('dirReadOut', [ '$rootScope', '$timeout', '$interval', 'websoc', 
                     $scope.valuetype = args.valueType;
                     switch ($scope.valuetype) {
                         case "String":
-                            $scope.myvalue = args.String;
+                            $scope.myvalue = args.stringVal;
                             break;
                         case "Boolean":
-                            $scope.myvalue = args.Boolean;
+                            $scope.myvalue = args.booleanVal;
                             break;
                         case "Integer":
-                            $scope.myvalue = args.Integer;
+                            $scope.myvalue = args.integerVal;
                             break;
                         case "Double":
-                            $scope.myvalue = args.Double;
+                            $scope.myvalue = args.doubleVal;
                             break;
                     }
                     $scope.$digest();
@@ -261,7 +252,6 @@ dirs.directive('dirReadOut', [ '$rootScope', '$timeout', '$interval', 'websoc', 
             element.bind("$destroy", function () {
                 $interval.cancel($scope.ipoll);
                 var myData = $.extend(true, {}, websoc.getprotocol_Scalar_Unsubscription());
-                myData.title = "scalarUnsubscribe";
                 myData.interfaceTag = $scope.interfacetag;
                 $rootScope.$emit('sendMyData', myData);
                 $timeout.cancel($scope.destroyTimer);
@@ -325,16 +315,16 @@ dirs.directive('dirCheckBox', [ '$rootScope', '$timeout', '$interval', 'websoc',
                     $scope.initialised = true;
                     $scope.valuetype = args.valueType;
                     if ($scope.valuetype == "String") {
-                        $scope.rxmyvalue = args.String;
+                        $scope.rxmyvalue = args.stringVal;
                     }
                     else if ($scope.valuetype == "Boolean") {
-                        $scope.rxmyvalue = args.Boolean;
+                        $scope.rxmyvalue = args.booleanVal;
                     }
                     else if ($scope.valuetype == "Integer") {
-                        $scope.rxmyvalue = args.Integer;
+                        $scope.rxmyvalue = args.integerVal;
                     }
                     else if ($scope.valuetype == "Double") {
-                        $scope.rxmyvalue = args.Double;
+                        $scope.rxmyvalue = args.doubleVal;
                     }
                     else {
                         return;
@@ -364,7 +354,6 @@ dirs.directive('dirCheckBox', [ '$rootScope', '$timeout', '$interval', 'websoc',
                 {
                     return;
                 }
-                //$scope.$digest();
             });
             $scope.$watch('myvalue', function()
             {
@@ -374,21 +363,7 @@ dirs.directive('dirCheckBox', [ '$rootScope', '$timeout', '$interval', 'websoc',
                         var myData = $.extend(true, {}, websoc.getprotocol_Request_Scalar());
                         myData.interfaceTag = $scope.interfacetag;
                         myData.valueType = $scope.valuetype;
-                        if ($scope.valuetype == "String") {
-                            myData.String = "";
-                        }
-                        else if ($scope.valuetype == "Boolean") {
-                            myData.Boolean = $scope.myvalue;
-                        }
-                        else if ($scope.valuetype == "Integer") {
-                            myData.Integer = 0;
-                        }
-                        else if ($scope.valuetype == "Double") {
-                            myData.Double = 0;
-                        }
-                        else {
-                            return;
-                        }
+                        myData.parameter = $scope.myvalue;
                         $rootScope.$emit('sendMyData', myData);
                     }
                 }
@@ -399,7 +374,6 @@ dirs.directive('dirCheckBox', [ '$rootScope', '$timeout', '$interval', 'websoc',
             element.bind("$destroy", function() {
                 $interval.cancel($scope.ipoll);
                 var myData = $.extend(true, {}, websoc.getprotocol_Scalar_Unsubscription());
-                myData.title = "scalarUnsubscribe";
                 myData.interfaceTag = $scope.interfacetag;
                 $rootScope.$emit('sendMyData', myData);
                 $timeout.cancel($scope.destroyTimer);
@@ -460,21 +434,7 @@ dirs.directive('dirReadOutButton', [ '$modal', '$rootScope', '$templateCache', '
                         var myData = $.extend(true, {}, websoc.getprotocol_Request_Scalar());
                         myData.interfaceTag = $scope.interfacetag;
                         myData.valueType = $scope.valuetype;
-                        if ($scope.valuetype == "String") {
-                            myData.String = result;
-                        }
-                        else if ($scope.valuetype == "Boolean") {
-                            myData.Boolean = result;
-                        }
-                        else if ($scope.valuetype == "Integer") {
-                            myData.Integer = result;
-                        }
-                        else if ($scope.valuetype == "Double") {
-                            myData.Double = result;
-                        }
-                        else {
-                            return;
-                        }
+                        myData.parameter = result;
                         $rootScope.$emit('sendMyData', myData);
                     });                    
                 }
@@ -490,7 +450,6 @@ dirs.directive('dirReadOutButton', [ '$modal', '$rootScope', '$templateCache', '
             $scope.releaseLock = function(){
                 $scope.status = "Idle";
                 $scope.statusLocked = false;
-                //$scope.$digest();
             };
             $scope.$on('interfaceStatus-' + $scope.interfacetag, function (event, args) {
                 if (args.handshake == "requestSent") {
@@ -513,16 +472,16 @@ dirs.directive('dirReadOutButton', [ '$modal', '$rootScope', '$templateCache', '
                 if ($scope.subscribed == true) {
                     $scope.valuetype = args.valueType;
                     if ($scope.valuetype == "String") {
-                        $scope.outValue = args.String;
+                        $scope.outValue = args.stringVal;
                     }
                     else if ($scope.valuetype == "Boolean") {
-                        $scope.outValue = args.Boolean;
+                        $scope.outValue = args.booleanVal;
                     }
                     else if ($scope.valuetype == "Integer") {
-                        $scope.outValue = args.Integer;
+                        $scope.outValue = args.integerVal;
                     }
                     else if ($scope.valuetype == "Double") {
-                        $scope.outValue = args.Double;
+                        $scope.outValue = args.doubleVal;
                     }
                     else {
                         return;
@@ -568,7 +527,6 @@ dirs.directive('dirReadOutButton', [ '$modal', '$rootScope', '$templateCache', '
             element.bind("$destroy", function() {
                 $interval.cancel($scope.ipoll);
                 var myData = $.extend(true, {}, websoc.getprotocol_Scalar_Unsubscription());
-                myData.title = "scalarUnsubscription";
                 myData.interfaceTag = $scope.interfacetag;
                 $rootScope.$emit('sendMyData', myData);
                 $timeout.cancel($scope.destroyTimer);

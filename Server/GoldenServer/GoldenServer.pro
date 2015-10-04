@@ -14,13 +14,14 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-
 SOURCES += main.cpp \
-    goldenserver.cpp \
-    configmanager.cpp
+    datastruct.cpp \
+    configmanager.cpp \
+    goldenserver.cpp
 
 HEADERS += \
-    goldenserver.h \
-    configmanager.h \
+    datastruct.h \
     call_once.h \
+    configmanager.h \
+    goldenserver.h \
     singleton.h
