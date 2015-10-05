@@ -453,10 +453,14 @@ dirs.directive('dirReadOutButton', [ '$modal', '$rootScope', '$templateCache', '
             };
             $scope.$on('interfaceStatus-' + $scope.interfacetag, function (event, args) {
                 if (args.handshake == "requestSent") {
-                    $scope.status = "Orange";
+                    if (!$scope.subscribed) {
+                        $scope.status = "Orange";
+                    }
                 }
                 else if (args.handshake == "HostInProgress") {
-                    $scope.status = "Yellow";
+                    if (!$scope.subscribed) {
+                        $scope.status = "Yellow";
+                    }
                 }
                 else if (args.handshake == "HostComplete") {
                     $scope.status = "Idle";
