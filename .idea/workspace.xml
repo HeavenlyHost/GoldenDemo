@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="a8bc4415-d66f-4d2f-b8e4-88e57bb67dda" name="Default" comment="">
+      <change type="DELETED" beforePath="D:\WebProjects\GoldenDemo\CtrlAssets\css\SMCheckBox.css" afterPath="" />
+      <change type="DELETED" beforePath="D:\WebProjects\GoldenDemo\CtrlAssets\css\SMReadOut.css" afterPath="" />
+      <change type="DELETED" beforePath="D:\WebProjects\GoldenDemo\CtrlAssets\css\SMReadOutButton.css" afterPath="" />
+      <change type="DELETED" beforePath="D:\WebProjects\GoldenDemo\CtrlAssets\css\SMTable.css" afterPath="" />
+      <change type="DELETED" beforePath="D:\WebProjects\GoldenDemo\CtrlAssets\html\SMCheckBox.html" afterPath="" />
+      <change type="DELETED" beforePath="D:\WebProjects\GoldenDemo\CtrlAssets\html\SMReadOut.html" afterPath="" />
+      <change type="DELETED" beforePath="D:\WebProjects\GoldenDemo\CtrlAssets\html\SMReadOutButton.html" afterPath="" />
+      <change type="DELETED" beforePath="D:\WebProjects\GoldenDemo\CtrlAssets\html\SMTable.html" afterPath="" />
+      <change type="DELETED" beforePath="D:\WebProjects\GoldenDemo\directives.js" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/GoldenServer.exe" afterPath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/GoldenServer.exe" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MinGW_32bit-Debug/debug/GoldenServer.exe" afterPath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MinGW_32bit-Debug/debug/GoldenServer.exe" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/GoldenServer.ilk" afterPath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/GoldenServer.ilk" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/configmanager.obj" afterPath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/configmanager.obj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MinGW_32bit-Debug/debug/goldenserver.o" afterPath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MinGW_32bit-Debug/debug/goldenserver.o" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/goldenserver.obj" afterPath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/goldenserver.obj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/goldenserver.pdb" afterPath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/goldenserver.pdb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MinGW_32bit-Debug/debug/main.o" afterPath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MinGW_32bit-Debug/debug/main.o" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/main.obj" afterPath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/main.obj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/moc_configmanager.obj" afterPath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/moc_configmanager.obj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MinGW_32bit-Debug/debug/moc_goldenserver.o" afterPath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MinGW_32bit-Debug/debug/moc_goldenserver.o" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/moc_goldenserver.obj" afterPath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/debug/moc_goldenserver.obj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/.qmake.stash" afterPath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MSVC2012_32bit-Debug/.qmake.stash" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/GoldenServer/GoldenServer.pro.user" afterPath="$PROJECT_DIR$/Server/GoldenServer/GoldenServer.pro.user" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MinGW_32bit-Debug/Makefile.Debug" afterPath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MinGW_32bit-Debug/Makefile.Debug" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MinGW_32bit-Debug/Makefile.Release" afterPath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MinGW_32bit-Debug/Makefile.Release" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app.js" afterPath="$PROJECT_DIR$/app.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config.xml" afterPath="$PROJECT_DIR$/config.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/GoldenServer/configmanager.cpp" afterPath="$PROJECT_DIR$/Server/GoldenServer/configmanager.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/GoldenServer/configmanager.h" afterPath="$PROJECT_DIR$/Server/GoldenServer/configmanager.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/GoldenServer/goldenserver.cpp" afterPath="$PROJECT_DIR$/Server/GoldenServer/goldenserver.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/GoldenServer/goldenserver.h" afterPath="$PROJECT_DIR$/Server/GoldenServer/goldenserver.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MinGW_32bit-Debug/debug/moc_goldenserver.cpp" afterPath="$PROJECT_DIR$/Server/build-GoldenServer-Desktop_Qt_5_5_0_MinGW_32bit-Debug/debug/moc_goldenserver.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services.js" afterPath="$PROJECT_DIR$/services.js" />
+    </list>
+    <ignored path="GoldenDemo.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="DaemonCodeAnalyzer">
+    <disable_hints />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="GoldenDemo" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="app.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.23349437" vertical-offset="4428" max-vertical-offset="5049">
+              <caret line="269" column="7" selection-start-line="269" selection-start-column="7" selection-end-line="269" selection-end-column="7" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="goldenlayout.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Third-Party/GoldenLayout/js/goldenlayout.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="45897" max-vertical-offset="78455">
+              <caret line="2713" column="23" selection-start-line="2713" selection-start-column="10" selection-end-line="2713" selection-end-column="23" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/app.js" />
+      </list>
+    </option>
+  </component>
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-4" />
+    <option name="y" value="-4" />
+    <option name="width" value="1928" />
+    <option name="height" value="1060" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="GoldenDemo" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="GoldenDemo" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="GoldenDemo" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="GoldenDemo" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="GoldenDemo" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="CtrlAssets" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="GoldenDemo" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="GoldenDemo" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="CtrlAssets" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SMReadOutButton" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="HbShouldOpenHtmlAsHb" value="" />
+    <property name="FullScreen" value="false" />
+  </component>
+  <component name="RunManager">
+    <list size="0" />
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a8bc4415-d66f-4d2f-b8e4-88e57bb67dda" name="Default" comment="" />
+      <created>1444997048608</created>
+      <option name="number" value="Default" />
+      <updated>1444997048608</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-4" y="-4" width="1928" height="1060" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32953367" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="myTodoPanelSettings">
+      <TodoPanelSettings />
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/CtrlAssets/SMTable/SMTable.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.07241747" vertical-offset="0" max-vertical-offset="939">
+          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CtrlAssets/SMTable/SMTable.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2924">
+          <caret line="30" column="58" selection-start-line="30" selection-start-column="58" selection-end-line="30" selection-end-column="58" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CtrlAssets/SMReadOut/SMReadOut.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="939">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CtrlAssets/SMReadOut/SMReadOut.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1530">
+          <caret line="19" column="38" selection-start-line="19" selection-start-column="38" selection-end-line="19" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CtrlAssets/SMReadOutButton/SMReadOutButton.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.30777422" vertical-offset="0" max-vertical-offset="1649">
+          <caret line="17" column="20" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Partials/readOutButtonDemoTemplate.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.09309967" vertical-offset="0" max-vertical-offset="913">
+          <caret line="5" column="16" selection-start-line="5" selection-start-column="16" selection-end-line="5" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CtrlAssets/SMReadOutButton/SMReadOutButton.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33045357" vertical-offset="0" max-vertical-offset="2618">
+          <caret line="18" column="43" selection-start-line="18" selection-start-column="43" selection-end-line="18" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Third-Party/GoldenLayout/js/goldenlayout.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="45897" max-vertical-offset="78455">
+          <caret line="2713" column="23" selection-start-line="2713" selection-start-column="10" selection-end-line="2713" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.23349437" vertical-offset="4428" max-vertical-offset="5049">
+          <caret line="269" column="7" selection-start-line="269" selection-start-column="7" selection-end-line="269" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

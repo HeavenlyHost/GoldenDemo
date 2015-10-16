@@ -6,6 +6,7 @@
 #include <QtCore/QByteArray>
 #include <QCoreApplication>
 #include <QWebSocket>
+#include <QMutex>
 
 #include "configmanager.h"
 #include "datastruct.h"
@@ -28,7 +29,7 @@ public slots:
 
     void triggerUpdateSlot(dataStruct data);
     void dataChangedSlot(dataStruct data);
-    void interfaceStatusSlot(dataStruct data, bool triggerUpdate);
+    void interfaceStatusSlot(dataStruct data, bool doSubscribe, bool triggerUpdate);
 
 signals:
     void closed();

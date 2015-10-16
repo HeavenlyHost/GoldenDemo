@@ -64,7 +64,7 @@ GoldenServer::GoldenServer(quint16 port, bool debug, QString appDirPath, QObject
     connect(this, SIGNAL(interfaceStatusSignal(dataStruct)), &ConfigManagerInstance, SLOT(interfaceStatusSlot(dataStruct)));
     connect(&ConfigManagerInstance, SIGNAL(dataChangedSignal(dataStruct)), this, SLOT(dataChangedSlot(dataStruct)));
     connect(&ConfigManagerInstance, SIGNAL(triggerUpdateSignal(dataStruct)), this, SLOT(triggerUpdateSlot(dataStruct)));
-    connect(&ConfigManagerInstance, SIGNAL(interfaceStatusSignal(dataStruct, bool)), this, SLOT(interfaceStatusSlot(dataStruct, bool)));
+    connect(&ConfigManagerInstance, SIGNAL(interfaceStatusSignal(dataStruct, bool, bool)), this, SLOT(interfaceStatusSlot(dataStruct, bool, bool)));
 }
 
 GoldenServer::~GoldenServer()
@@ -77,7 +77,7 @@ GoldenServer::~GoldenServer()
     disconnect(this, SIGNAL(interfaceStatusSignal(dataStruct)), &ConfigManagerInstance, SLOT(interfaceStatusSlot(dataStruct)));
     disconnect(&ConfigManagerInstance, SIGNAL(dataChangedSignal(dataStruct)), this, SLOT(dataChangedSlot(dataStruct)));
     disconnect(&ConfigManagerInstance, SIGNAL(triggerUpdateSignal(dataStruct)), this, SLOT(triggerUpdateSlot(dataStruct)));
-    disconnect(&ConfigManagerInstance, SIGNAL(interfaceStatusSignal(dataStruct, bool)), this, SLOT(interfaceStatusSlot(dataStruct, bool)));
+    disconnect(&ConfigManagerInstance, SIGNAL(interfaceStatusSignal(dataStruct, bool, bool)), this, SLOT(interfaceStatusSlot(dataStruct, bool, bool)));
 }
 
 void GoldenServer::ReadConfigXML(QString appDirPath)
@@ -232,13 +232,10 @@ QString GoldenServer::EncodeToWsProtocol_InterfaceStatus(sockProtocol dataToEnco
     QJsonObject jsonObj; // define new JSON object
     jsonObj["title"] = dataToEncode.title;
     jsonObj["interfaceTag"] = dataToEncode.interfaceTag;
+    jsonObj["valueType"] = dataToEncode.valueType;
     jsonObj["disabledState"] = dataToEncode.disabledState;
     jsonObj["errorState"] = dataToEncode.errorState;
-    jsonObj["disabledReason"] = dataToEncode.disabledReason;
-    jsonObj["minimumVal"] = dataToEncode.minimumVal;
-    jsonObj["maximumVal"] = dataToEncode.maximumVal;
     jsonObj["handshake"] = dataToEncode.handshake;
-    jsonObj["menu"] = dataToEncode.menu;
 
     QJsonDocument doc(jsonObj);
     QString strJson(doc.toJson(QJsonDocument::Compact));
@@ -262,18 +259,10 @@ void GoldenServer::DecodeToWsProtocol_ScalarSubscription(sockProtocol *destForDa
     QJsonObject jsonObj = jsonResponse.object();
 
     destForData->title = jsonObj["title"].toString();
-    destForData->interfaceTag = jsonObj["interfaceTag"].toString();
-    destForData->actionType = jsonObj["actionType"].toString();
-    destForData->parameter = jsonObj["parameter"].toString();
-    destForData->formatType = jsonObj["formatType"].toString();
-    destForData->formatString = jsonObj["formatString"].toString();
-    destForData->unitSuffix = jsonObj["unitSuffix"].toBool();
-    destForData->period = jsonObj["period"].toBool();
-    destForData->gain = jsonObj["gain"].toInt();
-    destForData->offset = jsonObj["offset"].toInt();
-    destForData->quantity = jsonObj["quantity"].toString();
-    destForData->period = jsonObj["period"].toInt();
-    destForData->phase = jsonObj["phase"].toInt();
+    destForData->interfaceTag = jsonObj["interfaceTag"].toString();    
+    destForData->actionType = jsonObj["action"].toObject()["type"].toString();
+    destForData->parameter = jsonObj["action"].toObject()["parameter"].toString();
+    destForData->formatType = jsonObj["format"].toObject()["type"].toString();
 }
 
 void GoldenServer::DecodeToWsProtocol_ScalarUnsubscription(sockProtocol *destForData, QString response)
@@ -294,17 +283,8 @@ void GoldenServer::DecodeToWsProtocol_ArraySubscription(sockProtocol *destForDat
 
     destForData->title = jsonObj["title"].toString();
     destForData->interfaceTag = jsonObj["interfaceTag"].toString();
-    destForData->actionType = jsonObj["actionType"].toString();
-    destForData->parameter = jsonObj["parameter"].toString();
-    destForData->formatType = jsonObj["formatType"].toString();
-    destForData->formatString = jsonObj["formatString"].toString();
-    destForData->unitSuffix = jsonObj["unitSuffix"].toBool();
-    destForData->period = jsonObj["period"].toBool();
-    destForData->gain = jsonObj["gain"].toInt();
-    destForData->offset = jsonObj["offset"].toInt();
-    destForData->quantity = jsonObj["quantity"].toString();
-    destForData->period = jsonObj["period"].toInt();
-    destForData->phase = jsonObj["phase"].toInt();}
+    destForData->formatType = jsonObj["format"].toObject()["type"].toString();
+}
 
 void GoldenServer::DecodeToWsProtocol_ArrayUnsubscription(sockProtocol *destForData, QString response)
 {
@@ -323,8 +303,7 @@ void GoldenServer::DecodeToWsProtocol_RequestScalar(sockProtocol *destForData, Q
     QJsonObject jsonObj = jsonResponse.object();
 
     destForData->title = jsonObj["title"].toString();
-    destForData->interfaceTag = jsonObj["interfaceTag"].toString();
-    destForData->valueType = jsonObj["valueType"].toString();
+    destForData->interfaceTag = jsonObj["interfaceTag"].toString();    
     destForData->booleanVal = jsonObj["parameter"].toBool();
     destForData->integerVal = jsonObj["parameter"].toInt();
     destForData->doubleVal = jsonObj["parameter"].toDouble();
@@ -365,17 +344,10 @@ void GoldenServer::processTextMessage(QString message)
             if (m_clients[i].sock == pClient)
             {
                 mutex.lock();
-                try
+                int index = m_clients[i].subscriptions.indexOf(destForData->interfaceTag);
+                if (index != -1)
                 {
-                    int index = m_clients[i].subscriptions.indexOf(destForData->interfaceTag);
-                    if (index != -1)
-                    {
-                        m_clients[i].subscriptions.removeAt(index);
-                    }
-                }
-                catch(...)
-                {
-                    qDebug() << "Exception raised on unsubscribe";
+                    m_clients[i].subscriptions.removeAt(index);
                 }
                 mutex.unlock();
                 break;
@@ -411,17 +383,10 @@ void GoldenServer::processTextMessage(QString message)
             if (m_clients[i].sock == pClient)
             {
                 mutex.lock();
-                try
+                int index = m_clients[i].subscriptions.indexOf(destForData->interfaceTag);
+                if (index != -1)
                 {
-                    int index = m_clients[i].subscriptions.indexOf(destForData->interfaceTag);
-                    if (index != -1)
-                    {
-                        m_clients[i].subscriptions.removeAt(index);
-                    }
-                }
-                catch(...)
-                {
-                    qDebug() << "Exception raised on unsubscribe";
+                    m_clients[i].subscriptions.removeAt(index);
                 }
                 mutex.unlock();
                 break;
@@ -436,31 +401,26 @@ void GoldenServer::processTextMessage(QString message)
         int i = 0;
         while (i < m_clients.length())
         {
-            try
+            if (m_clients[i].sock == pClient)
             {
-                if (m_clients[i].sock == pClient)
+                //Check for subscription
+                mutex.lock();
+                int index = m_clients[i].subscriptions.indexOf(destForData->interfaceTag);
+                mutex.unlock();
+                if (index != -1)
                 {
-                    //Check for subscription
-                    int index = m_clients[i].subscriptions.indexOf(destForData->interfaceTag);
-                    if (index != -1)
-                    {
-                        dataStruct myStruct = dataStruct(   destForData->interfaceTag,
-                                                            destForData->valueType,
-                                                            destForData->booleanVal,
-                                                            destForData->integerVal,
-                                                            destForData->doubleVal,
-                                                            destForData->stringVal,
-                                                            m_clients[i].sock);
-                        emit dataChangedSignal(myStruct);
-                        break;
-                    }
+                    dataStruct myStruct = dataStruct(   destForData->interfaceTag,
+                                                        destForData->valueType,
+                                                        destForData->booleanVal,
+                                                        destForData->integerVal,
+                                                        destForData->doubleVal,
+                                                        destForData->stringVal,
+                                                        m_clients[i].sock);
+                    emit dataChangedSignal(myStruct);
+                    break;
                 }
-                i++;
             }
-            catch(...)
-            {
-                qDebug() << "GoldenServer::update - Exception";
-            }
+            i++;
         }
     }
 
@@ -508,28 +468,23 @@ void GoldenServer::dataChangedSlot(dataStruct data)
         int i = 0;
         while (i < m_clients.length())
         {
-            try
+            mutex.lock();
+            int index = m_clients[i].subscriptions.indexOf(baseProtocol.interfaceTag);
+            mutex.unlock();
+            if (index != -1)
             {
-                int index = m_clients[i].subscriptions.indexOf(baseProtocol.interfaceTag);
-                if (index != -1)
-                {
-                    //Check for valid subscription
-                    QString jsonstr = EncodeToWsProtocol_ReportArray(baseProtocol);
-                    m_clients[i].sock->sendTextMessage(jsonstr);
-                }
-                i++;
+                //Check for valid subscription
+                QString jsonstr = EncodeToWsProtocol_ReportArray(baseProtocol);
+                m_clients[i].sock->sendTextMessage(jsonstr);
             }
-            catch(...)
-            {
-                qDebug() << "GoldenServer::update - Exception";
-            }
+            i++;
         }
     }
     else
     {
         baseProtocol.title = "reportScalar";
-        baseProtocol.notComputed = data.getnotComputed();
         baseProtocol.interfaceTag = data.gettag();
+        baseProtocol.notComputed = data.getnotComputed();
         baseProtocol.valueType = data.getvalueType();
         baseProtocol.booleanVal = data.getbln();
         baseProtocol.integerVal = data.getint();
@@ -542,7 +497,9 @@ void GoldenServer::dataChangedSlot(dataStruct data)
         {
             try
             {
+                mutex.lock();
                 int index = m_clients[i].subscriptions.indexOf(baseProtocol.interfaceTag);
+                mutex.unlock();
                 if (index != -1)
                 {
                     //Check for valid subscription
@@ -567,9 +524,6 @@ void GoldenServer::triggerUpdateSlot(dataStruct data)
 
     if (data.getIsArray())
     {
-        qDebug() << "Report Array";
-        qDebug() << data.gettag();
-
         baseProtocol.title = "reportArray";
         baseProtocol.interfaceTag = data.gettag();
         baseProtocol.notComputed = data.getnotComputed();
@@ -582,12 +536,7 @@ void GoldenServer::triggerUpdateSlot(dataStruct data)
 
         if (data.getsock() != NULL)
         {
-            qDebug() << "Array Have Socket";
-
             QString jsonstr = EncodeToWsProtocol_ReportArray(baseProtocol);
-
-            qDebug() << "REPORT ARRAY DATA: " + jsonstr;
-
             data.getsock()->sendTextMessage(jsonstr);
         }
     }
@@ -611,33 +560,31 @@ void GoldenServer::triggerUpdateSlot(dataStruct data)
     }
 }
 
-void GoldenServer::interfaceStatusSlot(dataStruct data, bool triggerUpdate)
+void GoldenServer::interfaceStatusSlot(dataStruct data, bool doSubscribe, bool triggerUpdate)
 {
     //Send to web sockets
     sockProtocol baseProtocol;
     baseProtocol.title = "interfaceStatus";
     baseProtocol.interfaceTag = data.gettag();
+    baseProtocol.valueType = data.getvalueType();
     baseProtocol.disabledState = data.getdisabledState();
     baseProtocol.errorState = data.geterrorState();
-    baseProtocol.disabledReason = data.getdisabledReason();
-    baseProtocol.errorReason = data.geterrorReason();
-    baseProtocol.minimumVal = data.getminimumValue();
-    baseProtocol.maximumVal = data.getmaximumValue();
     baseProtocol.handshake = data.gethandshake();
-    baseProtocol.menu = data.getmenu();
 
     if (data.getsock() != NULL)
     {
-        QString jsonstr = EncodeToWsProtocol_InterfaceStatus(baseProtocol);
-        data.getsock()->sendTextMessage(jsonstr);
-        if (data.gethandshake() == "HostComplete")
+        if (doSubscribe)
         {
+            QString jsonstr = EncodeToWsProtocol_InterfaceStatus(baseProtocol);
+            data.getsock()->sendTextMessage(jsonstr);
             //Do subscription only when the item has been confirmed to exist
             for (int i = 0; i < m_clients.length(); i++)
             {
                 if (m_clients[i].sock == data.getsock())
                 {
+                    mutex.lock();
                     m_clients[i].subscriptions << data.gettag();
+                    mutex.unlock();
                     break;
                 }
             }

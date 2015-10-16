@@ -1,4 +1,4 @@
-var app = angular.module('demoApp', ['ngAnimate', 'ui.bootstrap', 'ngPopup', 'myServices', 'myDirectives']);
+var app = angular.module('demoApp', ['ngAnimate', 'ui.bootstrap', 'ngPopup', 'myServices', 'smTable', 'smReadOutButton', 'smReadOut', 'smCheckBox']);
 
 var connectionEnum = {
     DISCONNECTED : 0,
@@ -130,20 +130,26 @@ app.controller('heyControllerNav', [ '$compile', '$scope', '$rootScope', 'websoc
 app.controller('glDivController', [ '$document', '$scope', function( $document, $scope ) {}]);
 
 app.controller('rootController', [ '$document', '$templateCache', '$http', '$compile', '$scope', '$rootScope', function( $document, $templateCache, $http, $compile, $scope, $rootScope ) {
-    $scope.myLayout = new GoldenLayout({
-         content:[{
-             type: 'row',
-             content: [{
-                 title: 'Read Out Button Demo',
-                 type: 'component',
-                 componentName: 'angularModule',
-                 componentState: {
-                     module: 'readOutButtonDemoModule',
-                     templateId: 'readOutButtonDemoTemplate',
-                 }
-             }]
-         }]
-    }, $document.find('#gldiv'));    
+	$scope.myLayout;
+    var savedState = localStorage.getItem( 'savedState' );
+	if( savedState !== null ) {
+		$scope.myLayout = new GoldenLayout( JSON.parse( savedState ), $document.find('#gldiv') );
+	} else {
+		$scope.myLayout = new GoldenLayout({
+			 content:[{
+				 type: 'row',
+				 content: [{
+					 title: 'Read Out Button Demo',
+					 type: 'component',
+					 componentName: 'angularModule',
+					 componentState: {
+						 module: 'readOutButtonDemoModule',
+						 templateId: 'readOutButtonDemoTemplate',
+					 }
+				 }]
+			 }]
+		}, $document.find('#gldiv'));    
+	}
     $scope.$on('dockDialog', function(event, args) {
         var newItemConfig = {
             title: args.title,
@@ -199,7 +205,11 @@ app.controller('rootController', [ '$document', '$templateCache', '$http', '$com
             // Remove pop dialog from DOM as we don't need it anymore
             $("div[id=pop" + args.templateId + "]").remove();            
         }
-    });
+
+		var state = JSON.stringify( $scope.myLayout.toConfig() );
+		localStorage.setItem( 'savedState', state );		
+
+	});
     $scope.stackCreated = function( stack ){
         /*
         * Re-use the label
@@ -257,6 +267,14 @@ app.controller('rootController', [ '$document', '$templateCache', '$http', '$com
     }        
     $scope.myLayout.on( 'stackCreated', function( stack ){
         $scope.stackCreated( stack );
+    });
+	$scope.myLayout.on( 'stateChanged', function(){
+		var state = JSON.stringify( $scope.myLayout.toConfig() );
+		localStorage.setItem( 'savedState', state );
+	});
+    $scope.myLayout.on( 'itemDestroyed', function(){
+        var state = JSON.stringify( $scope.myLayout.toConfig() );
+        localStorage.setItem( 'savedState', state );
     });
     $scope.myLayout.on( 'tabDrag', function( stack ){
     });

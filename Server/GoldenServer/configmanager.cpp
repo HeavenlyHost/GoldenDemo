@@ -58,7 +58,7 @@ ConfigManager::ConfigManager()
 
     updateDateTime = new QTimer(this);
     connect(updateDateTime, SIGNAL(timeout()), this, SLOT(updateDateTimeSlot()));
-    updateDateTime->start(50);
+    updateDateTime->start(100);
 
     updateArrays = new QTimer(this);
     connect(updateArrays, SIGNAL(timeout()), this, SLOT(updateArraysSlot()));
@@ -298,41 +298,40 @@ void ConfigManager::dataChangedSlot(dataStruct data){
     {
         if (GiData[index].gettag() == data.gettag())
         {
-            if (GiData[index].getvalueType() == data.getvalueType())
+            //simulate change in handshake state
+            data.sethandshake("requestSent");
+            emit interfaceStatusSignal(data, false, false);
+
+            //simulate change in handshake state
+            data.sethandshake("HostInProgress");
+            emit interfaceStatusSignal(data, false, false);
+
+            //simulate change in handshake state
+            data.sethandshake("HostComplete");
+            emit interfaceStatusSignal(data, false, false);
+
+            data.setvalueType(GiData[index].getvalueType());
+
+            //raise correct data change event
+            if (data.getvalueType() == "String")
             {
-                //simulate change in handshake state
-                data.sethandshake("requestSent");
-                emit interfaceStatusSignal(data, false);
-
-                //simulate change in handshake state
-                data.sethandshake("HostInProgress");
-                emit interfaceStatusSignal(data, false);
-
-                //simulate change in handshake state
-                data.sethandshake("HostComplete");
-                emit interfaceStatusSignal(data, false);
-
-                //raise correct data change event
-                if (data.getvalueType() == "String")
-                {
-                    GiData[index].setstr(data.getstr());
-                }
-                else if (data.getvalueType() == "Boolean")
-                {
-                    GiData[index].setbln(data.getbln());
-                }
-                else if (data.getvalueType() == "Integer")
-                {
-                    GiData[index].setint(data.getint());
-                }
-                else if (data.getvalueType() == "Double")
-                {
-                    GiData[index].setdbl(data.getdbl());
-                }
-
-                emit dataChangedSignal(data);
-                break;
+                GiData[index].setstr(data.getstr());
             }
+            else if (data.getvalueType() == "Boolean")
+            {
+                GiData[index].setbln(data.getbln());
+            }
+            else if (data.getvalueType() == "Integer")
+            {
+                GiData[index].setint(data.getint());
+            }
+            else if (data.getvalueType() == "Double")
+            {
+                GiData[index].setdbl(data.getdbl());
+            }
+
+            emit dataChangedSignal(data);
+            break;
         }
     }
 }
@@ -348,22 +347,22 @@ void ConfigManager::interfaceStatusSlot(dataStruct data){
                 //simulate change in handshake state
                 GiData[index].sethandshake("requestSent");
                 data.sethandshake(GiData[index].gethandshake());
-                emit interfaceStatusSignal(data, true);
+                emit interfaceStatusSignal(data, false, true);
 
                 //simulate change in handshake state
                 GiData[index].sethandshake("HostInProgress");
                 data.sethandshake(GiData[index].gethandshake());
-                emit interfaceStatusSignal(data, true);
+                emit interfaceStatusSignal(data, false, true);
 
                 //simulate change in handshake state
                 GiData[index].sethandshake("HostComplete");
                 data.sethandshake(GiData[index].gethandshake());
-                emit interfaceStatusSignal(data, true);
+                emit interfaceStatusSignal(data, true, true);
             }
             else
             {
                 data.sethandshake(GiData[index].gethandshake());
-                emit interfaceStatusSignal(data, true);
+                emit interfaceStatusSignal(data, true, true);
             }
 
             break;
