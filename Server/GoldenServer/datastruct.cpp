@@ -140,6 +140,11 @@ void dataStruct::setbln(bool m_bln){blnVal = m_bln;}
 void dataStruct::setstr(QString m_str){strVal = m_str;}
 void dataStruct::setint(int m_int){intVal = m_int;}
 void dataStruct::setdbl(double m_dbl){dblVal = m_dbl;}
+void dataStruct::setdisabledState(bool m_disabledState){disabledState = m_disabledState;}
+void dataStruct::setErrorState(bool m_errorState){errorState = m_errorState;}
+void dataStruct::setDisabledReason(QString m_disabledReason){disabledReason = m_disabledReason;}
+void dataStruct::setErrorReason(QString m_errorReason){errorReason = m_errorReason;}
+
 void dataStruct::setnotComputed(bool m_notComputed){notComputed = m_notComputed;}
 void dataStruct::setformattedValue(QString m_formattedValue){formattedValue = m_formattedValue;}
 void dataStruct::set_str_arr_values(QList<QString> m_strArray){str_arr_values = m_strArray;}

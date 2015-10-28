@@ -8,54 +8,76 @@ smReadOut.directive('dirReadOut', ['$rootScope', '$timeout', '$interval', 'webso
             actiontype: '@',
             parameter: '@',
             formattype: '@',
-            unitsuffix: '@',
+            formatstring: '@',
+            formatunitssource: '@',
+            formatunitsuffix: '@',
             period: '@',
             phase: '@'
         },
         template:'<div class="smrodiv">' +
-                    '<h3 class="smroIdle">{{myvalue}}</h3>' +
+                    '<h3 ng-class="status">{{myvalue}}</h3>' +
                  '</div>',
         controller: function ($scope) {
             $scope.myvalue = "---";
             $scope.subscribed = false;
             $scope.destroyTimer = null;
+            $scope.status = "smroDisabled";
             $scope.subscribe = function () {
                 if ($scope.subscribed == false && websoc.isConnected()) {
                     var myData = $.extend(true, {}, websoc.getprotocol_Scalar_Subscription());
                     myData.interfaceTag = $scope.interfacetag;
+                    myData.action.type = $scope.actiontype;
+                    myData.format.type = $scope.formattype;
+                    myData.format.properties.string = $scope.formatstring;
+                    myData.format.properties.unitsSource = $scope.formatunitssource;
+                    myData.format.properties.unitSuffix = $scope.formatunitsuffix;
                     $rootScope.$emit('sendMyData', myData);
                 }
             };
             $scope.$on('interfaceStatus-' + $scope.interfacetag, function (event, args) {
-                if (args.handshake == "requestSent") {
+                if (args.errorState == true)
+                {
+                    $scope.status = "smroError";
+                    $scope.myvalue = "---";
+                }
+                else if (args.handshake == "requestSent") {
                     //Do nothing
                 }
-                else if (args.handshake == "HostInProgress") {
+                else if (args.handshake == "hostInProgress") {
                     //Do nothing
                 }
-                else if (args.handshake == "HostComplete") {
+                else if (args.handshake == "hostComplete") {
                     $scope.subscribed = true;
+                    $scope.status = "smroIdle";
                 }
+                $scope.$digest();
             });
             $scope.$on('reportScalar-' + $scope.interfacetag, function (event, args) {
-                if ($scope.subscribed == true) {
-                    $scope.valuetype = args.valueType;
+                $scope.subscribed = true;
+                $scope.valuetype = args.valueType;
+                if ($scope.formattype != undefined &&
+                    $scope.formattype != "none")
+                {
+                    $scope.myvalue = args.formattedValue;
+                }
+                else
+                {
                     switch ($scope.valuetype) {
-                        case "String":
+                        case "string":
                             $scope.myvalue = args.stringVal;
                             break;
-                        case "Boolean":
+                        case "boolean":
                             $scope.myvalue = args.booleanVal;
                             break;
-                        case "Integer":
+                        case "integer":
                             $scope.myvalue = args.integerVal;
                             break;
-                        case "Double":
+                        case "double":
                             $scope.myvalue = args.doubleVal;
                             break;
                     }
-					$scope.$digest();					
                 }
+				$scope.$digest();					
             });
             $scope.$on('wsConnection', function (event, args) {
                 if (args == connectionEnum.CONNECTED) {
@@ -64,6 +86,7 @@ smReadOut.directive('dirReadOut', ['$rootScope', '$timeout', '$interval', 'webso
                 }
                 else if (args == connectionEnum.DISCONNECTED) {
                     $scope.myvalue = "---";
+                    $scope.status = "smroDisabled";
                     $scope.subscribed == false
                 }
             });

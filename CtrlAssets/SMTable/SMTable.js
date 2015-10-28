@@ -7,21 +7,48 @@ smTable.directive('dirTable', ['$rootScope', '$timeout', '$interval', 'websoc', 
             interfacetags: '@',
             actiontype: '@',
             parameter: '@',
-            formattype: '@',
-            unitsuffix: '@',
             period: '@',
             phase: '@'
         },
         template:'<div ui-grid="gridOptions" class="myGrid" ui-grid-selection ui-grid-auto-resize></div>',
         controller: function ($scope) {
             $scope.ipoll = null;
+            $scope.selectedSubscribed = false;
+            $scope.selectedIndex = 0;
             $scope.myTableData = [];
-
             $scope.gridOptions = {
                 data: $scope.myTableData,
                 enableFullRowSelection: true,
                 multiSelect: false,
-                columnDefs: []
+                columnDefs: [],
+                onRegisterApi: function (gridApi) {
+                    $scope.gridApi = gridApi;
+                    //gridApi.selection.selectRow(vm.gridOptions.data[0]);
+                    $scope.gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+                        if (row.isSelected) {
+							myindex = -1;
+							while (myindex < row.grid.rows.length)
+							{
+								myindex += 1;
+								if (row.grid.rows[myindex].isSelected)
+								{
+									break;
+								}
+							}							
+                            if ($scope.selectedIndex != myindex)
+                            {
+								if (myindex > -1)
+								{
+									$scope.selectedIndex = myindex;
+									var myData = $.extend(true, {}, websoc.getprotocol_Request_Scalar());
+									myData.interfaceTag = $scope.settings.selectedtag;
+									myData.parameter = $scope.selectedIndex.toString();
+									$rootScope.$emit('sendMyData', myData);
+								}
+                            }
+                        }
+                    });
+                }
             };
             $scope.$on('wsConnection', function (event, args) {
                 if (args == connectionEnum.CONNECTED) {
@@ -30,6 +57,7 @@ smTable.directive('dirTable', ['$rootScope', '$timeout', '$interval', 'websoc', 
                 }
                 else if (args == connectionEnum.DISCONNECTED) {
                     //Reset the settings
+                    $scope.selectedSubscribed = false;
                     $scope.settings = eval('(' + $scope.interfacetags + ')');
                     $scope.arrayData = {}
                 }
@@ -58,22 +86,30 @@ smTable.directive('dirTable', ['$rootScope', '$timeout', '$interval', 'websoc', 
                         if ($scope.settings.tags[index].tag == null)
                             return;
 
-                        //Extract correct data type based on returned valueType
-                        if (args.valueType == "Boolean") {
-                            $scope.settings.tags[index].data = args.booleanValues;
+                        if ($scope.settings.tags[index].formattype != undefined &&
+                            $scope.settings.tags[index].formattype != "none")
+                        {
+                            $scope.settings.tags[index].data = args.formattedValues;
                         }
-                        else if (args.valueType == "Integer") {
-                            $scope.settings.tags[index].data = args.integerValues;
-                        }
-                        else if (args.valueType == "Double") {
-                            $scope.settings.tags[index].data = args.doubleValues;
-                        }
-                        else if (args.valueType == "String") {
-                            $scope.settings.tags[index].data = args.stringValues;
-                        }
-                        else {
-                            //Type not known so return now !!!
-                            return;
+                        else
+                        {
+                            //Extract correct data type based on returned valueType
+                            if (args.valueType == "boolean") {
+                                $scope.settings.tags[index].data = args.booleanValues;
+                            }
+                            else if (args.valueType == "integer") {
+                                $scope.settings.tags[index].data = args.integerValues;
+                            }
+                            else if (args.valueType == "double") {
+                                $scope.settings.tags[index].data = args.doubleValues;
+                            }
+                            else if (args.valueType == "string") {
+                                $scope.settings.tags[index].data = args.stringValues;
+                            }
+                            else {
+                                //Type not known so return now !!!
+                                return;
+                            }
                         }
 
                         //Update table data
@@ -126,10 +162,10 @@ smTable.directive('dirTable', ['$rootScope', '$timeout', '$interval', 'websoc', 
                             if (args.handshake == "requestSent") {
                                 //Do nothing
                             }
-                            else if (args.handshake == "HostInProgress") {
+                            else if (args.handshake == "hostInProgress") {
                                 //Do nothing
                             }
-                            else if (args.handshake == "HostComplete") {
+                            else if (args.handshake == "hostComplete") {
                                 $scope.settings.tags[index].subscribed = true;
                             }
                             break;
@@ -137,13 +173,44 @@ smTable.directive('dirTable', ['$rootScope', '$timeout', '$interval', 'websoc', 
                     }
                 });
             }
+
+            $scope.$on('reportScalar-' + $scope.settings.selectedtag, function (event, args) {
+                $scope.selectedSubscribed = true;
+                $scope.selectedIndex = args.integerVal;
+            });
+
+            $scope.$on('interfaceStatus-' + $scope.settings.selectedtag, function (event, args) {
+                if ($scope.settings.selectedtag == args.interfaceTag) {
+                    if (args.handshake == "requestSent") {
+                        //Do nothing
+                    }
+                    else if (args.handshake == "hostInProgress") {
+                        //Do nothing
+                    }
+                    else if (args.handshake == "hostComplete") {
+                        $scope.selectedSubscribed = true;
+                    }
+                }
+            });
+
             $scope.subscribe = function () {
+                //do subscription for selected index
+                if ($scope.selectedSubscribed == false && websoc.isConnected()) {
+                    var myData = $.extend(true, {}, websoc.getprotocol_Scalar_Subscription());
+                    myData.interfaceTag = $scope.settings.selectedtag;
+                    $rootScope.$emit('sendMyData', myData);
+                }
+                //do subscription for table items
                 for (var index = 0; index < $scope.settings.tags.length; index++) {
                     var item = $scope.settings.tags[index];
                     var subscribed = item.subscribed || null;
                     if ((subscribed == null || subscribed == false) && websoc.isConnected()) {
                         var myData = $.extend(true, {}, websoc.getprotocol_Array_Subscription());
                         myData.interfaceTag = item.tag;
+                        myData.format.type = item.formattype;
+                        myData.format.properties.string = item.formatstring;
+                        myData.format.properties.unitsSource = item.formatunitssource;
+                        myData.format.properties.unitSuffix = item.formatunitsuffix;
                         $rootScope.$emit('sendMyData', myData);
                     }
                 }

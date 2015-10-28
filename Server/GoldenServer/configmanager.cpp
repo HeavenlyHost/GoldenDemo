@@ -7,54 +7,54 @@ ConfigManager::ConfigManager()
 {
     //Intialise strings
     GiData << dataStruct("strServerDateTime", "String", false,0,0,"system date/time");
-    GiData << dataStruct("strItem1", "String");
-    GiData << dataStruct("strItem2", "String");
-    GiData << dataStruct("strItem3", "String");
-    GiData << dataStruct("strItem4", "String");
-    GiData << dataStruct("strItem5", "String");
-    GiData << dataStruct("strItem6", "String");
-    GiData << dataStruct("strItem7", "String");
-    GiData << dataStruct("strItem8", "String");
-    GiData << dataStruct("strItem9", "String");
-    GiData << dataStruct("strItem10", "String");
-    GiData << dataStruct("strItem11", "String");
-    GiData << dataStruct("strItem12", "String");
-    GiData << dataStruct("strItem13", "String");
-    GiData << dataStruct("strItem14", "String");
-    GiData << dataStruct("strItem15", "String");
-    GiData << dataStruct("strArray1", "String", true);
+    GiData << dataStruct("strItem1", "string");
+    GiData << dataStruct("strItem2", "string");
+    GiData << dataStruct("strItem3", "string");
+    GiData << dataStruct("strItem4", "string");
+    GiData << dataStruct("strItem5", "string");
+    GiData << dataStruct("strItem6", "string");
+    GiData << dataStruct("strItem7", "string");
+    GiData << dataStruct("strItem8", "string");
+    GiData << dataStruct("strItem9", "string");
+    GiData << dataStruct("strItem10", "string");
+    GiData << dataStruct("strItem11", "string");
+    GiData << dataStruct("strItem12", "string");
+    GiData << dataStruct("strItem13", "string");
+    GiData << dataStruct("strItem14", "string");
+    GiData << dataStruct("strItem15", "string");
+    GiData << dataStruct("strArray1", "string", true);
 
     //Intialise doubles
-    GiData << dataStruct("dblItem1", "Double");
-    GiData << dataStruct("dblItem2", "Double");
-    GiData << dataStruct("dblItem3", "Double");
-    GiData << dataStruct("dblItem4", "Double");
-    GiData << dataStruct("dblArray1", "Double", true);
+    GiData << dataStruct("dblItem1", "double");
+    GiData << dataStruct("dblItem2", "double");
+    GiData << dataStruct("dblItem3", "double");
+    GiData << dataStruct("dblItem4", "double");
+    GiData << dataStruct("dblArray1", "double", true);
 
     //Intialise integers
-    GiData << dataStruct("intItem1", "Integer");
-    GiData << dataStruct("intItem2", "Integer");
-    GiData << dataStruct("intItem3", "Integer");
-    GiData << dataStruct("intItem4", "Integer");
-    GiData << dataStruct("intArray1", "Integer", true);
+    GiData << dataStruct("intItem1", "integer");
+    GiData << dataStruct("intItem2", "integer");
+    GiData << dataStruct("intItem3", "integer");
+    GiData << dataStruct("intItem4", "integer");
+    GiData << dataStruct("intArray1", "integer", true);
 
     //Intialise integers
-    GiData << dataStruct("blnItem1", "Boolean");
-    GiData << dataStruct("blnItem2", "Boolean");
-    GiData << dataStruct("blnItem3", "Boolean");
-    GiData << dataStruct("blnItem4", "Boolean");
-    GiData << dataStruct("blnItem5", "Boolean");
-    GiData << dataStruct("blnItem6", "Boolean");
-    GiData << dataStruct("blnItem7", "Boolean");
-    GiData << dataStruct("blnItem8", "Boolean");
-    GiData << dataStruct("blnItem9", "Boolean");
-    GiData << dataStruct("blnItem10", "Boolean");
-    GiData << dataStruct("blnItem11", "Boolean");
-    GiData << dataStruct("blnItem12", "Boolean");
-    GiData << dataStruct("blnItem13", "Boolean");
-    GiData << dataStruct("blnItem14", "Boolean");
-    GiData << dataStruct("blnItem15", "Boolean");
-    GiData << dataStruct("blnArray1", "Boolean", true);
+    GiData << dataStruct("blnItem1", "boolean");
+    GiData << dataStruct("blnItem2", "boolean");
+    GiData << dataStruct("blnItem3", "boolean");
+    GiData << dataStruct("blnItem4", "boolean");
+    GiData << dataStruct("blnItem5", "boolean");
+    GiData << dataStruct("blnItem6", "boolean");
+    GiData << dataStruct("blnItem7", "boolean");
+    GiData << dataStruct("blnItem8", "boolean");
+    GiData << dataStruct("blnItem9", "boolean");
+    GiData << dataStruct("blnItem10", "boolean");
+    GiData << dataStruct("blnItem11", "boolean");
+    GiData << dataStruct("blnItem12", "boolean");
+    GiData << dataStruct("blnItem13", "boolean");
+    GiData << dataStruct("blnItem14", "boolean");
+    GiData << dataStruct("blnItem15", "boolean");
+    GiData << dataStruct("blnArray1", "boolean", true);
 
     updateDateTime = new QTimer(this);
     connect(updateDateTime, SIGNAL(timeout()), this, SLOT(updateDateTimeSlot()));
@@ -109,7 +109,7 @@ void ConfigManager::updateArrayDataRandom()
     {
         if (GiData[index].getIsArray())
         {
-            if (GiData[index].getvalueType() == "Boolean")
+            if (GiData[index].getvalueType() == "boolean")
             {
                 QList<bool> temparr = GiData[index].get_bool_arr_values();
                 if (temparr.length() > 1)
@@ -119,7 +119,7 @@ void ConfigManager::updateArrayDataRandom()
                 }
                 GiData[index].set_bool_arr_values(temparr);
             }
-            else if (GiData[index].getvalueType() == "Integer")
+            else if (GiData[index].getvalueType() == "integer")
             {
                 QList<int> temparr = GiData[index].get_int_arr_values();
                 if (temparr.length() > 1)
@@ -129,7 +129,7 @@ void ConfigManager::updateArrayDataRandom()
                 }
                 GiData[index].set_int_arr_values(temparr);
             }
-            else if (GiData[index].getvalueType() == "Double")
+            else if (GiData[index].getvalueType() == "double")
             {
                 QList<double> temparr = GiData[index].get_dbl_arr_values();
                 if (temparr.length() > 1)
@@ -149,7 +149,7 @@ void ConfigManager::updateArrayData()
     {
         if (GiData[index].getIsArray())
         {
-            if (GiData[index].getvalueType() == "Boolean")
+            if (GiData[index].getvalueType() == "boolean")
             {
                 QList<bool> temparr = GiData[index].get_bool_arr_values();
                 if (temparr.length() > 1)
@@ -160,7 +160,7 @@ void ConfigManager::updateArrayData()
                 }
                 GiData[index].set_bool_arr_values(temparr);
             }
-            else if (GiData[index].getvalueType() == "Integer")
+            else if (GiData[index].getvalueType() == "integer")
             {
                 QList<int> temparr = GiData[index].get_int_arr_values();
                 if (temparr.length() > 1)
@@ -171,7 +171,7 @@ void ConfigManager::updateArrayData()
                 }
                 GiData[index].set_int_arr_values(temparr);
             }
-            else if (GiData[index].getvalueType() == "Double")
+            else if (GiData[index].getvalueType() == "double")
             {
                 QList<double> temparr = GiData[index].get_dbl_arr_values();
                 if (temparr.length() > 1)
@@ -182,7 +182,7 @@ void ConfigManager::updateArrayData()
                 }
                 GiData[index].set_dbl_arr_values(temparr);
             }
-            else if (GiData[index].getvalueType() == "String")
+            else if (GiData[index].getvalueType() == "string")
             {
                 QList<QString> temparr = GiData[index].get_str_arr_values();
                 if (temparr.length() > 1)
@@ -206,19 +206,19 @@ void ConfigManager::sendArrayUpdates()
             dataStruct myStruct(GiData[index].gettag(),
                                 GiData[index].getvalueType());
             myStruct.setIsArray(true);
-            if (myStruct.getvalueType() == "Double")
+            if (myStruct.getvalueType() == "double")
             {
                 myStruct.set_dbl_arr_values(GiData[index].get_dbl_arr_values());
             }
-            else if (myStruct.getvalueType() == "Boolean")
+            else if (myStruct.getvalueType() == "boolean")
             {
                 myStruct.set_bool_arr_values(GiData[index].get_bool_arr_values());
             }
-            else if (myStruct.getvalueType() == "Integer")
+            else if (myStruct.getvalueType() == "integer")
             {
                 myStruct.set_int_arr_values(GiData[index].get_int_arr_values());
             }
-            else if (myStruct.getvalueType() == "String")
+            else if (myStruct.getvalueType() == "string")
             {
                 myStruct.set_str_arr_values(GiData[index].get_str_arr_values());
             }
@@ -261,19 +261,19 @@ void ConfigManager::triggerUpdateSlot(dataStruct data){
             data.setIsArray(GiData[index].getIsArray());
             if (data.getIsArray())
             {
-                if (GiData[index].getvalueType() == "Double")
+                if (GiData[index].getvalueType() == "double")
                 {
                     data.set_dbl_arr_values(GiData[index].get_dbl_arr_values());
                 }
-                else if (GiData[index].getvalueType() == "Boolean")
+                else if (GiData[index].getvalueType() == "boolean")
                 {
                     data.set_bool_arr_values(GiData[index].get_bool_arr_values());
                 }
-                else if (GiData[index].getvalueType() == "Integer")
+                else if (GiData[index].getvalueType() == "integer")
                 {
                     data.set_int_arr_values(GiData[index].get_int_arr_values());
                 }
-                else if (GiData[index].getvalueType() == "String")
+                else if (GiData[index].getvalueType() == "string")
                 {
                     data.set_str_arr_values(GiData[index].get_str_arr_values());
                 }
@@ -303,29 +303,29 @@ void ConfigManager::dataChangedSlot(dataStruct data){
             emit interfaceStatusSignal(data, false, false);
 
             //simulate change in handshake state
-            data.sethandshake("HostInProgress");
+            data.sethandshake("hostInProgress");
             emit interfaceStatusSignal(data, false, false);
 
             //simulate change in handshake state
-            data.sethandshake("HostComplete");
+            data.sethandshake("hostComplete");
             emit interfaceStatusSignal(data, false, false);
 
             data.setvalueType(GiData[index].getvalueType());
 
             //raise correct data change event
-            if (data.getvalueType() == "String")
+            if (data.getvalueType() == "string")
             {
                 GiData[index].setstr(data.getstr());
             }
-            else if (data.getvalueType() == "Boolean")
+            else if (data.getvalueType() == "boolean")
             {
                 GiData[index].setbln(data.getbln());
             }
-            else if (data.getvalueType() == "Integer")
+            else if (data.getvalueType() == "integer")
             {
                 GiData[index].setint(data.getint());
             }
-            else if (data.getvalueType() == "Double")
+            else if (data.getvalueType() == "double")
             {
                 GiData[index].setdbl(data.getdbl());
             }
@@ -350,12 +350,12 @@ void ConfigManager::interfaceStatusSlot(dataStruct data){
                 emit interfaceStatusSignal(data, false, true);
 
                 //simulate change in handshake state
-                GiData[index].sethandshake("HostInProgress");
+                GiData[index].sethandshake("hostInProgress");
                 data.sethandshake(GiData[index].gethandshake());
                 emit interfaceStatusSignal(data, false, true);
 
                 //simulate change in handshake state
-                GiData[index].sethandshake("HostComplete");
+                GiData[index].sethandshake("hostComplete");
                 data.sethandshake(GiData[index].gethandshake());
                 emit interfaceStatusSignal(data, true, true);
             }
@@ -365,7 +365,12 @@ void ConfigManager::interfaceStatusSlot(dataStruct data){
                 emit interfaceStatusSignal(data, true, true);
             }
 
-            break;
+            return;
         }
     }
+
+    //interface not found
+    data.setErrorState(true);
+    data.setErrorReason("Interface Tag Not Available !!!");
+    emit interfaceStatusSignal(data, false, false);
 }

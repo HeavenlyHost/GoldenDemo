@@ -11,7 +11,10 @@ smReadOutButton.directive('dirReadOutButton', ['$modal', '$rootScope', '$templat
             actiontype: '@',
             parameter: '@',
             formattype: '@',
-            unitsuffix: '@',
+            formatstring: '@',
+            formatunitssource: '@',
+            formatunitsuffix: '@',
+            eventdriven:'@',
             period: '@',
             phase: '@',
             caption: '@'
@@ -20,7 +23,7 @@ smReadOutButton.directive('dirReadOutButton', ['$modal', '$rootScope', '$templat
 	                '<div class="robInnerBase" ng-class="status">' +
 		                '<div class="robCentre">' +
             			    '<p class="robCaption">{{::caption}}</p>' +
-                			'<p class="robValue">{{outValue}}</p>' +
+                			'<p data-ng-if="showValue" class="robValue">{{outValue}}</p>' +
                 		'</div>' +
                     '</div>' +
                 '</div>',
@@ -32,94 +35,131 @@ smReadOutButton.directive('dirReadOutButton', ['$modal', '$rootScope', '$templat
             $scope.tout = null;
             $scope.tin = null;
             $scope.destroyTimer = null;
-            $scope.statusLocked = false;
+            $scope.statusLocked = false;            
+            $scope.showValue = $scope.actiontype !== "toggle" && $scope.eventdriven !== "true";
             $scope.OnClick = function () {
                 if ($scope.subscribed == true) {
-                    var modalInstance = $modal.open({
-                        animation: true,
-                        templateUrl: 'CtrlAssets/html/SMModalBasic.html',
-                        scope: $scope,
-                        controller: function ($scope) {
-                            $scope.newvalue = $scope.$parent.outValue;
-                            $scope.applyvalue = function () {
-                                this.$close($scope.newvalue);
-                            };
-                            $scope.closemodal = function () {
-                                this.$dismiss();
-                            };
-                        },
-                        size: 'sm'
-                    });
-
-                    modalInstance.result.then(function (result) {
+                    if ($scope.eventdriven == "true")
+                    {
                         var myData = $.extend(true, {}, websoc.getprotocol_Request_Scalar());
                         myData.interfaceTag = $scope.interfacetag;
-                        myData.parameter = result;
+                        myData.parameter = "true";
                         $rootScope.$emit('sendMyData', myData);
-                    });
+                    }
+                    else if ($scope.actiontype == "toggle")
+                    {
+                        var myData = $.extend(true, {}, websoc.getprotocol_Request_Scalar());
+                        myData.interfaceTag = $scope.interfacetag;
+                        myData.parameter = !$scope.outValue;
+                        $rootScope.$emit('sendMyData', myData);
+                    }
+                    else
+                    {
+                        var modalInstance = $modal.open({
+                            animation: true,
+                            templateUrl: 'CtrlAssets/html/SMModalBasic.html',
+                            scope: $scope,
+                            controller: function ($scope) {
+                                $scope.newvalue = $scope.$parent.outValue;
+                                $scope.applyvalue = function () {
+                                    this.$close($scope.newvalue);
+                                };
+                                $scope.closemodal = function () {
+                                    this.$dismiss();
+                                };
+                            },
+                            size: 'sm'
+                        });
+
+                        modalInstance.result.then(function (result) {
+                            var myData = $.extend(true, {}, websoc.getprotocol_Request_Scalar());
+                            myData.interfaceTag = $scope.interfacetag;
+                            myData.parameter = result;
+                            $rootScope.$emit('sendMyData', myData);
+                        });
+                    }
                 }
             };
-            $scope.reqtInit = function () {
+            $scope.subscribe = function () {
                 if ($scope.subscribed == false && websoc.isConnected()) {
                     var myData = $.extend(true, {}, websoc.getprotocol_Scalar_Subscription());
                     myData.interfaceTag = $scope.interfacetag;
+                    myData.action.type = $scope.actiontype;
+                    myData.format.type = $scope.formattype;
+                    myData.format.properties.string = $scope.formatstring;
+                    myData.format.properties.unitsSource = $scope.formatunitssource;
+                    myData.format.properties.unitSuffix = $scope.formatunitsuffix;
                     $rootScope.$emit('sendMyData', myData);
                 }
             };
-            $scope.releaseLock = function () {
-                $scope.status = "robIdle";
-                $scope.statusLocked = false;
-            };
             $scope.$on('interfaceStatus-' + $scope.interfacetag, function (event, args) {
-                if (args.handshake == "requestSent") {
-                    if (!$scope.subscribed) {
-                        $scope.status = "robOrange";
-                    }
+                if (args.errorState == true)
+                {
+                    $scope.outValue = "---"
+                    $scope.status = "robRed";
                 }
-                else if (args.handshake == "HostInProgress") {
-                    if (!$scope.subscribed) {
-                        $scope.status = "robYellow";
-                    }
+                else if (args.handshake == "requestSent") {
+                    $scope.status = "robYellow";
                 }
-                else if (args.handshake == "HostComplete") {
+                else if (args.handshake == "hostInProgress") {
+                    $scope.status = "robOrange";
+                }
+                else if (args.handshake == "hostComplete") {
                     $scope.status = "robIdle";
                     $scope.subscribed = true;
                 }
+                $scope.$digest();
             });
             $scope.$on('reportScalar-' + $scope.interfacetag, function (event, args) {
-                if ($scope.subscribed == true) {
-                    $scope.valuetype = args.valueType;
-                    if ($scope.valuetype == "String") {
+                $scope.subscribed = true;
+                $scope.valuetype = args.valueType;
+                if ($scope.formattype != undefined &&
+                    $scope.formattype != "none")
+                {
+                    $scope.myvalue = args.formattedValue;
+                }
+                else
+                {
+                    if ($scope.valuetype == "string") {
                         $scope.outValue = args.stringVal;
                     }
-                    else if ($scope.valuetype == "Boolean") {
+                    else if ($scope.valuetype == "boolean") {
                         $scope.outValue = args.booleanVal;
                     }
-                    else if ($scope.valuetype == "Integer") {
+                    else if ($scope.valuetype == "integer") {
                         $scope.outValue = args.integerVal;
                     }
-                    else if ($scope.valuetype == "Double") {
+                    else if ($scope.valuetype == "double") {
                         $scope.outValue = args.doubleVal;
                     }
                     else {
                         return;
                     }
+                }
 
-	                $scope.$digest();
-					
-                    if (!$scope.statusLocked) {
+                if ($scope.actiontype == "toggle")
+                {
+                    if ($scope.outValue == true)
+                    {
                         $scope.status = "robGreen";
-                        $scope.statusLocked = true;
-                        $timeout.cancel($scope.tin);
-                        $scope.tin = $timeout(function () { $scope.releaseLock() }, 1000);
+                    }
+                    else
+                    {
+                        $scope.status = "robIdle";
                     }
                 }
+                else
+                {
+                    $scope.status = "robIdle";
+                }
+
+                $scope.$digest();
             });
             $scope.$on('wsConnection', function (event, args) {
                 if (args == connectionEnum.CONNECTED) {
                     $scope.status = "robIdle";
                     $scope.outValue = "Intialising";
-                    $scope.reqtInit();
+                    $scope.subscribe();
                 }
                 else if (args == connectionEnum.DISCONNECTED) {
                     $timeout.cancel($scope.tin);
@@ -129,7 +169,7 @@ smReadOutButton.directive('dirReadOutButton', ['$modal', '$rootScope', '$templat
                 }
             });
             //initialise control
-            $scope.reqtInit();
+            $scope.subscribe();
         },
         link: function ($scope, element, attrs) {
             element.bind("click", function () {

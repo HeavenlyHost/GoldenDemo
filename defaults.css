@@ -16,7 +16,9 @@ body{
 }
 
 p {
-	color: orange;
+	color: white;
+    font-family: 'Segoe UI';
+    font-size: 18px;
 }
 
 .divroot{
@@ -169,3 +171,205 @@ h3 {
 h4 {
 	color:orange;
 }
+
+label {
+   	color: white;
+   	font-family: 'Segoe UI';
+   	font-size: 18px;
+   	font-weight:400;
+   	margin: 0;
+   	align-content: flex-end;
+   	float: right;
+}
+
+.lblspan{
+   	color: white;
+   	font-family: 'Segoe UI';
+   	font-size: 18px;
+    font-weight:400;
+}
+
+.wrapperdiv{
+    margin: 0 auto;
+    overflow:hidden;
+}
+
+.innerdiv{
+    margin: 0 auto;
+}
+
+.splitdivleft{
+    float:left;
+    width:49%;
+    align-self:center;
+}
+
+.splitdivright {
+    float:right;
+    width:49%;
+    align-self:center;
+}
+
+.fullwidthdiv{
+    margin:0px auto;
+    width:100%;
+}
+
+.divflexcentre{
+    display:flex;
+    justify-content:center;
+}
+
+.divflexend{
+    display:flex;
+    justify-content:flex-end;
+}
+
+.divflexstart{
+    display:flex;
+    justify-content:flex-start;
+    margin-left: 10px;
+}
+
+.divrightmiddle {
+    float: right;
+}
+
+.divleftmiddle {
+    float:left;
+}
+
+.divlefttext {
+    text-align:start;
+}
+
+.lblinline{
+    float:right;
+    text-align: end;
+}
+
+.lblinlinealignleft{
+    float:left;
+    text-align: start;
+}
+
+.buttoninline{
+    display:inline-block;
+}
+
+.valinline{
+    width:100%;
+}
+
+.splitdivtop {
+    margin-top:0;
+    margin-bottom:50%;
+    margin-left:0;
+    margin-right:0;   
+}
+
+.splitdivtop::after{
+    clear:both;
+}
+
+.splitdivbottom {
+    margin-top: 50%;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.splitdivbottom::after{
+    clear:both;
+}
+
+.divcentre {
+    /* margin: 0 auto; */
+    text-align:center;
+}
+
+.divtextmargintop{
+    margin-top:10px;
+}
+
+
+
+
+/*
+.examplesResizerDemos{
+    background-color: white;
+    margin:0 auto;
+}
+
+.resizerDemo-handler {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    padding: 0 1px;
+    background-color: gray;
+    cursor: ew-resize;
+    line-height: 5px;
+    font-size: 14px;
+}
+
+.resizerDemo-handler:before {
+    content: '� � �';
+    color: white;
+    width: 5px;
+    position: absolute;
+    top: 50%;
+    margin-top: -15px;
+}
+
+.example-2 {
+    border: 1px solid silver;
+    margin: 25px;
+    background-color: #eee;
+}
+
+.example-2-first,
+.example-2-second {
+    background-color: black;
+    color: white;
+    padding: 2px;
+    width: 45%;
+    margin: 5px;
+    float: left;
+}
+
+.example-2-second {
+    float: right;
+}
+
+.example-2-box {
+    background-color: gray;
+    color: white;
+    margin: 5px;
+    padding: 2px;
+}
+
+.example-2[max-width~="300px"] .example-2-first,
+.example-2[max-width~="300px"] .example-2-second {
+    float: none;
+    background-color: #4186ff;
+    width: auto;
+}
+
+.example-2[max-width~="350px"] .example-2-box {
+    background-color: #ba9196;
+}
+
+.example-2[max-width~="300px"] .example-2-box {
+    background-color: #ba6377;
+}
+
+.example-2[max-width~="200px"] .example-2-box {
+    background-color: #ba4349;
+}
+
+.example-2[max-width~="100px"] .example-2-box {
+    background-color: #ba000d;
+}
+*/

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
 	<ws>
-		<ip>172.19.97.184</ip>
+		<ip>172.19.97.114</ip>
 		<port>9876</port>
 	</ws>
 </config>

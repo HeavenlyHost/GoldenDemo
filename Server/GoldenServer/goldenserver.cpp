@@ -165,19 +165,19 @@ QString GoldenServer::EncodeToWsProtocol_ReportScalar(sockProtocol dataToEncode)
     jsonObj["notComputed"] = dataToEncode.notComputed;
     jsonObj["valueType"] = dataToEncode.valueType;
     //Check for type
-    if (dataToEncode.valueType == "Boolean")
+    if (dataToEncode.valueType == "boolean")
     {
         jsonObj["booleanVal"] = dataToEncode.booleanVal;
     }
-    else if (dataToEncode.valueType == "Integer")
+    else if (dataToEncode.valueType == "integer")
     {
         jsonObj["integerVal"] = dataToEncode.integerVal;
     }
-    else if (dataToEncode.valueType == "Double")
+    else if (dataToEncode.valueType == "double")
     {
         jsonObj["doubleVal"] = dataToEncode.doubleVal;
     }
-    else if (dataToEncode.valueType == "String")
+    else if (dataToEncode.valueType == "string")
     {
         jsonObj["stringVal"] = dataToEncode.stringVal;
     }
@@ -199,13 +199,13 @@ QString GoldenServer::EncodeToWsProtocol_ReportArray(sockProtocol dataToEncode)
     jsonObj["notComputed"] = dataToEncode.notComputed;
     jsonObj["valueType"] = dataToEncode.valueType;
     //Check for value type
-    if (dataToEncode.valueType == "Boolean")
+    if (dataToEncode.valueType == "boolean")
         jsonObj["booleanValues"] = QJsonArray::fromVariantList(ToVariantList(dataToEncode.booleanArray));
-    else if (dataToEncode.valueType == "Integer")
+    else if (dataToEncode.valueType == "integer")
         jsonObj["integerValues"] = QJsonArray::fromVariantList(ToVariantList(dataToEncode.integerArray));
-    else if (dataToEncode.valueType == "Double")
+    else if (dataToEncode.valueType == "double")
         jsonObj["doubleValues"] = QJsonArray::fromVariantList(ToVariantList(dataToEncode.doubleArray));
-    else if (dataToEncode.valueType == "String")
+    else if (dataToEncode.valueType == "string")
         jsonObj["stringValues"] = QJsonArray::fromVariantList(ToVariantList(dataToEncode.stringArray));
     //Add formatted type
     jsonObj["formattedValues"] = QJsonArray::fromVariantList(ToVariantList(dataToEncode.formattedArray));
@@ -235,6 +235,8 @@ QString GoldenServer::EncodeToWsProtocol_InterfaceStatus(sockProtocol dataToEnco
     jsonObj["valueType"] = dataToEncode.valueType;
     jsonObj["disabledState"] = dataToEncode.disabledState;
     jsonObj["errorState"] = dataToEncode.errorState;
+    jsonObj["disabledReason"] = dataToEncode.disabledReason;
+    jsonObj["errorReason"] = dataToEncode.errorReason;
     jsonObj["handshake"] = dataToEncode.handshake;
 
     QJsonDocument doc(jsonObj);
@@ -567,16 +569,19 @@ void GoldenServer::interfaceStatusSlot(dataStruct data, bool doSubscribe, bool t
     baseProtocol.title = "interfaceStatus";
     baseProtocol.interfaceTag = data.gettag();
     baseProtocol.valueType = data.getvalueType();
-    baseProtocol.disabledState = data.getdisabledState();
-    baseProtocol.errorState = data.geterrorState();
     baseProtocol.handshake = data.gethandshake();
+    baseProtocol.errorState = data.geterrorState();
+    baseProtocol.errorReason = data.geterrorReason();
+    baseProtocol.disabledState = data.getdisabledState();
+    baseProtocol.disabledReason = data.getdisabledReason();
 
     if (data.getsock() != NULL)
     {
+        QString jsonstr = EncodeToWsProtocol_InterfaceStatus(baseProtocol);
+        data.getsock()->sendTextMessage(jsonstr);
+
         if (doSubscribe)
         {
-            QString jsonstr = EncodeToWsProtocol_InterfaceStatus(baseProtocol);
-            data.getsock()->sendTextMessage(jsonstr);
             //Do subscription only when the item has been confirmed to exist
             for (int i = 0; i < m_clients.length(); i++)
             {

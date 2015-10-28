@@ -139,13 +139,18 @@ servs.service('websoc', ['$timeout', '$rootScope', 'configmanager', function($ti
     var protocol_Scalar_Subscription = {
         'title': 'scalarSubscription',
         'interfaceTag': '',
-        'action': [{
+        'action': {
             'type': 'InsertConstant',
             'parameter': ''
-            }],
-        'format': [{
-            'type': 'none'
-            }],
+            },
+        'format': {
+            'type': 'none',
+            'properties': {
+                'string': 'none',
+                'unitsSource': 'user',
+                'unitSuffix': 'none'
+                },
+            },
     }
 
     var protocol_Scalar_Unsubscription = {
@@ -156,9 +161,14 @@ servs.service('websoc', ['$timeout', '$rootScope', 'configmanager', function($ti
     var protocol_Array_Subscription = {
         'title': 'arraySubscription',
         'interfaceTag': '',
-        'format': [{
-            'type': 'none'
-            }]
+        'format': {
+            'type': 'none',
+            'properties': {
+                'string': 'none',
+                'unitsSource': 'user',
+                'unitSuffix': 'none'
+                },
+            },
     }
 
     var protocol_Array_Unsubscription = {

@@ -1,0 +1,36 @@
+* {
+    margin: 0;
+}
+
+html, body {
+    height: 100%;
+}
+
+.root {
+    width: 100%;
+    height: 100%;
+    background-color:aliceblue;
+}
+#wrap {
+    position: relative;
+    width: 640px;
+    height: 480px;
+    background-color: red;
+    float: left;
+}
+#outer {
+    position: relative;
+    width: 640px;
+    height: 480px;
+    background-color:aqua;
+    transform-origin: top left;
+}
+#inner {
+    background-color:azure;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 10px;
+    width: 620px;
+    height: 460px;
+}

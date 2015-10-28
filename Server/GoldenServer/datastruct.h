@@ -42,7 +42,7 @@ public:
     QList<int> get_int_arr_values();
     QList<QString> get_ftd_arr_values();
 
-    void setIsArray(bool m_isArray);
+    void setIsArray(bool m_isArray);    
     void setsock(QWebSocket *qws);
     void sethandshake(QString m_handshake);
     void setbln(bool m_bln);
@@ -57,6 +57,10 @@ public:
     void set_dbl_arr_values(QList<double> m_dblArray);
     void set_int_arr_values(QList<int> m_intArray);
     void set_ftd_arr_values(QList<QString> m_fdtArray);
+    void setdisabledState(bool m_disabledState);
+    void setErrorState(bool m_errorState);
+    void setDisabledReason(QString m_disabledReason);
+    void setErrorReason(QString m_errorReason);
 
 private:
     void Initialise();

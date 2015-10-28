@@ -30,6 +30,7 @@ smCheckBox.directive('dirCheckBox', ['$rootScope', '$timeout', '$interval', 'web
                 if ($scope.subscribed == false && websoc.isConnected()) {
                     var myData = $.extend(true, {}, websoc.getprotocol_Scalar_Subscription());
                     myData.interfaceTag = $scope.interfacetag;
+                    myData.action.type = $scope.actiontype;
                     $rootScope.$emit('sendMyData', myData);
                 }
             };
@@ -39,12 +40,12 @@ smCheckBox.directive('dirCheckBox', ['$rootScope', '$timeout', '$interval', 'web
                         $scope.status = "smcbrs";
                     }
                 }
-                else if (args.handshake == "HostInProgress") {
+                else if (args.handshake == "hostInProgress") {
                     if ($scope.subscribed == false) {
                         $scope.status = "smcbhip";
                     }
                 }
-                else if (args.handshake == "HostComplete") {
+                else if (args.handshake == "hostComplete") {
                     $scope.status = "smcbidl";
                     $scope.subscribed = true;
                 }
@@ -53,16 +54,16 @@ smCheckBox.directive('dirCheckBox', ['$rootScope', '$timeout', '$interval', 'web
                 if ($scope.subscribed == true) {
                     $scope.initialised = true;
                     $scope.valuetype = args.valueType;
-                    if ($scope.valuetype == "String") {
+                    if ($scope.valuetype == "string") {
                         $scope.rxmyvalue = args.stringVal;
                     }
-                    else if ($scope.valuetype == "Boolean") {
+                    else if ($scope.valuetype == "boolean") {
                         $scope.rxmyvalue = args.booleanVal;
                     }
-                    else if ($scope.valuetype == "Integer") {
+                    else if ($scope.valuetype == "integer") {
                         $scope.rxmyvalue = args.integerVal;
                     }
-                    else if ($scope.valuetype == "Double") {
+                    else if ($scope.valuetype == "double") {
                         $scope.rxmyvalue = args.doubleVal;
                     }
                     else {

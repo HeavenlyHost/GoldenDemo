@@ -71,9 +71,20 @@
   font-weight: normal;
   background: #f3f3f3;
   background: 
-  
-  -webkit-gradient(linear, left bottom, left top, color-stop(0, #354563), color-stop(1, #576786));
+  -webkit-gradient(linear, left bottom, left top, color-stop(0, #222222), color-stop(1, #000000));
   background: 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   
@@ -160,8 +171,32 @@
   
   
   
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   -moz-linear-gradient(center bottom, #eeeeee 0%, #ffffff 100%);
   background: 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   
@@ -447,7 +482,7 @@ select.ui-grid-filter-select:hover {
 .ui-grid-viewport {
   min-height: 20px;
   position: relative;
-  background-color: #7A8EB5;
+  background-color: #222222;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
 }

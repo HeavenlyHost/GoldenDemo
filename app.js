@@ -46,6 +46,8 @@ app.controller('checkBoxDemoController', [ '$scope', function( $scope ) {}]);
 
 app.controller('readOutButtonDemoContoller', [ '$scope', function( $scope ) {}]);
 
+app.controller('playerControlDemoContoller', ['$scope', function ($scope) { }]);
+
 app.controller('popupDemoController', [ '$scope', '$rootScope', function( $scope, $rootScope ) {
     $scope.ngPopupOption = {
         createNew: false,
@@ -68,7 +70,9 @@ app.controller('popupDemoController', [ '$scope', '$rootScope', function( $scope
         },
         onDragStart : function(){},
         onDragEnd : function(){},
-        onResize : function(){}
+        onResize: function () {
+            //Maybe do scaling here
+        }
     }
 }]);
 
@@ -111,7 +115,16 @@ app.controller('heyControllerNav', [ '$compile', '$scope', '$rootScope', 'websoc
         }; 
         $rootScope.$broadcast('dockDialog', newItemConfig)
     };        
-    $scope.$on('wsConnection', function(event, args) {
+    $scope.addNewPlayerControlDemoTemplate = function () {
+        var newItemConfig = {
+            createNew: true,
+            title: "Player Control Demo",
+            moduleId: "playerControlDemoModule",
+            templateId: "playerControlDemoTemplate"
+        };
+        $rootScope.$broadcast('dockDialog', newItemConfig)
+    };
+    $scope.$on('wsConnection', function (event, args) {
         if (args != connectionEnum.CONNECTING){
             if (args == connectionEnum.CONNECTED)
             {
@@ -207,8 +220,7 @@ app.controller('rootController', [ '$document', '$templateCache', '$http', '$com
         }
 
 		var state = JSON.stringify( $scope.myLayout.toConfig() );
-		localStorage.setItem( 'savedState', state );		
-
+		localStorage.setItem('savedState', state);
 	});
     $scope.stackCreated = function( stack ){
         /*

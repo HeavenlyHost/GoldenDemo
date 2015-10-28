@@ -4,9 +4,15 @@
         <dir-read-out interfacetag="strServerDateTime"></dir-read-out>
     </header>
     <div>
-        <dir-table interfacetags="{'tags':[ {tag: 'strArray1', colname: 'colName', displayname: 'My Name'},
-                                        {tag: 'dblArray1', colname: 'colMark', displayname: 'My Mark'},
-                                        {tag: 'blnArray1', colname: 'colLive', displayname: 'My Live'},
-                                        {tag: 'intArray1', colname: 'colPriority', displayname: 'My Priority'}]}" />
+        <dir-table interfacetags="{ 'selectedtag':'lng_KTFXVEHSELINDEX[0]', 
+                                    'tags':[ {tag: 'str_STFXVEHREGNAME[0]', colname: 'colName', displayname: 'Registration', formattype: 'none', formatstring: 'none', formatunitssource: 'user', formatunitsuffix: 'none'},
+                                        {tag: 'lng_KTFXVEHAPPID[0]', colname: 'colMark', displayname: 'App', formattype: 'none', formatstring: 'none', formatunitssource: 'user', formatunitsuffix: 'none'},
+                                        {tag: 'lng_KTFXVEHDISID[0]', colname: 'colLive', displayname: 'ID', formattype: 'none', formatstring: 'none', formatunitssource: 'user', formatunitsuffix: 'none'},
+                                        {tag: 'str_STFXVEHSTATUS[0]', colname: 'colPriority', displayname: 'Status', formattype: 'none', formatstring: 'none', formatunitssource: 'user', formatunitsuffix: 'none'}]}" />
+
+    </div>
+
+    <div>
+        <dir-read-out-button caption="Select Control" interfacetag="bln_PTFXVEHCONTROLSEL[0]" actiontype="insertConstant" eventdriven="true"></dir-read-out-button>
     </div>
 </div>

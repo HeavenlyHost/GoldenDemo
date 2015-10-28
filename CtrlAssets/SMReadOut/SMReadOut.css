@@ -1,4 +1,4 @@
-﻿/* dirReadOut */
+/* dirReadOut */
 .smrodiv {	
 	display: inline-flex;
 	width: auto;
@@ -8,5 +8,23 @@
 }
 
 .smroIdle {
-    color: orange;
+    color: green;
+    margin: 0px;
+    font-size: 18px;
+}
+
+.smroError {
+    color: red;
+    margin: 0px;
+    font-size: 18px;
+}
+
+.smroDisabled {
+    color: gray;
+    margin: 0px;
+    font-size: 18px;
+}
+
+.smrodiv > p {
+    margin: 0px;
 }
