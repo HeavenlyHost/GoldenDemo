@@ -4,6 +4,7 @@ servs.service('configmanager', ['$http', function($http){
     var ready = false;
     var wsIpAddress = "0.0.0.0";
     var wsPort = 0;
+    var scenariosPath = "";
     
     var readConfig = function(){
           var req = {
@@ -20,6 +21,7 @@ servs.service('configmanager', ['$http', function($http){
           $http(req).success( function(data){
               wsIpAddress = data.config[0].ws[0].ip[0]._text;
               wsPort = data.config[0].ws[0].port[0]._text;
+              scenariosPath = data.config[0].paths[0].scenarios[0]._text;
               ready = true;
           });
     }; 
@@ -32,14 +34,19 @@ servs.service('configmanager', ['$http', function($http){
         return wsPort;
     }
 
+    var getScenariosPath = function () {
+        return scenariosPath;
+    }
+
     var isReady = function(){
         return ready;
     }
-    
+
     return {
         isReady: isReady,
         getIP: getIP,
         getPort: getPort,
+        getScenariosPath: getScenariosPath,
         readConfig: readConfig
     };      
 }]);

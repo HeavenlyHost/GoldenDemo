@@ -7,7 +7,7 @@
                         <label>Controlled Player</label>
                     </div>
                     <div class="splitdivright">
-                        <dir-read-out id="ctrlPlayer" interfacetag="str_STFXVEHCNTRLREG[TPOS]"></dir-read-out>
+                        <dir-read-out id="ctrlPlayer" interfacetag="str_STFXVEHCNTRLREG[0]"></dir-read-out>
                     </div>
                     <br style="clear:both;" />
                 </div>
@@ -24,7 +24,7 @@
             </div>
             <div class="splitdivright">
                 <div class="divflexcentre">
-                    <dir-read-out-button caption="Straight & Level" interfacetag="blnItem5" actiontype="toggle"></dir-read-out-button>
+                    <dir-read-out-button caption="Straight & Level" interfacetag="bln_PTFXVEHCNTRLSANDL[0]" actiontype="toggle"></dir-read-out-button>
                 </div>
             </div>
             <br style="clear:both;" />
@@ -50,7 +50,7 @@
             <div class="divflexcentre">
                 <div class="splitdivleft">
                     <div class="divflexend">
-                        <dir-read-out-button caption="Heading" interfacetag="sng_RTFXVEHHDNGDMD[0]" actiontype="insertConstant"></dir-read-out-button>
+                        <dir-read-out-button caption="Heading" interfacetag="sng_RTFXVEHHDNGDMD[0]" actiontype="insertConstant" , formattype: 'none', formatstring: 'none', formatunitssource: 'user', formatunitsuffix: 'none'></dir-read-out-button>
                     </div>
                 </div>
                 <div class="splitdivright">
@@ -66,12 +66,12 @@
             <div class="divflexcentre">
                 <div class="splitdivleft">
                     <div class="divflexend">
-                        <dir-read-out-button caption="IAS" interfacetag="sng_RTFXVEHTURNRATEDMD[0]" actiontype="insertConstant"></dir-read-out-button>
+                        <dir-read-out-button caption="IAS" interfacetag="sng_RTFXVEHSPEEDDMD[0]" actiontype="insertConstant"></dir-read-out-button>
                     </div>
                 </div>
                 <div class="splitdivright">
                     <div class="divflexstart">
-                        <dir-read-out interfacetag=" sng_RTFXVEHCNTRLTURNRATE[0]"></dir-read-out>
+                        <dir-read-out interfacetag=" sng_RTFXVEHSPEED[0]"></dir-read-out>
                     </div>
                 </div>
                 <br style="clear:both;" />
@@ -82,28 +82,28 @@
             <div class="divflexcentre">
                 <div class="splitdivleft">
                     <div class="divflexend">
-                        <dir-read-out-button caption="Height AMSL" interfacetag="sng_RTFXVEHSPEEDDMD[0]" actiontype="insertConstant"></dir-read-out-button>
-                    </div>
-                </div>
-                <div class="splitdivright">
-                    <div class="divflexstart">
-                        <dir-read-out interfacetag="sng_RTFXVEHSPEED[0]"></dir-read-out>
-                    </div>
-                </div>
-                <br style="clear:both;" />
-            </div>
-        </div>
-
-        <div class="fullwidthdiv">
-            <div class="divflexcentre">
-                <div class="splitdivleft">
-                    <div class="divflexend">
-                        <dir-read-out-button caption="Height AGL" interfacetag="sng_RTFXVEHALTDMD[0]" actiontype="insertConstant"></dir-read-out-button>
+                        <dir-read-out-button caption="Height AMSL" interfacetag="sng_RTFXVEHALTDMD[0]" actiontype="insertConstant"></dir-read-out-button>
                     </div>
                 </div>
                 <div class="splitdivright">
                     <div class="divflexstart">
                         <dir-read-out interfacetag="sng_RTFXVEHALT[0]"></dir-read-out>
+                    </div>
+                </div>
+                <br style="clear:both;" />
+            </div>
+        </div>
+
+        <div class="fullwidthdiv">
+            <div class="divflexcentre">
+                <div class="splitdivleft">
+                    <div class="divflexend">
+                        <dir-read-out-button caption="Height AGL" interfacetag="sng_RTFXVEHAGLDMD[0]" actiontype="insertConstant"></dir-read-out-button>
+                    </div>
+                </div>
+                <div class="splitdivright">
+                    <div class="divflexstart">
+                        <dir-read-out interfacetag="sng_RTFXVEHAGL[0]"></dir-read-out>
                     </div>
                 </div>
                 <br style="clear:both;" />
@@ -142,7 +142,7 @@
                 </div>
                 <div class="splitdivright">
                     <div class="divflexstart">
-                        <dir-read-out-button caption="Hold" interfacetag="bln_PTFXVEHCNTRLGTURNDE[TPOS]" actiontype="toggle"></dir-read-out-button>
+                        <dir-read-out-button caption="Hold" interfacetag="bln_PTFXVEHCNTRLGTURNDE[0]" actiontype="toggle"></dir-read-out-button>
                     </div>
                 </div>
                 <br style="clear:both;" />

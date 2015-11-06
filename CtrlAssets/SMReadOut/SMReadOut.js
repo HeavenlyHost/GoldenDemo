@@ -77,6 +77,7 @@ smReadOut.directive('dirReadOut', ['$rootScope', '$timeout', '$interval', 'webso
                             break;
                     }
                 }
+                $scope.status = "smroIdle";
 				$scope.$digest();					
             });
             $scope.$on('wsConnection', function (event, args) {

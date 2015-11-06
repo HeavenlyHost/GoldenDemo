@@ -1,0 +1,20 @@
+﻿<div class="templatetabdiv" data-ng-controller="scenarioDemoContoller">
+    <header>
+        <h1>Scenario Tree Demo</h1>
+    </header>
+    <div>
+        <dir-table enabletreemode=true
+                   treesource="directory"
+                   treepath="%CGFDATA%\scenario\"
+                   treequery=""
+                   interfacetags="{ 'selectedtag':'str_STFXSCENSELNAME',
+                                    'tags':[ {colname: 'descriptor', displayname: 'Descriptor', visible: 'true'},
+                                             {colname: 'legend', displayname: 'Legend', visible: 'true'},
+                                             {colname: 'index', displayname: 'SelIndex', visible: 'false'}]}" />
+    </div>
+
+    <div>
+        <dir-read-out-button caption="Start" interfacetag="bln_PTFXSCENSTART" actiontype="insertConstant" eventdriven="true"></dir-read-out-button>
+        <dir-read-out-button caption="Stop All" interfacetag="bln_PTFXSCENSTOP" actiontype="insertConstant" eventdriven="true"></dir-read-out-button>
+    </div>
+</div>

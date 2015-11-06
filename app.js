@@ -6,6 +6,8 @@ var connectionEnum = {
     CONNECTED: 2
 }
 
+var popCount = 0;
+
 app.run(['$rootScope', '$templateCache', '$http', 'fileaccessor', 'configmanager', function ($rootScope, $templateCache, $http, fileaccessor, configmanager){
 
     configmanager.readConfig();
@@ -48,6 +50,8 @@ app.controller('readOutButtonDemoContoller', [ '$scope', function( $scope ) {}])
 
 app.controller('playerControlDemoContoller', ['$scope', function ($scope) { }]);
 
+app.controller('scenarioDemoContoller', ['$scope', function ($scope) { }]);
+
 app.controller('popupDemoController', [ '$scope', '$rootScope', function( $scope, $rootScope ) {
     $scope.ngPopupOption = {
         createNew: false,
@@ -58,6 +62,7 @@ app.controller('popupDemoController', [ '$scope', '$rootScope', function( $scope
         templateId: $rootScope.ngPopupOptionRoot.templateId,
         template: $rootScope.ngPopupOptionRoot.template,
         title: $rootScope.ngPopupOptionRoot.title,
+        popId: $rootScope.ngPopupOptionRoot.popId,
         hasTitleBar: true,
         resizable:true,
         draggable: true,
@@ -68,10 +73,13 @@ app.controller('popupDemoController', [ '$scope', '$rootScope', function( $scope
         {
             $rootScope.$broadcast('dockDialog', this);
         },
-        onDragStart : function(){},
+        onDragStart: function ()
+        {
+            angular.element('#pop' + this.popId).appendTo(document.body);
+        },
         onDragEnd : function(){},
         onResize: function () {
-            //Maybe do scaling here
+            angular.element('#pop' + this.popId).appendTo(document.body);
         }
     }
 }]);
@@ -121,6 +129,15 @@ app.controller('heyControllerNav', [ '$compile', '$scope', '$rootScope', 'websoc
             title: "Player Control Demo",
             moduleId: "playerControlDemoModule",
             templateId: "playerControlDemoTemplate"
+        };
+        $rootScope.$broadcast('dockDialog', newItemConfig)
+    };
+    $scope.addNewScenarioDemoTemplate = function () {
+        var newItemConfig = {
+            createNew: true,
+            title: "Scenario Demo",
+            moduleId: "scenarioModule",
+            templateId: "scenarioTemplate"
         };
         $rootScope.$broadcast('dockDialog', newItemConfig)
     };
@@ -216,7 +233,7 @@ app.controller('rootController', [ '$document', '$templateCache', '$http', '$com
         if (args.createNew == false)
         {
             // Remove pop dialog from DOM as we don't need it anymore
-            $("div[id=pop" + args.templateId + "]").remove();            
+            $("div[id=pop" + args.popId + "]").remove();
         }
 
 		var state = JSON.stringify( $scope.myLayout.toConfig() );
@@ -262,10 +279,11 @@ app.controller('rootController', [ '$document', '$templateCache', '$http', '$com
                 moduleId: item._mSubscriptions.__all[0].ctx.config.componentState.module,
                 templateId: item._mSubscriptions.__all[0].ctx.config.componentState.templateId,
                 template: html,
+                popId: popCount += 1,
                 title: item.config.title,
             }
 
-            var myPopup = angular.element('<div id=pop' + templateId + ' data-ng-controller="popupDemoController"><ng-pop-up option="ngPopupOption"></ng-pop-up></div>');
+            var myPopup = angular.element('<div id=pop' + popCount + ' data-ng-controller="popupDemoController"><ng-pop-up option="ngPopupOption"></ng-pop-up></div>');
             html = $compile(myPopup)($rootScope);
             angular.element(document.body).append(html);
         };
